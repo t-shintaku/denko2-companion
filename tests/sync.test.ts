@@ -113,12 +113,12 @@ describe('他端末との合流', () => {
         studySessions: [
           {
             id: 'pc-1',
-            startedAt: '2026-09-01T10:00:00+09:00',
-            jstDate: '2026-09-01',
+            startedAt: '2026-08-01T10:00:00+09:00',
+            jstDate: '2026-08-01',
             durationMinutes: 30,
             kind: 'theory',
             countsAsBasics: true,
-            updatedAt: '2026-09-01T10:00:00+09:00',
+            updatedAt: '2026-08-01T10:00:00+09:00',
           },
         ],
         questionAttempts: [],
@@ -152,12 +152,12 @@ describe('他端末との合流', () => {
         studySessions: [
           {
             id: 'pc-1',
-            startedAt: '2026-09-01T10:00:00+09:00',
-            jstDate: '2026-09-01',
+            startedAt: '2026-08-01T10:00:00+09:00',
+            jstDate: '2026-08-01',
             durationMinutes: 30,
             kind: 'theory',
             countsAsBasics: true,
-            updatedAt: '2026-09-01T10:00:00+09:00',
+            updatedAt: '2026-08-01T10:00:00+09:00',
           },
         ],
         questionAttempts: [],
@@ -217,12 +217,12 @@ describe('競合と失敗', () => {
               studySessions: [
                 {
                   id: 'pc-1',
-                  startedAt: '2026-09-01T10:00:00+09:00',
-                  jstDate: '2026-09-01',
+                  startedAt: '2026-08-01T10:00:00+09:00',
+                  jstDate: '2026-08-01',
                   durationMinutes: 30,
                   kind: 'theory',
                   countsAsBasics: true,
-                  updatedAt: '2026-09-01T10:00:00+09:00',
+                  updatedAt: '2026-08-01T10:00:00+09:00',
                 },
               ],
               questionAttempts: [],
@@ -262,12 +262,12 @@ describe('競合と失敗', () => {
         studySessions: [
           {
             id: 'pc-1',
-            startedAt: '2026-09-01T10:00:00+09:00',
-            jstDate: '2026-09-01',
+            startedAt: '2026-08-01T10:00:00+09:00',
+            jstDate: '2026-08-01',
             durationMinutes: 30,
             kind: 'theory',
             countsAsBasics: true,
-            updatedAt: '2026-09-01T10:00:00+09:00',
+            updatedAt: '2026-08-01T10:00:00+09:00',
           },
         ],
         questionAttempts: [],

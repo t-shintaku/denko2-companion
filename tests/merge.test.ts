@@ -4,6 +4,7 @@ import {
   digest,
   emptyData,
   mergeAll,
+  mergeLessonProgress,
   mergeSettings,
   mergeTable,
   pickWinner,
@@ -12,7 +13,7 @@ import {
 } from '../src/domain/merge';
 import { defaultSettings } from '../src/db/repo';
 import { SEED_UPDATED_AT } from '../src/domain/types';
-import type { BudgetItem, QuestionAttempt, StudySession, UserSettings } from '../src/domain/types';
+import type { BudgetItem, LessonProgress, QuestionAttempt, StudySession, UserSettings } from '../src/domain/types';
 
 function session(id: string, updatedAt: string, durationMinutes = 25): StudySession {
   return {
@@ -127,6 +128,103 @@ describe('合体の不変条件', () => {
 
     expect(pickWinner(broken, good)).toBe(good);
     expect(mergeTable([broken], [], 'id').rows).toHaveLength(1);
+  });
+});
+
+describe('レッスン進捗の合体(段階ごと)', () => {
+  const base = (patch: Partial<LessonProgress> = {}): LessonProgress => ({
+    lessonId: 'p1-w1-l1',
+    xpAwarded: 0,
+    updatedAt: '2026-08-01T10:00:00+09:00',
+    ...patch,
+  });
+
+  it('【中核】PCで「閉じて答える」・スマホで「解く」を進めても、どちらも消えない', () => {
+    // 行ごと勝ち抜きだと updatedAt の新しい側で丸ごと上書きされ、
+    // 片方の回答が消える。消えるのは本人が実際にやった学習そのもの
+    const pc = base({
+      inputViewedAt: '2026-08-01T10:00:00+09:00',
+      recallSubmittedAt: '2026-08-01T10:05:00+09:00',
+      recallAnswers: ['接地', '絶縁'],
+      updatedAt: '2026-08-01T10:05:00+09:00',
+    });
+    const phone = base({
+      inputViewedAt: '2026-08-01T10:00:00+09:00',
+      practiceSubmittedAt: '2026-08-02T09:00:00+09:00',
+      practiceNote: '5問中4問',
+      practiceCorrect: 4,
+      practiceTotal: 5,
+      updatedAt: '2026-08-02T09:00:00+09:00',
+    });
+
+    const merged = mergeLessonProgress(pc, phone);
+
+    expect(merged.recallSubmittedAt).toBe('2026-08-01T10:05:00+09:00');
+    expect(merged.recallAnswers).toEqual(['接地', '絶縁']);
+    expect(merged.practiceSubmittedAt).toBe('2026-08-02T09:00:00+09:00');
+    expect(merged.practiceCorrect).toBe(4);
+    expect(merged.practiceTotal).toBe(5);
+    expect(merged.inputViewedAt).toBe('2026-08-01T10:00:00+09:00');
+  });
+
+  it('合体の向きを変えても同じ結果になる(収束)', () => {
+    const pc = base({
+      recallSubmittedAt: '2026-08-01T10:05:00+09:00',
+      recallAnswers: ['a'],
+      updatedAt: '2026-08-01T10:05:00+09:00',
+    });
+    const phone = base({
+      practiceSubmittedAt: '2026-08-02T09:00:00+09:00',
+      practiceNote: 'b',
+      updatedAt: '2026-08-02T09:00:00+09:00',
+    });
+
+    expect(canonical(mergeLessonProgress(pc, phone))).toBe(canonical(mergeLessonProgress(phone, pc)));
+  });
+
+  it('同じ段階を両方でやったら、新しい回答を残す', () => {
+    const older = base({
+      recallSubmittedAt: '2026-08-01T10:00:00+09:00',
+      recallAnswers: ['古い'],
+      updatedAt: '2026-08-01T10:00:00+09:00',
+    });
+    const newer = base({
+      recallSubmittedAt: '2026-08-03T10:00:00+09:00',
+      recallAnswers: ['新しい'],
+      updatedAt: '2026-08-03T10:00:00+09:00',
+    });
+
+    expect(mergeLessonProgress(older, newer).recallAnswers).toEqual(['新しい']);
+    expect(mergeLessonProgress(newer, older).recallAnswers).toEqual(['新しい']);
+  });
+
+  it('一度完了した事実は取り消されない。XPも下がらない', () => {
+    const done = base({
+      inputViewedAt: '2026-08-01T10:00:00+09:00',
+      recallSubmittedAt: '2026-08-01T10:01:00+09:00',
+      practiceSubmittedAt: '2026-08-01T10:02:00+09:00',
+      takeawaySavedAt: '2026-08-01T10:03:00+09:00',
+      completedAt: '2026-08-01T10:03:00+09:00',
+      xpAwarded: 10,
+      updatedAt: '2026-08-01T10:03:00+09:00',
+    });
+    const stale = base({ inputViewedAt: '2026-08-05T10:00:00+09:00', updatedAt: '2026-08-05T10:00:00+09:00' });
+
+    const merged = mergeLessonProgress(done, stale);
+
+    expect(merged.completedAt).toBe('2026-08-01T10:03:00+09:00');
+    expect(merged.xpAwarded).toBe(10);
+    expect(merged.takeawaySavedAt).toBe('2026-08-01T10:03:00+09:00');
+  });
+
+  it('テーブル合体でも段階ごとの規則が使われる', () => {
+    const pc = base({ recallSubmittedAt: '2026-08-01T10:05:00+09:00', updatedAt: '2026-08-01T10:05:00+09:00' });
+    const phone = base({ practiceSubmittedAt: '2026-08-02T09:00:00+09:00', updatedAt: '2026-08-02T09:00:00+09:00' });
+
+    const merged = mergeAll(data({ lessonProgress: [pc] }), data({ lessonProgress: [phone] }));
+
+    expect(merged.data.lessonProgress[0]?.recallSubmittedAt).toBe('2026-08-01T10:05:00+09:00');
+    expect(merged.data.lessonProgress[0]?.practiceSubmittedAt).toBe('2026-08-02T09:00:00+09:00');
   });
 });
 

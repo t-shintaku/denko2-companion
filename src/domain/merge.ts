@@ -16,7 +16,7 @@
  */
 
 import { SCHEMA_VERSION } from './types';
-import type { BackupFile, IsoDateTime, UserSettings } from './types';
+import type { BackupFile, IsoDateTime, LessonProgress, UserSettings } from './types';
 
 export type MergeCount = {
   /** リモートから取り込んで増えた・更新された行 */
@@ -69,47 +69,95 @@ export function pickWinner<T extends Row>(a: T, b: T): T {
 
 export type MergedTable<T> = { rows: T[]; count: MergeCount };
 
+/** 同じキーの2行から1行を作る規則。既定は行ごと勝ち抜き(pickWinner) */
+export type Combine<T> = (mine: T, theirs: T) => T;
+
 /**
- * 1テーブル分の合体。ローカルとリモートの和集合を取り、衝突は pickWinner で決める。
+ * 1テーブル分の合体。ローカルとリモートの和集合を取り、衝突は combine で決める。
  * 戻り値の rows は主キー昇順。端末によって並びが変わらないようにするため。
  */
 export function mergeTable<T extends Row>(
   local: T[],
   remote: T[],
   key: string,
+  combine: Combine<T> = pickWinner,
 ): MergedTable<T> {
   const localByKey = new Map<string, T>();
   for (const row of local) localByKey.set(String(row[key]), row);
-
-  const out = new Map<string, T>(localByKey);
-  let incoming = 0;
-
-  for (const row of remote) {
-    const k = String(row[key]);
-    const mine = localByKey.get(k);
-    if (!mine) {
-      out.set(k, row);
-      incoming += 1;
-      continue;
-    }
-    const winner = pickWinner(mine, row);
-    if (winner !== mine && canonical(winner) !== canonical(mine)) {
-      out.set(k, winner);
-      incoming += 1;
-    }
-  }
-
-  // リモートに無い、またはリモートより新しい行 = こちらから送る必要がある行
   const remoteByKey = new Map<string, T>();
   for (const row of remote) remoteByKey.set(String(row[key]), row);
+
+  const out = new Map<string, T>();
+  let incoming = 0;
   let outgoing = 0;
-  for (const [k, row] of out) {
+
+  for (const k of new Set([...localByKey.keys(), ...remoteByKey.keys()])) {
+    const mine = localByKey.get(k);
     const theirs = remoteByKey.get(k);
-    if (!theirs || canonical(theirs) !== canonical(row)) outgoing += 1;
+    const merged = mine && theirs ? combine(mine, theirs) : (mine ?? theirs)!;
+    out.set(k, merged);
+
+    // 合体後の姿が自分のと違えば取り込み、相手のと違えば送信。
+    // 「勝った/負けた」ではなく「差があるか」で数える。項目単位の合体では
+    // どちらの行とも一致しない第三の行ができるため
+    if (!mine || canonical(mine) !== canonical(merged)) incoming += 1;
+    if (!theirs || canonical(theirs) !== canonical(merged)) outgoing += 1;
   }
 
   const rows = [...out.entries()].sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0)).map(([, v]) => v);
   return { rows, count: { incoming, outgoing } };
+}
+
+/**
+ * レッスン進捗は**行ごと勝ち抜きにしてはいけない**。
+ *
+ * 4段階(見る→閉じて答える→解く→1点残す)は別々の端末で別々に進む。
+ * PCで「閉じて答える」、スマホで「解く」を進めたとき、行ごと置換だと
+ * updatedAt が新しい側で丸ごと上書きされ、片方の回答が消える。
+ * 消えるのは本人が実際にやった学習そのものなので取り返しがつかない。
+ *
+ * 段階ごとに突き合わせる。段階は一度立ったら降りない(単調)ので、
+ * どの順で合体しても同じ結果になる。
+ */
+const STEP_GROUPS = [
+  { at: 'inputViewedAt', payload: [] as string[] },
+  { at: 'recallSubmittedAt', payload: ['recallAnswers'] },
+  { at: 'practiceSubmittedAt', payload: ['practiceNote', 'practiceCorrect', 'practiceTotal'] },
+  { at: 'takeawaySavedAt', payload: ['takeaway'] },
+] as const;
+
+export function mergeLessonProgress(mine: LessonProgress, theirs: LessonProgress): LessonProgress {
+  const newer = pickWinner(mine as unknown as Row, theirs as unknown as Row) as unknown as LessonProgress;
+  const merged: LessonProgress = {
+    lessonId: mine.lessonId,
+    // 段階に紐づかない欄(学習モード)は行としての新しい方に従う
+    mode: newer.mode,
+    xpAwarded: Math.max(mine.xpAwarded ?? 0, theirs.xpAwarded ?? 0),
+    updatedAt: Date.parse(mine.updatedAt) >= Date.parse(theirs.updatedAt) ? mine.updatedAt : theirs.updatedAt,
+  };
+
+  for (const group of STEP_GROUPS) {
+    const a = mine[group.at as keyof LessonProgress] as string | undefined;
+    const b = theirs[group.at as keyof LessonProgress] as string | undefined;
+    // 片方にしか無ければ、それが唯一の事実。必ず残す(ここが消えていた)
+    const source = !a ? (b ? theirs : undefined) : !b ? mine : Date.parse(a) >= Date.parse(b) ? mine : theirs;
+    if (!source) continue;
+    const stamp = source[group.at as keyof LessonProgress] as string | undefined;
+    if (!stamp) continue;
+    (merged as Record<string, unknown>)[group.at] = stamp;
+    for (const field of group.payload) {
+      const value = (source as Record<string, unknown>)[field];
+      if (value !== undefined) (merged as Record<string, unknown>)[field] = value;
+    }
+  }
+
+  // 一度完了したという事実は取り消さない。最初に完了した時刻を残す
+  const completed = [mine.completedAt, theirs.completedAt].filter(Boolean) as string[];
+  if (completed.length > 0) {
+    merged.completedAt = completed.reduce((x, y) => (Date.parse(x) <= Date.parse(y) ? x : y));
+  }
+
+  return merged;
 }
 
 /**
@@ -228,6 +276,9 @@ export function mergeAll(
       (local[table] ?? []) as unknown as Row[],
       (remote[table] ?? []) as unknown as Row[],
       PRIMARY_KEY[table],
+      table === 'lessonProgress'
+        ? (mergeLessonProgress as unknown as Combine<Row>)
+        : undefined,
     );
     (data as Record<string, unknown>)[table] = merged.rows;
     counts[table] = merged.count;

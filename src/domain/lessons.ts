@@ -152,6 +152,75 @@ export function minutesFor(lesson: CurriculumLesson, mode: LessonMode): number {
   return lesson.estimatedMinutes[mode];
 }
 
+/**
+ * 段階ごとの時間配分。レッスン全体の見積をこの比で割る。
+ *
+ * なぜ要るか: 10分モードでも見積が10分を超えるレッスンが **28/54本**(最大60分)ある。
+ * レッスン1本を「次の10分」として出すと、10分と言いながら60分の作業を渡すことになる。
+ * 段階単位で出すと超過は **22/216段階** まで落ちる(実カリキュラムで計測)。
+ *
+ * 比率は「見て理解する」が最も重く、「1点残す」が最も軽いという実作業の形から置いた目安。
+ * 実績時間は別途 measuredMinutes で実測しているので、これは提示用の目安に留まる。
+ */
+export const STEP_WEIGHT: Record<LessonStep, number> = {
+  input: 0.45,
+  recall: 0.15,
+  practice: 0.3,
+  takeaway: 0.1,
+};
+
+/** その段階だけにかかる目安(分)。必須でない段階を除いた比で割り直す */
+export function stepMinutes(
+  lesson: CurriculumLesson,
+  mode: LessonMode,
+  step: LessonStep,
+): number {
+  const steps = requiredSteps(lesson);
+  if (!steps.includes(step)) return 0;
+  const sum = steps.reduce((n, s) => n + STEP_WEIGHT[s], 0);
+  return Math.max(1, Math.round((minutesFor(lesson, mode) * STEP_WEIGHT[step]) / sum));
+}
+
+/** 残っている段階の合計(分) */
+export function remainingMinutes(
+  lesson: CurriculumLesson,
+  mode: LessonMode,
+  progress: LessonProgress | undefined,
+): number {
+  return requiredSteps(lesson)
+    .filter((s) => !stepDone(progress, s))
+    .reduce((n, s) => n + stepMinutes(lesson, mode, s), 0);
+}
+
+export type LessonPlan = {
+  /** 次にやる段階。全部終わっていれば undefined */
+  step?: LessonStep;
+  /** この一手にかかる目安(分)。残り全部ではなく「次の1段階」 */
+  minutes: number;
+  /** 残り全部の目安(分) */
+  remaining: number;
+  /** 与えられた持ち時間に、次の1段階が収まるか */
+  fitsBudget: boolean;
+};
+
+/**
+ * 持ち時間に対して「次の一手」を決める。
+ * 収まらないときも作業は返すが、**fitsBudget=false を必ず添える**。
+ * 呼び出し側が「10分」と言い切ってよいかどうかを、ここの真偽で判断する。
+ */
+export function planForBudget(
+  lesson: CurriculumLesson,
+  mode: LessonMode,
+  progress: LessonProgress | undefined,
+  budgetMinutes: number,
+): LessonPlan {
+  const remaining = remainingMinutes(lesson, mode, progress);
+  const step = nextStep(lesson, progress);
+  if (!step) return { minutes: 0, remaining: 0, fitsBudget: true };
+  const minutes = stepMinutes(lesson, mode, step);
+  return { step, minutes, remaining, fitsBudget: minutes <= budgetMinutes };
+}
+
 export const MODE_LABEL: Record<LessonMode, string> = {
   minimum: '10分',
   standard: '30分',

@@ -43,7 +43,8 @@ describe('Sprint 1 の通し動作', () => {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     }
     // 最初のクエストはオリエンテーション
-    expect(await screen.findByText('資格と試験の地図')).toBeInTheDocument();
+    // クエストの見出しは「レッスン名 — 段階名」。1本まるごとではなく次の1段階を出す
+    expect(await screen.findByText(/資格と試験の地図 — 見る/)).toBeInTheDocument();
     expect(screen.getByText(/入口:試験と電気の地図/)).toBeInTheDocument();
     // ホームにも診断を始めるボタンは出ない
     expect(screen.queryByRole('button', { name: /診断/ })).not.toBeInTheDocument();
@@ -137,6 +138,27 @@ describe('Sprint 1 の通し動作', () => {
     await waitFor(() => expect(clickSpy).toHaveBeenCalled());
     expect(await screen.findByText(/書き出した/)).toBeInTheDocument();
     clickSpy.mockRestore();
+  });
+
+  it('【回帰】50問模試は問題数の合計が50でないと保存ボタンが押せない', async () => {
+    // 画面から水増しできるかを実際に確かめる。ドメインで throw する前に、
+    // まず押させないのが正しい(押せて例外、では原因が分からない)
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderApp();
+    await user.click(await screen.findByRole('button', { name: 'はじめる' }));
+    await user.click(await screen.findByRole('button', { name: '学科' }));
+    await user.click(await screen.findByRole('button', { name: /50問模試/ }));
+
+    await user.type(await screen.findByLabelText(/出典/), '令和7年度上期');
+
+    const save = await screen.findByRole('button', { name: '結果を保存する' });
+    expect(save).toBeDisabled();
+    expect(await screen.findByText(/50問ちょうどにする/)).toBeInTheDocument();
+
+    // 1科目に80問入れても(=120点になる入力)保存させない
+    const totals = screen.getAllByLabelText(/問題数/);
+    await user.type(totals[0]!, '80');
+    expect(await screen.findByRole('button', { name: '結果を保存する' })).toBeDisabled();
   });
 
   it('設定タブに端末間の同期があり、既定では未接続で外へ出ない', async () => {

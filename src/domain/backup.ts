@@ -108,7 +108,84 @@ export function migrate(raw: BackupFile): { backup: BackupFile; migratedFrom?: n
   return { backup: { ...raw, schemaVersion: SCHEMA_VERSION, data }, migratedFrom: from };
 }
 
-export function validateBackup(text: string): ValidationResult {
+/** テーブルごとの主キー。同期のマージ規則と同じものを使う */
+const PRIMARY_KEY: Record<string, string> = {
+  settings: 'id',
+  lessonProgress: 'lessonId',
+  adminTaskStates: 'taskId',
+  studySessions: 'id',
+  questionAttempts: 'id',
+  mockExams: 'id',
+  unknownTerms: 'id',
+  skillAttempts: 'id',
+  budgetItems: 'id',
+};
+
+/** 未来の updatedAt をどこまで許すか。端末の時計ずれを見込んで1日 */
+export const MAX_CLOCK_SKEW_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * 行単位の検証。root と配列の形だけ見ていたので、
+ * **主キーの欠落・重複・壊れた updatedAt** が素通りしていた。
+ *
+ * とくに危ないのが未来の updatedAt。マージは新しい方を採るので、
+ * 3000年の日付を持つ行は**永久に勝ち続け**、以後どの端末で直しても上書きされる。
+ * 手で同期ファイルを触った1回の事故が、全端末に恒久的に固着する。
+ *
+ * 壊れた行を黙って捨てない。ファイルごと弾いて本人に知らせる(AT-009 と同じ規律)。
+ */
+export function validateRows(
+  d: Record<string, unknown>,
+  now: Date = new Date(),
+): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const limit = now.getTime() + MAX_CLOCK_SKEW_MS;
+
+  for (const [table, key] of Object.entries(PRIMARY_KEY)) {
+    const rows = d[table];
+    if (!Array.isArray(rows)) continue;
+    const seen = new Set<string>();
+
+    rows.forEach((row, i) => {
+      const path = `data.${table}[${i}]`;
+      if (typeof row !== 'object' || row === null || Array.isArray(row)) {
+        issues.push({ path, message: 'オブジェクトではない' });
+        return;
+      }
+      const r = row as Record<string, unknown>;
+
+      const id = r[key];
+      if (typeof id !== 'string' || id.trim() === '') {
+        issues.push({ path: `${path}.${key}`, message: '主キーが無い、または文字列ではない' });
+      } else if (seen.has(id)) {
+        issues.push({ path: `${path}.${key}`, message: `主キーが重複している: ${id}` });
+      } else {
+        seen.add(id);
+      }
+
+      const updatedAt = r.updatedAt;
+      if (updatedAt !== undefined) {
+        if (typeof updatedAt !== 'string') {
+          issues.push({ path: `${path}.updatedAt`, message: '文字列ではない' });
+        } else {
+          const t = Date.parse(updatedAt);
+          if (Number.isNaN(t)) {
+            issues.push({ path: `${path}.updatedAt`, message: `日時として読めない: ${updatedAt}` });
+          } else if (t > limit) {
+            issues.push({
+              path: `${path}.updatedAt`,
+              message: `未来の日時(${updatedAt})。この行が同期で永久に勝ち続けてしまう`,
+            });
+          }
+        }
+      }
+    });
+  }
+
+  return issues;
+}
+
+export function validateBackup(text: string, now: Date = new Date()): ValidationResult {
   const issues: ValidationIssue[] = [];
   let parsed: unknown;
   try {
@@ -157,6 +234,8 @@ export function validateBackup(text: string): ValidationResult {
       issues.push({ path: 'data.settings[0].startDate', message: 'YYYY-MM-DD ではない' });
     }
   }
+
+  issues.push(...validateRows(d, now));
 
   if (issues.length > 0) return { ok: false, issues };
 

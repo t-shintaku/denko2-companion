@@ -83,6 +83,18 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
           </div>
           <p className="muted">{q.detail}</p>
           <p className="muted">クリア条件: {q.clearCondition}</p>
+          {q.remainingMinutes !== undefined && q.remainingMinutes > q.minutes && (
+            <p className="muted">
+              このレッスン全体では残り約{q.remainingMinutes}分。今日はここまでで区切ってよい。
+            </p>
+          )}
+          {!q.fitsBudget && (
+            // 収まらないなら黙って出さない。「10分」と書いて60分渡すのが一番効く嘘
+            <p className="notice">
+              この一手は{q.minutes}分かかる({budget}分には収まらない)。
+              途中でやめてよく、段階を終えたところまで記録される。
+            </p>
+          )}
           <div className="row row--between">
             <span className="badge">
               {q.minutes}分 / {MODE_LABEL[modeForBudget(budget)]}版

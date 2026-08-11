@@ -5,7 +5,10 @@ import {
   TOPIC_MIN_SAMPLE,
   academicGate,
   buildExamRecords,
+  excludedMocks,
+  mocks,
   recentAverageScore,
+  validateExamInput,
   reviewQueue,
   scoreOf,
   timedMockCount,
@@ -160,7 +163,8 @@ describe('FR-010 模試の記録', () => {
   it('入力から模試と1問ごとの記録を組み立てる', () => {
     const { exam, attempts } = buildExamRecords(
       {
-        kind: 'mock-50',
+        // 3問なので小テスト。50問模試として3問を保存する経路は塞いだ(下の回帰テスト)
+        kind: 'topic-quiz',
         label: '令和7年度上期',
         timed: true,
         minutes: 118,
@@ -184,6 +188,67 @@ describe('FR-010 模試の記録', () => {
     // 正解に誤答理由を残さない
     expect(attempts[0]?.errorReason).toBeUndefined();
     expect(attempts[1]?.errorReason).toBe('knowledge');
+  });
+
+  it('【回帰】50問模試は50問ちょうどでないと記録できない', () => {
+    // 1問2点で点数を出すので、問題数が自由だと80問入力して120点の模試が作れる。
+    // 平均80点ゲートも「120分模試2回」も、これで無意味になる
+    const build = (n: number) =>
+      buildExamRecords(
+        {
+          kind: 'mock-50',
+          label: '令和7年度上期',
+          timed: true,
+          questions: Array.from({ length: n }, () => ({
+            topicId: 'law' as const,
+            correct: true,
+            confidence: 3 as const,
+          })),
+        },
+        { examId: 'e1', attemptId: (i) => `e1_q${i + 1}` },
+        '2026-10-01T10:00:00+09:00',
+        '2026-10-01',
+      );
+
+    expect(() => build(3)).toThrow(/50問ちょうど/);
+    expect(() => build(80)).toThrow(/50問ちょうど/);
+    expect(build(50).exam.totalQuestions).toBe(50);
+    expect(scoreOf(build(50).exam)).toBe(100); // 満点はちょうど100点。それ以上は作れない
+  });
+
+  it('【回帰】20問診断も20問ちょうどを要求する', () => {
+    expect(
+      validateExamInput({
+        kind: 'diagnostic-20',
+        label: '診断',
+        timed: false,
+        questions: Array.from({ length: 19 }, () => ({
+          topicId: 'law' as const,
+          correct: true,
+          confidence: 3 as const,
+        })),
+      }),
+    ).toHaveLength(1);
+  });
+
+  it('【回帰】50問でない模試は、集計にも回数にも入れない', () => {
+    // 検証を入れる前に保存された行や、手で書き換えた同期ファイルの行を集計側でも弾く
+    const bad: MockExam = {
+      id: 'x1',
+      takenAt: '2026-10-01T10:00:00+09:00',
+      updatedAt: '2026-10-01T10:00:00+09:00',
+      jstDate: '2026-10-01',
+      kind: 'mock-50',
+      label: '水増し',
+      totalQuestions: 80,
+      correctCount: 60, // scoreOf なら120点になる
+      timed: true,
+    };
+
+    expect(mocks([bad])).toHaveLength(0);
+    expect(excludedMocks([bad])).toHaveLength(1);
+    expect(timedMockCount([bad])).toBe(0);
+    expect(recentAverageScore([bad, bad, bad], 3)).toBeUndefined();
   });
 
   it('模試のあと「次までに直す上位3つ」を誤答数の多い順に出す', () => {

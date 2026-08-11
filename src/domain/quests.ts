@@ -7,7 +7,8 @@
  */
 
 import { addDays, diffDays, todayJst } from './jst';
-import { isLessonComplete, modeForBudget } from './lessons';
+import { STEP_LABEL, isLessonComplete, modeForBudget, planForBudget } from './lessons';
+import type { LessonStep } from './lessons';
 import type { ResolvedAdminTask } from './adminTasks';
 import { actionableAdminTasks } from './adminTasks';
 import type { OnboardingState } from './onboarding';
@@ -42,8 +43,18 @@ export type Quest = {
   clearCondition: string;
   lessonId?: string;
   taskId?: string;
+  /** この一手の目安(分)。**レッスン全体ではなく次の1段階**。表示する数字はこれ */
   minutes: number;
   mode: LessonMode;
+  /** 次にやる段階。レッスン以外のクエストでは undefined */
+  step?: LessonStep;
+  /** レッスンを最後まで終えるのに残っている目安(分) */
+  remainingMinutes?: number;
+  /**
+   * 持ち時間に収まるか。false のとき「10分だけ」と言ってはいけない。
+   * 実カリキュラムには1段階で10分を超えるもの(20問診断など)が 22/216 残っている
+   */
+  fitsBudget: boolean;
 };
 
 export type QuestContext = {
@@ -127,19 +138,42 @@ function questFromLesson(
   slot: Quest['slot'],
   reason: QuestReason,
   budgetMinutes: number,
+  progress?: LessonProgress,
 ): Quest {
   const mode = modeForBudget(budgetMinutes);
+  // レッスン1本まるごとを「次の10分」として出さない。
+  // 10分モードでも見積が10分を超えるレッスンが実カリキュラムに 28/54本ある
+  const plan = planForBudget(lesson, mode, progress, budgetMinutes);
   return {
     id: `lesson:${lesson.id}`,
     reason,
     slot,
-    title: lesson.title,
+    title: plan.step ? `${lesson.title} — ${STEP_LABEL[plan.step]}` : lesson.title,
     detail: lesson.objective,
-    clearCondition: clearConditionFor(lesson),
+    clearCondition: plan.step ? stepConditionFor(lesson, plan.step) : clearConditionFor(lesson),
     lessonId: lesson.id,
-    minutes: lesson.estimatedMinutes[mode],
+    minutes: plan.minutes,
     mode,
+    step: plan.step,
+    remainingMinutes: plan.remaining,
+    fitsBudget: plan.fitsBudget,
   };
+}
+
+/** その段階だけのクリア条件。4段階まとめて出すと「10分で終わる」に見えない */
+export function stepConditionFor(lesson: CurriculumLesson, step: LessonStep): string {
+  switch (step) {
+    case 'input':
+      return '教材を見る(ここまでで一旦終えてよい)';
+    case 'recall':
+      return `教材を閉じて${lesson.recallPrompts.length || 1}個思い出す`;
+    case 'practice':
+      return lesson.practice.targetCount != null
+        ? `${lesson.practice.instruction}(目安${lesson.practice.targetCount}問)`
+        : lesson.practice.instruction;
+    case 'takeaway':
+      return '次に直す1点を保存する';
+  }
 }
 
 export function clearConditionFor(lesson: CurriculumLesson): string {
@@ -161,6 +195,7 @@ function questFromAdmin(task: ResolvedAdminTask, budgetMinutes: number): Quest {
     taskId: task.template.id,
     minutes: Math.min(budgetMinutes, 20),
     mode: modeForBudget(budgetMinutes),
+    fitsBudget: true,
   };
 }
 
@@ -185,11 +220,16 @@ export function nextTenMinutes(ctx: QuestContext): Quest | undefined {
   if (gap !== undefined && gap >= COMEBACK_GAP_DAYS) {
     const lesson = lessons[0];
     if (lesson) {
-      const quest = questFromLesson(lesson, 'main', 'comeback', 10);
+      const quest = questFromLesson(lesson, 'main', 'comeback', 10, ctx.progress[lesson.id]);
+      // 「10分」と書いてよいのは本当に10分で終わるときだけ。
+      // 収まらないのに10分と書くのは、復帰した本人に対する二度目の嘘になる
       return {
         ...quest,
-        title: `再開の10分 — ${lesson.title}`,
-        detail: `${gap}日空いた。失点ではない。10分だけ戻す。`,
+        title: `再開の${quest.minutes}分 — ${quest.title}`,
+        detail: quest.fitsBudget
+          ? `${gap}日空いた。失点ではない。${quest.minutes}分だけ戻す。`
+          : `${gap}日空いた。失点ではない。この続きは${quest.minutes}分かかる。` +
+            '途中でやめてよい。段階を終えたところまで記録される。',
       };
     }
   }
@@ -217,11 +257,24 @@ export function buildTodayQuests(ctx: QuestContext): Quest[] {
   if (main) {
     const mode = modeForBudget(ctx.budgetMinutes);
     const lesson = main.lessonId ? lessonById(ctx.curriculum, main.lessonId) : undefined;
-    quests.push({
-      ...main,
-      mode,
-      minutes: lesson ? lesson.estimatedMinutes[mode] : main.minutes,
-    });
+    // 【回帰】ここでレッスン全体の見積へ戻していた。
+    // 持ち時間10分の人へ 60分のレッスンを「今日のクエスト」として出していた元凶。
+    // 持ち時間で計算し直した「次の1段階」を出す
+    const plan = lesson
+      ? planForBudget(lesson, mode, ctx.progress[lesson.id], ctx.budgetMinutes)
+      : undefined;
+    quests.push(
+      plan
+        ? {
+            ...main,
+            mode,
+            minutes: plan.minutes,
+            step: plan.step,
+            remainingMinutes: plan.remaining,
+            fitsBudget: plan.fitsBudget,
+          }
+        : { ...main, mode },
+    );
   }
 
   // 2件目: 前日の復習
@@ -241,6 +294,7 @@ export function buildTodayQuests(ctx: QuestContext): Quest[] {
       lessonId: reviewLesson.id,
       minutes: 5,
       mode: 'minimum',
+      fitsBudget: true,
     });
   }
 

@@ -99,8 +99,12 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
     });
     const quest = nextTenMinutes(ctx);
     expect(quest?.reason).toBe('comeback');
-    expect(quest?.title).toContain('再開の10分');
     expect(quest?.detail).toContain('失点ではない');
+    // 見出しの分数と、実際に渡す作業量が一致していること。
+    // 以前は「再開の10分」と固定文言で書きながら60分の作業を渡し得た
+    expect(quest?.title).toContain(`再開の${quest?.minutes}分`);
+    expect(quest?.minutes).toBeLessThanOrEqual(10);
+    expect(quest?.fitsBudget).toBe(true);
   });
 
   it('2日の空白では再開モードにしない', () => {
@@ -128,7 +132,25 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
     const quests = buildTodayQuests(ctx);
     expect(quests.length).toBeGreaterThan(0);
     expect(quests.length).toBeLessThanOrEqual(3);
-    for (const q of quests) expect(q.clearCondition).toContain('1点');
+    for (const q of quests) expect(q.clearCondition.trim()).not.toBe('');
+  });
+
+  it('【回帰】提示する分数が持ち時間を超えない。超えるときは超えると明示する', () => {
+    // 以前は「次の10分」と言いながらレッスン全体の見積(最大60分)を出していた。
+    // 10分モードで見積が10分を超えるレッスンは実カリキュラムに28/54本ある
+    for (const budget of [10, 30, 60] as const) {
+      const quests = buildTodayQuests(
+        makeContext({ today: '2026-08-11', now: new Date('2026-08-11T20:00:00+09:00'), budget }),
+      );
+      for (const q of quests) {
+        if (q.fitsBudget) {
+          expect(q.minutes).toBeLessThanOrEqual(budget);
+        } else {
+          // 収まらないと申告しているときだけ超えてよい。黙って超えるのは禁止
+          expect(q.minutes).toBeGreaterThan(budget);
+        }
+      }
+    }
   });
 
   it('持ち時間を変えると同じレッスンの所要時間が変わる', () => {

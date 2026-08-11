@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { topics } from '../../data';
 import { repo } from '../../db/repo';
-import { ERROR_REASON_LABEL, POINTS_PER_QUESTION } from '../../domain/academic';
+import { ERROR_REASON_LABEL, EXAM_QUESTION_COUNT, POINTS_PER_QUESTION } from '../../domain/academic';
 import type { ExamInput } from '../../domain/academic';
 import { useVault } from '../../state/VaultContext';
 import type { ErrorReason, ExamKind, TopicId } from '../../domain/types';
@@ -79,9 +79,36 @@ export function ExamSheet({
   const perQuestionAnswered = rows.filter((r) => r.correct !== undefined).length;
   const perQuestionCorrect = rows.filter((r) => r.correct === true).length;
 
-  const ready =
-    label.trim() !== '' &&
-    (mode === 'bulk' ? bulkTotals.total > 0 : perQuestionAnswered === rows.length);
+  /**
+   * 保存できない理由を先に全部出す。
+   * 50問模試は50問ちょうどでないと点数が意味を持たない(1問2点なので、
+   * 80問入れれば120点の模試ができてしまい、平均80点ゲートが壊れる)。
+   */
+  const requiredCount = EXAM_QUESTION_COUNT[kind];
+  const blockers = useMemo(() => {
+    const list: string[] = [];
+    if (label.trim() === '') list.push('出典(年度・期)を入れる');
+
+    if (mode === 'bulk') {
+      for (const t of topics) {
+        const c = Number(bulk[t.id]?.correct || 0);
+        const n = Number(bulk[t.id]?.total || 0);
+        if (c > n) list.push(`${t.shortName}: 正答数(${c})が問題数(${n})を超えている`);
+      }
+      if (requiredCount !== undefined && bulkTotals.total !== requiredCount) {
+        list.push(
+          `問題数の合計を${requiredCount}問ちょうどにする(いま ${bulkTotals.total}問)。` +
+            `学科は${requiredCount}問固定なので、ここがずれると点数も判定も狂う`,
+        );
+      }
+      if (requiredCount === undefined && bulkTotals.total < 1) list.push('問題数を入れる');
+    } else if (perQuestionAnswered !== rows.length) {
+      list.push(`未回答が ${rows.length - perQuestionAnswered}問ある`);
+    }
+    return list;
+  }, [label, mode, bulk, bulkTotals, perQuestionAnswered, rows.length, requiredCount]);
+
+  const ready = blockers.length === 0;
 
   const submit = async () => {
     setBusy(true);
@@ -371,9 +398,11 @@ export function ExamSheet({
           {busy ? '保存中…' : '結果を保存する'}
         </button>
         {!ready && (
-          <p className="muted">
-            出典と{mode === 'bulk' ? '問題数' : 'すべての問題の○×'}を入れると保存できる。
-          </p>
+          <ul className="plain muted" data-testid="exam-blockers">
+            {blockers.map((b) => (
+              <li key={b}>・{b}</li>
+            ))}
+          </ul>
         )}
       </div>
     </main>

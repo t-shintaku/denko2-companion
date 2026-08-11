@@ -10,6 +10,7 @@
 import { diffDays, todayJst } from './jst';
 import type {
   ErrorReason,
+  ExamKind,
   IsoDate,
   IsoDateTime,
   MockExam,
@@ -29,6 +30,42 @@ export const REQUIRED_TIMED_MOCKS = 2;
 export const RECENT_WINDOW = 20;
 /** 科目別正答率を判定に使うのに必要な最低問題数。3問で100%を「得意」と呼ばない */
 export const TOPIC_MIN_SAMPLE = 10;
+
+/**
+ * 受験区分ごとの問題数。**学科は50問120分**なので、模試の50問は入力チェックではなく
+ * 合格判定の前提そのもの。ここが自由だと、80問入力して120点の模試が作れてしまい、
+ * 平均80点ゲートも「120分模試2回」も意味を失う。
+ * 出典: https://www.shiken.or.jp/construction/second/department/
+ */
+export const EXAM_QUESTION_COUNT: Record<ExamKind, number | undefined> = {
+  'diagnostic-20': 20,
+  'mock-50': 50,
+  // カテゴリ小テストは問題数が決まっていない
+  'topic-quiz': undefined,
+};
+
+export const MAX_TOPIC_QUIZ_QUESTIONS = 50;
+
+/** 保存してよい記録か。ドメインで止める(画面をすり抜けても入らないようにする) */
+export function validateExamInput(input: ExamInput): string[] {
+  const issues: string[] = [];
+  const required = EXAM_QUESTION_COUNT[input.kind];
+  const n = input.questions.length;
+
+  if (required !== undefined && n !== required) {
+    issues.push(
+      `${input.kind === 'mock-50' ? '50問模試' : '20問診断'}は${required}問ちょうどで記録する(いまは${n}問)`,
+    );
+  }
+  if (required === undefined && (n < 1 || n > MAX_TOPIC_QUIZ_QUESTIONS)) {
+    issues.push(`小テストは1〜${MAX_TOPIC_QUIZ_QUESTIONS}問で記録する(いまは${n}問)`);
+  }
+  if (input.label.trim() === '') issues.push('出典(年度・期)を書く。あとで推移を追えなくなる');
+  if (input.minutes !== undefined && (input.minutes < 1 || input.minutes > 600)) {
+    issues.push('所要時間が現実的でない');
+  }
+  return issues;
+}
 
 export function scoreOf(exam: Pick<MockExam, 'correctCount'>): number {
   return exam.correctCount * POINTS_PER_QUESTION;
@@ -147,10 +184,22 @@ export function reviewQueue(
 // 模試
 // ---------------------------------------------------------------------------
 
+/**
+ * 学科ゲートに算入してよい模試。**50問ちょうどのものだけ**。
+ *
+ * 入力側でも弾いているが、集計側でも弾く。片方だけにすると、
+ * 検証を入れる前に保存された行や、手で書き換えた同期ファイルの行が
+ * そのまま平均点と回数に効く。点数の水増しは受験判断を直接誤らせるので二重に止める。
+ */
 export function mocks(exams: MockExam[]): MockExam[] {
   return exams
-    .filter((e) => e.kind === 'mock-50')
+    .filter((e) => e.kind === 'mock-50' && e.totalQuestions === EXAM_QUESTION_COUNT['mock-50'])
     .sort((a, b) => (a.takenAt < b.takenAt ? -1 : 1));
+}
+
+/** 50問でないため集計から外した模試。画面に理由を出すために数える */
+export function excludedMocks(exams: MockExam[]): MockExam[] {
+  return exams.filter((e) => e.kind === 'mock-50' && e.totalQuestions !== EXAM_QUESTION_COUNT['mock-50']);
 }
 
 /** 直近 n 回の平均点。回数が足りなければ undefined(足りない平均で通さない) */
@@ -315,6 +364,11 @@ export function buildExamRecords(
   at: IsoDateTime,
   jstDate: IsoDate,
 ): { exam: MockExam; attempts: QuestionAttempt[] } {
+  const issues = validateExamInput(input);
+  if (issues.length > 0) {
+    // 画面をすり抜けても記録させない。壊れた点数は復習キューにも科目別成績にも波及する
+    throw new Error(`記録できない: ${issues.join(' / ')}`);
+  }
   const correctCount = input.questions.filter((q) => q.correct).length;
   const exam: MockExam = {
     id: ids.examId,

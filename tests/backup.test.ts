@@ -173,6 +173,87 @@ describe('AT-009 データ管理', () => {
     expect(result.backup.data.questionAttempts[0]?.updatedAt).toBe('2026-08-11T21:00:00+09:00');
   });
 
+  it('【回帰】未来の updatedAt を持つ行を受け付けない', () => {
+    // 合体は新しい方を採るので、3000年の日付を持つ行は永久に勝ち続ける。
+    // 手で同期ファイルを1回触った事故が、全端末に恒久的に固着する
+    const poisoned = {
+      kind: 'denko2-companion-backup',
+      schemaVersion: SCHEMA_VERSION,
+      exportedAt: '2026-08-12T10:00:00+09:00',
+      appVersion: '0.1.0',
+      data: {
+        ...emptyData(),
+        studySessions: [
+          {
+            id: 's1',
+            startedAt: '2026-08-11T20:00:00+09:00',
+            jstDate: '2026-08-11',
+            durationMinutes: 25,
+            kind: 'theory',
+            countsAsBasics: true,
+            updatedAt: '3000-01-01T00:00:00+09:00',
+          } as never,
+        ],
+      },
+    };
+
+    const result = validateBackup(JSON.stringify(poisoned), new Date('2026-08-12T10:00:00+09:00'));
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.issues[0]?.message).toContain('未来');
+  });
+
+  it('【回帰】主キーの欠落と重複を弾く', () => {
+    const broken = {
+      kind: 'denko2-companion-backup',
+      schemaVersion: SCHEMA_VERSION,
+      exportedAt: '2026-08-12T10:00:00+09:00',
+      appVersion: '0.1.0',
+      data: {
+        ...emptyData(),
+        unknownTerms: [
+          { id: 't1', term: 'a', createdAt: '2026-08-11T20:00:00+09:00', origin: 'x', updatedAt: '2026-08-11T20:00:00+09:00' },
+          { id: 't1', term: 'b', createdAt: '2026-08-11T20:00:00+09:00', origin: 'x', updatedAt: '2026-08-11T20:00:00+09:00' },
+          { term: 'c', createdAt: '2026-08-11T20:00:00+09:00', origin: 'x', updatedAt: '2026-08-11T20:00:00+09:00' },
+        ] as never[],
+      },
+    };
+
+    const result = validateBackup(JSON.stringify(broken), new Date('2026-08-12T10:00:00+09:00'));
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    const messages = result.issues.map((i) => i.message).join('\n');
+    expect(messages).toContain('重複');
+    expect(messages).toContain('主キーが無い');
+  });
+
+  it('正常な行は通す(検証を厳しくして普段の書き出しを壊していない)', () => {
+    const good = {
+      kind: 'denko2-companion-backup',
+      schemaVersion: SCHEMA_VERSION,
+      exportedAt: '2026-08-12T10:00:00+09:00',
+      appVersion: '0.1.0',
+      data: {
+        ...emptyData(),
+        studySessions: [
+          {
+            id: 's1',
+            startedAt: '2026-08-11T20:00:00+09:00',
+            jstDate: '2026-08-11',
+            durationMinutes: 25,
+            kind: 'theory',
+            countsAsBasics: true,
+            updatedAt: '2026-08-11T20:00:00+09:00',
+          } as never,
+        ],
+      },
+    };
+
+    expect(validateBackup(JSON.stringify(good), new Date('2026-08-12T10:00:00+09:00')).ok).toBe(true);
+  });
+
   it('将来テーブルが増えても、欠けているテーブルは空として扱う', () => {
     const partial = {
       kind: 'denko2-companion-backup',
