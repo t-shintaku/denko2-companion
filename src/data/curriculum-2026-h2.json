@@ -1,0 +1,1040 @@
+{
+  "schemaVersion": 1,
+  "id": "curriculum-2026-h2",
+  "title": "2026年度下期 第二種電気工事士 学習カリキュラム",
+  "examCycleId": "2026-h2",
+  "phases": [
+    {
+      "id": "phase-0",
+      "order": 0,
+      "title": "Phase 0 入口",
+      "goal": "試験と電気の地図を持ち、問題の形を一度見る。得点は取りにいかない。",
+      "anchor": { "kind": "start", "offsetDays": 0, "durationDays": 6 },
+      "segment": "academic"
+    },
+    {
+      "id": "phase-1",
+      "order": 1,
+      "title": "Phase 1 視覚で取れる得点源",
+      "goal": "配線図記号・材料・工具・器具を写真と記号で取れるようにする。20問診断で初期値を取る。",
+      "anchor": { "kind": "flow", "weightWeeks": 3 },
+      "segment": "academic"
+    },
+    {
+      "id": "phase-2",
+      "order": 2,
+      "title": "Phase 2 全範囲を一周",
+      "goal": "施工方法・検査・法令・配線設計・複線図・基礎計算まで、7科目すべてに触れる。",
+      "anchor": { "kind": "flow", "weightWeeks": 3 },
+      "segment": "academic"
+    },
+    {
+      "id": "phase-3",
+      "order": 3,
+      "title": "Phase 3 過去問で安定",
+      "goal": "50問を本番形式で回し、直近平均を75点以上へ。技能は候補問題へ着手する。",
+      "anchor": { "kind": "flow", "weightWeeks": 3 },
+      "segment": "academic"
+    },
+    {
+      "id": "phase-4",
+      "order": 4,
+      "title": "Phase 4 学科直前",
+      "goal": "新しい教材を足さない。誤答の潰し込みと当日の段取りだけ。",
+      "anchor": { "kind": "before-academic", "durationDays": 7 },
+      "segment": "academic"
+    },
+    {
+      "id": "phase-5",
+      "order": 5,
+      "title": "Phase 5 技能集中",
+      "goal": "候補13問すべてに触れ、欠陥なしと時間を作る。丸ごと間引かない。",
+      "anchor": { "kind": "after-academic" },
+      "segment": "skill"
+    },
+    {
+      "id": "phase-6",
+      "order": 6,
+      "title": "技能直前",
+      "goal": "新しい裏技・工具・施工法を試さない。反復欠陥と段取りだけ。",
+      "anchor": { "kind": "before-skill", "durationDays": 5 },
+      "segment": "skill"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "p0-l1",
+      "phaseId": "phase-0",
+      "order": 1,
+      "stage": "orientation",
+      "title": "資格と試験の地図",
+      "objective": "第二種電気工事士で何ができて何ができないか、学科→技能→免状申請という道筋を1枚で言えるようにする。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 45 },
+      "resources": ["pana-start", "official-second", "meti-license"],
+      "recallPrompts": [
+        { "id": "p0-l1-r1", "kind": "free-line", "prompt": "画面を閉じて。合格から免状までに、あと何の手続きが要る?" },
+        { "id": "p0-l1-r2", "kind": "free-line", "prompt": "この資格で「できないこと」を1つ挙げる。" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "自分の受験ルート(CBT/筆記、想定日)を設定画面へ入れる",
+        "scored": false
+      },
+      "officialTopicIds": ["law"],
+      "required": true,
+      "safetyNote": "免状を受け取るまでは、天井や壁から出ている電源線への直結工事はできない。"
+    },
+    {
+      "id": "p0-l2",
+      "phaseId": "phase-0",
+      "order": 2,
+      "stage": "orientation",
+      "title": "電圧・電流・抵抗・電力ということば",
+      "objective": "4つの言葉を、計算ではなく水の流れの比喩で説明できるようにする。",
+      "prerequisites": ["p0-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 45 },
+      "resources": ["hozan-gakka", "jemc-ohm"],
+      "recallPrompts": [
+        { "id": "p0-l2-r1", "kind": "free-line", "prompt": "電圧・電流・抵抗を、比喩で1行ずつ。" },
+        { "id": "p0-l2-r2", "kind": "free-line", "prompt": "電力(W)は何と何を掛けたもの?" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "自宅のブレーカーか家電の表示から、V と W の実物を1つ見つけて書く",
+        "scored": false
+      },
+      "officialTopicIds": ["basic-theory"],
+      "required": true,
+      "safetyNote": "見るだけ。分電盤のカバーを開けたり配線に触れたりしない。"
+    },
+    {
+      "id": "p0-l3",
+      "phaseId": "phase-0",
+      "order": 3,
+      "stage": "orientation",
+      "title": "家庭の電気 — 100V・分電盤・ブレーカー・漏電・接地",
+      "objective": "自宅の電気がどう来てどう守られているかを概観し、危険がどこにあるかを知る。",
+      "prerequisites": ["p0-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 45 },
+      "resources": ["hozan-gakka", "meti-safety"],
+      "recallPrompts": [
+        { "id": "p0-l3-r1", "kind": "free-line", "prompt": "漏電遮断器は何から人を守っている?" },
+        { "id": "p0-l3-r2", "kind": "free-line", "prompt": "接地(アース)は何のためにある?" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "自宅の分電盤を「見て」、主幹と分岐の数を数えて記録する(触らない・開けない)",
+        "scored": false
+      },
+      "officialTopicIds": ["inspection", "law"],
+      "required": true,
+      "safetyNote": "通電している設備を練習台にしない。異常な発熱・焦げ・水濡れがあれば自分で触らず業者へ。"
+    },
+    {
+      "id": "p0-l4",
+      "phaseId": "phase-0",
+      "order": 4,
+      "stage": "orientation",
+      "title": "器具・工具・図記号を写真で見る",
+      "objective": "名前を覚えるのではなく、「こういう物と記号がある」という見取り図を作る。",
+      "prerequisites": ["p0-l3"],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 45 },
+      "resources": ["hozan-gakka", "hozan-youtube"],
+      "recallPrompts": [
+        { "id": "p0-l4-r1", "kind": "free-line", "prompt": "見た中で名前を覚えた器具・工具を3つ。" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "家にありそうな工具(ドライバー・ペンチ等)を実際に探して、有無を記録する",
+        "scored": false
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": true
+    },
+    {
+      "id": "p0-l5",
+      "phaseId": "phase-0",
+      "order": 5,
+      "stage": "ungraded-five",
+      "title": "問題を見てみる（5問・採点なし）",
+      "objective": "問題の形式を知り、知らない言葉を拾う。解けなくてよい。",
+      "prerequisites": ["p0-l4"],
+      "estimatedMinutes": { "minimum": 10, "standard": 20, "deep": 30 },
+      "resources": ["official-range", "official-qa"],
+      "recallPrompts": [
+        { "id": "p0-l5-r1", "kind": "free-line", "prompt": "問題は何を問うてきた? 1行で。" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "公式の例題・過去問を5問「見る」。答え合わせはするが点は数えない。知らなかった言葉を最大3つ保存する",
+        "resourceIds": ["official-range", "official-qa"],
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p0-l6",
+      "phaseId": "phase-0",
+      "order": 6,
+      "stage": "basics",
+      "title": "申込みの下調べと入口の復習",
+      "objective": "8月17日10時の申込開始に備え、必要なものを先に揃える。入口4本を1回だけ振り返る。",
+      "prerequisites": ["p0-l5"],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 40 },
+      "resources": ["official-second", "official-overview"],
+      "recallPrompts": [
+        { "id": "p0-l6-r1", "kind": "free-line", "prompt": "申込みに必要なもの(顔写真・支払方法など)を挙げる。" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "顔写真データ・支払方法・メールアドレスを用意し、事務タブの「マイページ」を確認する",
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true
+    },
+
+    {
+      "id": "p1-w1-l1",
+      "phaseId": "phase-1",
+      "order": 1,
+      "stage": "basics",
+      "title": "配線図記号(1) 一般配線と機器",
+      "objective": "配線図20問の土台。まず一般配線・電線・機器の記号を見て言えるようにする。",
+      "prerequisites": ["p0-l5"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "hozan-youtube"],
+      "recallPrompts": [
+        { "id": "p1-w1-l1-r1", "kind": "free-line", "prompt": "今日見た記号を3つ、名前つきで書き出す。" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "HOZANの一問一答で記号問題を5問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true
+    },
+    {
+      "id": "p1-w1-l2",
+      "phaseId": "phase-1",
+      "order": 2,
+      "stage": "basics",
+      "title": "配線図記号(2) 点滅器・コンセント",
+      "objective": "スイッチ(片切・3路・4路・位置表示)とコンセントの記号を区別できるようにする。",
+      "prerequisites": ["p1-w1-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "hozan-youtube"],
+      "recallPrompts": [
+        { "id": "p1-w1-l2-r1", "kind": "free-line", "prompt": "3路スイッチの記号は? 何に使う?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "記号問題5問 + 前日の復習3問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true
+    },
+    {
+      "id": "p1-w1-l3",
+      "phaseId": "phase-1",
+      "order": 3,
+      "stage": "basics",
+      "title": "週末チェック 配線図記号15問（目標60%）",
+      "objective": "記号だけで何割取れるかを見る。60%に届かなければ翌週へ持ち越さず、その場で誤答を潰す。",
+      "prerequisites": ["p1-w1-l2"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 50 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p1-w1-l3-r1", "kind": "free-line", "prompt": "間違えた記号を1つ、なぜ間違えたかつきで。" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 15,
+        "instruction": "記号15問。正答数を記録する",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true
+    },
+    {
+      "id": "p1-w1-l4",
+      "phaseId": "phase-1",
+      "order": 4,
+      "stage": "basics",
+      "title": "技能試験の全体像を1本だけ見る",
+      "objective": "12月の技能試験が何をする試験かを知る。今は練習しない。学科前の技能接触。",
+      "prerequisites": ["p0-l4"],
+      "estimatedMinutes": { "minimum": 10, "standard": 20, "deep": 30 },
+      "resources": ["hozan-ginou", "official-candidates"],
+      "recallPrompts": [
+        { "id": "p1-w1-l4-r1", "kind": "free-line", "prompt": "技能試験の合格基準は? 制限時間は?" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "候補問題13問のPDFを開き、13問あることを目で確認する",
+        "resourceIds": ["official-candidates"],
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": false,
+      "skillTouch": true
+    },
+    {
+      "id": "p1-w2-l1",
+      "phaseId": "phase-1",
+      "order": 5,
+      "stage": "basics",
+      "title": "材料 — ケーブル・電線・ボックス",
+      "objective": "VVF・VVR・IV・CVなど、写真から名称と用途を言えるようにする。",
+      "prerequisites": ["p1-w1-l3"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "hozan-youtube"],
+      "recallPrompts": [
+        { "id": "p1-w2-l1-r1", "kind": "free-line", "prompt": "VVF 1.6-2C とは何を表す?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "写真問題5問 + 前日の復習3問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": true
+    },
+    {
+      "id": "p1-w2-l2",
+      "phaseId": "phase-1",
+      "order": 6,
+      "stage": "basics",
+      "title": "工具 — 指定工具と使い道",
+      "objective": "技能試験の指定工具を、名前・見た目・何をする道具かで結びつける。",
+      "prerequisites": ["p1-w2-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "official-overview"],
+      "recallPrompts": [
+        { "id": "p1-w2-l2-r1", "kind": "free-line", "prompt": "リングスリーブ用圧着工具に必要な適合規格は?" },
+        { "id": "p1-w2-l2-r2", "kind": "free-line", "prompt": "技能試験で使えない工具は?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "工具の写真問題5問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": true,
+      "safetyNote": "技能試験で電動工具は使用不可。電動機能をOFFにしても不可。"
+    },
+    {
+      "id": "p1-w2-l3",
+      "phaseId": "phase-1",
+      "order": 7,
+      "stage": "basics",
+      "title": "配線器具 — スイッチ・コンセント・レセプタクル",
+      "objective": "器具の実物と結線部の形を知る。技能の下地にもなる。",
+      "prerequisites": ["p1-w2-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "hozan-youtube"],
+      "recallPrompts": [
+        { "id": "p1-w2-l3-r1", "kind": "free-line", "prompt": "接地側電線をつなぐのは器具のどちら側?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "器具の写真問題5問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": true
+    },
+    {
+      "id": "p1-w2-l4",
+      "phaseId": "phase-1",
+      "order": 8,
+      "stage": "basics",
+      "title": "週末チェック 材料・工具・器具20問（目標65%）",
+      "objective": "写真で取れる範囲の実力を測る。",
+      "prerequisites": ["p1-w2-l3"],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p1-w2-l4-r1", "kind": "free-line", "prompt": "間違えた問題の共通点は?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 20,
+        "instruction": "20問。正答数を記録する",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": true
+    },
+    {
+      "id": "p1-w2-l5",
+      "phaseId": "phase-1",
+      "order": 9,
+      "stage": "basics",
+      "title": "工具・材料の棚卸し（買う前に数える）",
+      "objective": "高額セットを反射で買わないため、所有・借用可・購入必須を分ける。",
+      "prerequisites": ["p1-w2-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 40 },
+      "resources": ["official-overview"],
+      "recallPrompts": [
+        { "id": "p1-w2-l5-r1", "kind": "free-line", "prompt": "今日の時点で「買わないと無い」ものはどれ?" }
+      ],
+      "practice": {
+        "kind": "checklist",
+        "instruction": "家にある工具を実際に探し、所有／借用可／購入必須へ仕分ける",
+        "scored": false
+      },
+      "officialTopicIds": ["equipment-tools"],
+      "required": false
+    },
+    {
+      "id": "p1-w3-l1",
+      "phaseId": "phase-1",
+      "order": 10,
+      "stage": "diagnostic",
+      "title": "20問診断（採点あり）",
+      "objective": "基礎を3〜5時間積んだ上で、7科目の初期値を取る。ここが本当のスタートライン。",
+      "prerequisites": ["p0-l5"],
+      "estimatedMinutes": { "minimum": 20, "standard": 40, "deep": 60 },
+      "resources": ["official-qa", "official-range"],
+      "recallPrompts": [
+        { "id": "p1-w3-l1-r1", "kind": "free-line", "prompt": "手も足も出なかった分野はどれ?" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 20,
+        "instruction": "公式過去問から20問。7科目に分類して正答数を登録する",
+        "resourceIds": ["official-qa"],
+        "scored": true
+      },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p1-w3-l2",
+      "phaseId": "phase-1",
+      "order": 11,
+      "stage": "regular",
+      "title": "施工方法の入口 — 工事の種類と電線接続",
+      "objective": "どんな工事方法があり、どこで何が使えるかの枠を作る。",
+      "prerequisites": ["p1-w3-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p1-w3-l2-r1", "kind": "free-line", "prompt": "電線を接続するときの原則を2つ。" }
+      ],
+      "practice": {
+        "kind": "external-questions",
+        "targetCount": 5,
+        "instruction": "施工方法5問",
+        "resourceIds": ["hozan-gakka"],
+        "scored": true
+      },
+      "officialTopicIds": ["construction-method"],
+      "required": true
+    },
+
+    {
+      "id": "p2-w4-l1",
+      "phaseId": "phase-2",
+      "order": 1,
+      "stage": "regular",
+      "title": "ケーブル工事と電線管工事",
+      "objective": "工事方法ごとの施工条件と禁止事項を押さえる。",
+      "prerequisites": ["p1-w3-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p2-w4-l1-r1", "kind": "free-line", "prompt": "金属管工事で必要になる接地は?" }
+      ],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "施工方法5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["construction-method"],
+      "required": true
+    },
+    {
+      "id": "p2-w4-l2",
+      "phaseId": "phase-2",
+      "order": 2,
+      "stage": "regular",
+      "title": "接地工事と絶縁抵抗",
+      "objective": "接地工事の種類と、絶縁抵抗の基準値を数字で言えるようにする。",
+      "prerequisites": ["p2-w4-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p2-w4-l2-r1", "kind": "free-line", "prompt": "100V回路の絶縁抵抗の基準値は?" }
+      ],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "検査5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["inspection"],
+      "required": true
+    },
+    {
+      "id": "p2-w4-l3",
+      "phaseId": "phase-2",
+      "order": 3,
+      "stage": "regular",
+      "title": "測定器と検査の手順",
+      "objective": "何を測る器具かを写真と結びつけ、竣工検査の順序を言えるようにする。",
+      "prerequisites": ["p2-w4-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [
+        { "id": "p2-w4-l3-r1", "kind": "free-line", "prompt": "竣工検査の順序を3語で。" }
+      ],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "検査5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["inspection"],
+      "required": true
+    },
+    {
+      "id": "p2-w4-l4",
+      "phaseId": "phase-2",
+      "order": 4,
+      "stage": "regular",
+      "title": "週末20問（目標65%）",
+      "objective": "施工方法・検査の定着を測る。",
+      "prerequisites": ["p2-w4-l3"],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p2-w4-l4-r1", "kind": "free-line", "prompt": "落とした問題の誤答理由は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 20, "instruction": "20問。正答数を記録", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": ["construction-method", "inspection"],
+      "required": true
+    },
+    {
+      "id": "p2-w4-l5",
+      "phaseId": "phase-2",
+      "order": 5,
+      "stage": "regular",
+      "title": "VVFの外装・被覆を剥く（練習材料のみ）",
+      "objective": "技能の最初の一手。寸法どおりに剥けるかだけを見る。",
+      "prerequisites": ["p1-w1-l4"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 60 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p2-w4-l5-r1", "kind": "free-line", "prompt": "芯線に傷をつけないコツは?" }],
+      "practice": { "kind": "basic-skill", "instruction": "練習用VVFで外装100mm・被覆20mmを3本剥く", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "skillTouch": true,
+      "safetyNote": "必ず試験用の非通電材料で行う。自宅の壁・天井から出ている電線には触れない。"
+    },
+    {
+      "id": "p2-w5-l1",
+      "phaseId": "phase-2",
+      "order": 6,
+      "stage": "regular",
+      "title": "電気工事士法と電気用品安全法",
+      "objective": "誰が何をしてよいか、どの製品を使ってよいかの法律の骨格をつかむ。",
+      "prerequisites": ["p2-w4-l4"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka", "meti-license"],
+      "recallPrompts": [{ "id": "p2-w5-l1-r1", "kind": "free-line", "prompt": "第二種で従事できる工事の範囲は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "法令5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["law"],
+      "required": true
+    },
+    {
+      "id": "p2-w5-l2",
+      "phaseId": "phase-2",
+      "order": 7,
+      "stage": "regular",
+      "title": "技術基準・内線規程の頻出",
+      "objective": "暗記カードは最大20枚まで。よく出るものだけに絞る。",
+      "prerequisites": ["p2-w5-l1"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [{ "id": "p2-w5-l2-r1", "kind": "free-line", "prompt": "今日の中で一番覚えにくかった数字は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "法令5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["law"],
+      "required": true
+    },
+    {
+      "id": "p2-w5-l3",
+      "phaseId": "phase-2",
+      "order": 8,
+      "stage": "regular",
+      "title": "分岐回路・許容電流・過電流遮断器",
+      "objective": "配線設計の頻出3点セットを表で覚える。",
+      "prerequisites": ["p2-w5-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [{ "id": "p2-w5-l3-r1", "kind": "free-line", "prompt": "20A配線用遮断器の分岐回路で使える電線の太さは?" }],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "配線設計5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["distribution-design"],
+      "required": true
+    },
+    {
+      "id": "p2-w5-l4",
+      "phaseId": "phase-2",
+      "order": 9,
+      "stage": "regular",
+      "title": "電線接続 — リングスリーブと差込形コネクタ",
+      "objective": "圧着マークとスリーブサイズの選定を、手を動かして覚える。",
+      "prerequisites": ["p2-w4-l5"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 60 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p2-w5-l4-r1", "kind": "free-line", "prompt": "1.6mm×2本のときの圧着マークは?" }],
+      "practice": { "kind": "basic-skill", "instruction": "練習材料でリングスリーブ圧着を3箇所、差込形コネクタを3箇所", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": ["construction-method"],
+      "required": true,
+      "skillTouch": true,
+      "safetyNote": "非通電の練習材料のみ。"
+    },
+    {
+      "id": "p2-w6-l1",
+      "phaseId": "phase-2",
+      "order": 10,
+      "stage": "regular",
+      "title": "複線図(1) 1灯1点滅",
+      "objective": "単線図から複線図へ変換する手順を固定する。",
+      "prerequisites": ["p2-w5-l4"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 60 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p2-w6-l1-r1", "kind": "free-line", "prompt": "複線図を描く手順の1番目は?" }],
+      "practice": { "kind": "wiring-diagram", "instruction": "1灯1点滅の複線図を1枚描く", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true,
+      "skillTouch": true
+    },
+    {
+      "id": "p2-w6-l2",
+      "phaseId": "phase-2",
+      "order": 11,
+      "stage": "regular",
+      "title": "複線図(2) コンセント併設",
+      "objective": "コンセントが入ったときの接地側・非接地側の扱いを間違えない。",
+      "prerequisites": ["p2-w6-l1"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 60 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p2-w6-l2-r1", "kind": "free-line", "prompt": "コンセントへ来る2本はそれぞれ何?" }],
+      "practice": { "kind": "wiring-diagram", "instruction": "コンセント併設の複線図を1枚", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true,
+      "skillTouch": true
+    },
+    {
+      "id": "p2-w6-l3",
+      "phaseId": "phase-2",
+      "order": 12,
+      "stage": "regular",
+      "title": "複線図(3) 3路スイッチ",
+      "objective": "3路の渡り線を毎回同じ形で描けるようにする。技能の最大の詰まりどころ。",
+      "prerequisites": ["p2-w6-l2"],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p2-w6-l3-r1", "kind": "free-line", "prompt": "3路スイッチの0番端子には何をつなぐ?" }],
+      "practice": { "kind": "wiring-diagram", "instruction": "3路スイッチの複線図を1枚", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true,
+      "skillTouch": true
+    },
+    {
+      "id": "p2-w6-l4",
+      "phaseId": "phase-2",
+      "order": 13,
+      "stage": "regular",
+      "title": "オームの法則・電力・直列と並列",
+      "objective": "計算問題を全部は取りにいかない。落とせない基本形だけを確実にする。",
+      "prerequisites": ["p0-l2"],
+      "estimatedMinutes": { "minimum": 10, "standard": 30, "deep": 60 },
+      "resources": ["jemc-ohm", "hozan-gakka"],
+      "recallPrompts": [{ "id": "p2-w6-l4-r1", "kind": "free-line", "prompt": "並列合成抵抗の求め方を式で。" }],
+      "practice": { "kind": "external-questions", "targetCount": 5, "instruction": "基礎理論5問", "resourceIds": ["hozan-gakka"], "scored": true },
+      "officialTopicIds": ["basic-theory"],
+      "required": true
+    },
+    {
+      "id": "p2-w6-l5",
+      "phaseId": "phase-2",
+      "order": 14,
+      "stage": "regular",
+      "title": "50問を参照あり・時間無制限で初完走（目標60点）",
+      "objective": "全範囲に一度触れた状態で、50問という量を最後まで通す。点より完走。",
+      "prerequisites": ["p2-w6-l4"],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 120 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p2-w6-l5-r1", "kind": "free-line", "prompt": "調べながらでも解けなかった分野は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 50, "instruction": "公式過去問50問。参照あり・時間無制限。得点を記録", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+
+    {
+      "id": "p3-w7-l1",
+      "phaseId": "phase-3",
+      "order": 1,
+      "stage": "regular",
+      "title": "50問 過去問1回目（目標60点）",
+      "objective": "参照なしで50問。ここからが本当の得点。",
+      "prerequisites": ["p2-w6-l5"],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 120 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p3-w7-l1-r1", "kind": "free-line", "prompt": "自信がないまま当たった問題はどれ?" }],
+      "practice": { "kind": "external-questions", "targetCount": 50, "instruction": "参照なしで50問。得点と科目別内訳を記録", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w7-l2",
+      "phaseId": "phase-3",
+      "order": 2,
+      "stage": "regular",
+      "title": "誤答と「自信の低い正解」を潰す",
+      "objective": "当たった問題も、自信2以下なら次は落ちる。誤答と同じ扱いで復習する。",
+      "prerequisites": ["p3-w7-l1"],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [{ "id": "p3-w7-l2-r1", "kind": "free-line", "prompt": "同じ理由で落とした問題の共通点は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 10, "instruction": "誤答・低自信の10問を解き直す", "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w7-l3",
+      "phaseId": "phase-3",
+      "order": 3,
+      "stage": "regular",
+      "title": "技能候補No.1 — 複線図と動画",
+      "objective": "候補問題という単位に初めて触れる。まだ施工はしない。",
+      "prerequisites": ["p2-w6-l3"],
+      "estimatedMinutes": { "minimum": 15, "standard": 30, "deep": 60 },
+      "resources": ["hozan-ginou", "official-candidates"],
+      "recallPrompts": [{ "id": "p3-w7-l3-r1", "kind": "free-line", "prompt": "No.1で迷った接続はどこ?" }],
+      "practice": { "kind": "wiring-diagram", "instruction": "候補No.1の複線図を1枚描く", "resourceIds": ["hozan-ginou"], "scored": false },
+      "officialTopicIds": ["wiring-diagram"],
+      "required": true,
+      "skillTouch": true
+    },
+    {
+      "id": "p3-w8-l1",
+      "phaseId": "phase-3",
+      "order": 4,
+      "stage": "regular",
+      "title": "別年度50問（目標70点）",
+      "objective": "年度を変えても取れるかを見る。1年度だけの丸暗記を防ぐ。",
+      "prerequisites": ["p3-w7-l2"],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 120 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p3-w8-l1-r1", "kind": "free-line", "prompt": "前回より落ちた分野は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 50, "instruction": "別年度の50問。得点を記録", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w8-l2",
+      "phaseId": "phase-3",
+      "order": 5,
+      "stage": "regular",
+      "title": "公式CBT体験版を触る",
+      "objective": "CBTの操作(見直しフラグ・一覧・残り時間)を本番前に体で覚える。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 40 },
+      "resources": ["official-cbt"],
+      "recallPrompts": [{ "id": "p3-w8-l2-r1", "kind": "free-line", "prompt": "「後で見直す」はどう操作した?" }],
+      "practice": { "kind": "checklist", "instruction": "公式CBT体験版を最後まで通す", "resourceIds": ["official-cbt"], "scored": false },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w8-l3",
+      "phaseId": "phase-3",
+      "order": 6,
+      "stage": "regular",
+      "title": "候補No.1を時間無制限で施工する",
+      "objective": "速さは見ない。完成させ、欠陥基準で自己点検する。",
+      "prerequisites": ["p3-w7-l3"],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 90 },
+      "resources": ["hozan-ginou", "official-defect"],
+      "recallPrompts": [{ "id": "p3-w8-l3-r1", "kind": "free-line", "prompt": "欠陥基準に照らして怪しい箇所は?" }],
+      "practice": { "kind": "candidate", "instruction": "候補No.1を1回施工し、欠陥の有無を記録", "resourceIds": ["official-defect"], "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "skillTouch": true,
+      "safetyNote": "試験用の非通電材料のみ。完成した作品に電源をつながない。"
+    },
+    {
+      "id": "p3-w9-l1",
+      "phaseId": "phase-3",
+      "order": 7,
+      "stage": "regular",
+      "title": "本番同様 50問120分",
+      "objective": "時間内に解ききる練習。直近3回の平均を出す。",
+      "prerequisites": ["p3-w8-l1"],
+      "estimatedMinutes": { "minimum": 60, "standard": 120, "deep": 150 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p3-w9-l1-r1", "kind": "free-line", "prompt": "時間が足りなくなったのはどこから?" }],
+      "practice": { "kind": "external-questions", "targetCount": 50, "instruction": "120分計って50問。中断しない", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w9-l2",
+      "phaseId": "phase-3",
+      "order": 8,
+      "stage": "regular",
+      "title": "60%未満のカテゴリを補強する",
+      "objective": "平均点ではなく、最も弱い科目を上げる。1科目でも60%未満なら準備完了にしない。",
+      "prerequisites": ["p3-w9-l1"],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": ["hozan-gakka"],
+      "recallPrompts": [{ "id": "p3-w9-l2-r1", "kind": "free-line", "prompt": "一番弱い科目と、その原因は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 10, "instruction": "最弱カテゴリを10問", "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p3-w9-l3",
+      "phaseId": "phase-3",
+      "order": 9,
+      "stage": "regular",
+      "title": "候補No.2または3を正確さ優先で施工",
+      "objective": "学科直前でも技能から完全に離れない。週1回の接触を保つ。",
+      "prerequisites": ["p3-w8-l3"],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 90 },
+      "resources": ["hozan-ginou", "official-defect"],
+      "recallPrompts": [{ "id": "p3-w9-l3-r1", "kind": "free-line", "prompt": "No.1と違って難しかったのは?" }],
+      "practice": { "kind": "candidate", "instruction": "候補No.2または3を1回施工。時間より欠陥ゼロ", "scored": false },
+      "officialTopicIds": [],
+      "required": false,
+      "skillTouch": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+
+    {
+      "id": "p4-l1",
+      "phaseId": "phase-4",
+      "order": 1,
+      "stage": "regular",
+      "title": "本番模試（週2回まで）",
+      "objective": "直近3回平均80点・全科目60%以上を確認する。新しい教材は足さない。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 60, "standard": 120, "deep": 150 },
+      "resources": ["official-qa"],
+      "recallPrompts": [{ "id": "p4-l1-r1", "kind": "free-line", "prompt": "今日の失点は知識か時間か。" }],
+      "practice": { "kind": "external-questions", "targetCount": 50, "instruction": "120分で50問", "resourceIds": ["official-qa"], "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p4-l2",
+      "phaseId": "phase-4",
+      "order": 2,
+      "stage": "regular",
+      "title": "誤答上位20件の見直し",
+      "objective": "3日前以降はこれだけ。新しい範囲へ手を出さない。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 15, "standard": 35, "deep": 60 },
+      "resources": [],
+      "recallPrompts": [{ "id": "p4-l2-r1", "kind": "free-line", "prompt": "まだ説明できない項目は?" }],
+      "practice": { "kind": "external-questions", "targetCount": 20, "instruction": "誤答上位20件を解き直す", "scored": true },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p4-l3",
+      "phaseId": "phase-4",
+      "order": 3,
+      "stage": "regular",
+      "title": "前日 — 30分以内で閉じる",
+      "objective": "徹夜・新規動画・長時間模試をしない。明日のために止める練習。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 10, "standard": 20, "deep": 30 },
+      "resources": [],
+      "recallPrompts": [{ "id": "p4-l3-r1", "kind": "free-line", "prompt": "明日の集合時刻と会場は?" }],
+      "practice": { "kind": "checklist", "instruction": "持ち物・会場・出発時刻を確認して閉じる", "scored": false },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p4-l4",
+      "phaseId": "phase-4",
+      "order": 4,
+      "stage": "regular",
+      "title": "当日 — 持ち物・会場・時刻だけ",
+      "objective": "学習しない。未完了タスクも見ない。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 5, "standard": 10, "deep": 10 },
+      "resources": [],
+      "recallPrompts": [{ "id": "p4-l4-r1", "kind": "free-line", "prompt": "受験票・本人確認書類・筆記具は持ったか。" }],
+      "practice": { "kind": "checklist", "instruction": "持ち物チェックだけ", "scored": false },
+      "officialTopicIds": [],
+      "required": true
+    },
+
+    {
+      "id": "p5-w1",
+      "phaseId": "phase-5",
+      "order": 1,
+      "stage": "regular",
+      "title": "技能Week1 — 基本作業と複線図を欠陥なしにする",
+      "objective": "候補問題へ行く前に、剥ぎ・輪づくり・圧着・器具結線を単体で欠陥なしにする。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 30, "standard": 60, "deep": 120 },
+      "resources": ["hozan-ginou", "official-defect"],
+      "recallPrompts": [{ "id": "p5-w1-r1", "kind": "free-line", "prompt": "自分が一番落としやすい欠陥は?" }],
+      "practice": { "kind": "basic-skill", "instruction": "基本作業を各3回。欠陥基準で自己点検", "resourceIds": ["official-defect"], "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。作品に通電しない。"
+    },
+    {
+      "id": "p5-w2",
+      "phaseId": "phase-5",
+      "order": 2,
+      "stage": "regular",
+      "title": "技能Week2 — 候補No.1〜4",
+      "objective": "4題を1回ずつ。時間はまだ測らない。",
+      "prerequisites": ["p5-w1"],
+      "estimatedMinutes": { "minimum": 40, "standard": 90, "deep": 150 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p5-w2-r1", "kind": "free-line", "prompt": "4題で共通して詰まった工程は?" }],
+      "practice": { "kind": "candidate", "instruction": "候補No.1〜4を各1回", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+    {
+      "id": "p5-w3",
+      "phaseId": "phase-5",
+      "order": 3,
+      "stage": "regular",
+      "title": "技能Week3 — 候補No.5〜8（時間計測開始）",
+      "objective": "ここから時間を測る。まだ40分を超えてよい。",
+      "prerequisites": ["p5-w2"],
+      "estimatedMinutes": { "minimum": 40, "standard": 90, "deep": 150 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p5-w3-r1", "kind": "free-line", "prompt": "一番時間を食った工程は?" }],
+      "practice": { "kind": "candidate", "instruction": "候補No.5〜8を各1回。施工時間を記録", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+    {
+      "id": "p5-w4",
+      "phaseId": "phase-5",
+      "order": 4,
+      "stage": "regular",
+      "title": "技能Week4 — 候補No.9〜13（全13問へ到達）",
+      "objective": "13問すべてに最低1回触れる。候補を丸ごと間引かない。",
+      "prerequisites": ["p5-w3"],
+      "estimatedMinutes": { "minimum": 40, "standard": 90, "deep": 150 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p5-w4-r1", "kind": "free-line", "prompt": "13問で最も苦手な番号は?" }],
+      "practice": { "kind": "candidate", "instruction": "候補No.9〜13を各1回", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+    {
+      "id": "p5-w5",
+      "phaseId": "phase-5",
+      "order": 5,
+      "stage": "regular",
+      "title": "技能Week5 — 2周目（欠陥・45分超・複線図の迷いを優先）",
+      "objective": "全部を均等に回さない。落ちた条件から順に潰す。",
+      "prerequisites": ["p5-w4"],
+      "estimatedMinutes": { "minimum": 40, "standard": 90, "deep": 150 },
+      "resources": ["hozan-ginou", "official-defect"],
+      "recallPrompts": [{ "id": "p5-w5-r1", "kind": "free-line", "prompt": "2回以上出た欠陥は?" }],
+      "practice": { "kind": "candidate", "instruction": "弱点順に2周目", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+    {
+      "id": "p5-w6",
+      "phaseId": "phase-5",
+      "order": 6,
+      "stage": "regular",
+      "title": "技能Week6 — No.1〜13ランダム模試（40分・本番同様）",
+      "objective": "番号を引いてから40分で仕上げる。直近3回35分以内を目指す。",
+      "prerequisites": ["p5-w5"],
+      "estimatedMinutes": { "minimum": 40, "standard": 60, "deep": 120 },
+      "resources": ["hozan-ginou"],
+      "recallPrompts": [{ "id": "p5-w6-r1", "kind": "free-line", "prompt": "40分を超えた原因は段取りか作業か?" }],
+      "practice": { "kind": "candidate", "instruction": "ランダムに1題、40分で施工", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+
+    {
+      "id": "p6-l1",
+      "phaseId": "phase-6",
+      "order": 1,
+      "stage": "regular",
+      "title": "直前 — ランダム模試 1日1題まで",
+      "objective": "疲労で手を荒らさない。1題で止める。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 40, "standard": 50, "deep": 60 },
+      "resources": [],
+      "recallPrompts": [{ "id": "p6-l1-r1", "kind": "free-line", "prompt": "今日の欠陥候補は?" }],
+      "practice": { "kind": "candidate", "instruction": "ランダム1題、40分", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電材料のみ。"
+    },
+    {
+      "id": "p6-l2",
+      "phaseId": "phase-6",
+      "order": 2,
+      "stage": "regular",
+      "title": "直前 — 反復欠陥の部分練習と工具確認",
+      "objective": "作品を丸ごと作らず、落とす工程だけを繰り返す。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 20, "standard": 40, "deep": 60 },
+      "resources": ["official-defect"],
+      "recallPrompts": [{ "id": "p6-l2-r1", "kind": "free-line", "prompt": "工具は全部あるか。圧着工具は JIS C 9711 適合か。" }],
+      "practice": { "kind": "basic-skill", "instruction": "反復欠陥の工程だけを5回", "scored": false },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。"
+    },
+    {
+      "id": "p6-l3",
+      "phaseId": "phase-6",
+      "order": 3,
+      "stage": "regular",
+      "title": "前日 — 持ち物・会場確認、軽い1題または休養",
+      "objective": "新しい裏技・工具・施工法を試さない。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 10, "standard": 25, "deep": 40 },
+      "resources": [],
+      "recallPrompts": [{ "id": "p6-l3-r1", "kind": "free-line", "prompt": "明日の会場・集合時刻・持ち物は?" }],
+      "practice": { "kind": "checklist", "instruction": "工具と持ち物を並べて写真を撮る", "scored": false },
+      "officialTopicIds": [],
+      "required": true
+    },
+    {
+      "id": "p6-l4",
+      "phaseId": "phase-6",
+      "order": 4,
+      "stage": "regular",
+      "title": "当日 — 工具・施工条件の読み方・欠陥確認順",
+      "objective": "学習しない。手順の確認だけ。",
+      "prerequisites": [],
+      "estimatedMinutes": { "minimum": 5, "standard": 10, "deep": 10 },
+      "resources": ["official-defect"],
+      "recallPrompts": [{ "id": "p6-l4-r1", "kind": "free-line", "prompt": "提出前に見る欠陥チェックの順番は?" }],
+      "practice": { "kind": "checklist", "instruction": "持ち物と確認順のチェックだけ", "scored": false },
+      "officialTopicIds": [],
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+/**
+ * 完全未経験者オンボーディングのゲート(FR-003 / §6 / AT-002)。
+ *
+ *   オリエンテーション → 無採点5問 → 基礎180分 → 20問診断 → 通常
+ *
+ * 破ってはいけないこと:
+ * - 初回に20問診断を出さない
+ * - 無採点5問を「診断テスト」と呼ばない / 得点・正答率を出さない / 準備度へ反映しない
+ * - 基礎180分に達する前に20問診断を前面へ出さない(本人の手動解禁は別導線で許す)
+ */
+
+import type {
+  Curriculum,
+  LessonProgress,
+  OnboardingStage,
+  StudySession,
+  UserSettings,
+} from './types';
+
+export const BASICS_REQUIRED_MINUTES = 180;
+
+export type OnboardingState = {
+  stage: OnboardingStage;
+  orientationTotal: number;
+  orientationDone: number;
+  ungradedFiveDone: boolean;
+  basicsMinutes: number;
+  basicsRequiredMinutes: number;
+  diagnosticDone: boolean;
+  /** 20問診断を前面に出してよいか */
+  diagnosticAvailable: boolean;
+  /** 手動解禁ボタンを出してよいか(基礎未達だが本人が理解できている場合) */
+  diagnosticManualUnlockOffered: boolean;
+};
+
+/** 基礎学習として数える時間。無採点5問など体験系は countsAsBasics=false で除外 */
+export function basicsMinutes(sessions: StudySession[]): number {
+  return sessions
+    .filter((s) => s.countsAsBasics)
+    .reduce((sum, s) => sum + (Number.isFinite(s.durationMinutes) ? s.durationMinutes : 0), 0);
+}
+
+export function evaluateOnboarding(
+  curriculum: Curriculum,
+  progress: Record<string, LessonProgress>,
+  sessions: StudySession[],
+  settings: Pick<
+    UserSettings,
+    'beginnerMode' | 'diagnosticUnlockedManually' | 'diagnosticCompletedAt' | 'ungradedFiveCompletedAt'
+  >,
+): OnboardingState {
+  const orientationLessons = curriculum.lessons.filter((l) => l.stage === 'orientation');
+  const orientationDone = orientationLessons.filter((l) => progress[l.id]?.completedAt).length;
+  const orientationComplete =
+    orientationLessons.length > 0 && orientationDone === orientationLessons.length;
+
+  const ungradedLesson = curriculum.lessons.find((l) => l.stage === 'ungraded-five');
+  const ungradedFiveDone = Boolean(
+    settings.ungradedFiveCompletedAt ||
+      (ungradedLesson && progress[ungradedLesson.id]?.completedAt),
+  );
+
+  const minutes = basicsMinutes(sessions);
+  const diagnosticDone = Boolean(settings.diagnosticCompletedAt);
+
+  const basicsMet = minutes >= BASICS_REQUIRED_MINUTES;
+  const diagnosticAvailable =
+    orientationComplete &&
+    ungradedFiveDone &&
+    (basicsMet || settings.diagnosticUnlockedManually);
+
+  let stage: OnboardingStage;
+  if (!settings.beginnerMode) stage = 'regular';
+  else if (!orientationComplete) stage = 'orientation';
+  else if (!ungradedFiveDone) stage = 'ungraded-five';
+  else if (!diagnosticAvailable) stage = 'basics';
+  else if (!diagnosticDone) stage = 'diagnostic';
+  else stage = 'regular';
+
+  return {
+    stage,
+    orientationTotal: orientationLessons.length,
+    orientationDone,
+    ungradedFiveDone,
+    basicsMinutes: minutes,
+    basicsRequiredMinutes: BASICS_REQUIRED_MINUTES,
+    diagnosticDone,
+    diagnosticAvailable,
+    // 「本人が理解できた場合は手動で早められる」(§6 Step 4)。
+    // ただし前面には出さない。基礎が半分を超えてから設定画面に現れる。
+    diagnosticManualUnlockOffered:
+      settings.beginnerMode &&
+      orientationComplete &&
+      ungradedFiveDone &&
+      !basicsMet &&
+      !settings.diagnosticUnlockedManually &&
+      minutes >= BASICS_REQUIRED_MINUTES / 2,
+  };
+}
+
+export const STAGE_LABEL: Record<OnboardingStage, string> = {
+  orientation: '入口:試験と電気の地図',
+  'ungraded-five': '入口:問題を見てみる',
+  basics: '基礎づくり',
+  diagnostic: '20問診断',
+  regular: '通常カリキュラム',
+};
+
+export const STAGE_HINT: Record<OnboardingStage, string> = {
+  orientation: '資格でできること、電圧・電流・抵抗、家庭の電気、器具と工具をひととおり見る段階。',
+  'ungraded-five':
+    '過去問5問を「見てみる」だけ。採点しない。知らなかった言葉を最大3つ拾えれば成功。',
+  basics: `写真・図記号・器具工具・超基礎理論を積む段階。累計${BASICS_REQUIRED_MINUTES}分で20問診断が開く。`,
+  diagnostic: '採点ありの20問診断。ここで初めて7科目の初期値を取る。',
+  regular: '7科目を回しながら過去問と技能を積む段階。',
+};

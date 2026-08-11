@@ -1,0 +1,51 @@
+[
+  {
+    "id": "basic-theory",
+    "officialNo": 1,
+    "name": "電気に関する基礎理論",
+    "shortName": "基礎理論",
+    "approxQuestions": 5
+  },
+  {
+    "id": "distribution-design",
+    "officialNo": 2,
+    "name": "配電理論及び配線設計",
+    "shortName": "配電・配線設計",
+    "approxQuestions": 5
+  },
+  {
+    "id": "equipment-tools",
+    "officialNo": 3,
+    "name": "電気機器、配線器具、材料及び工具",
+    "shortName": "器具・材料・工具",
+    "approxQuestions": 7
+  },
+  {
+    "id": "construction-method",
+    "officialNo": 4,
+    "name": "電気工事の施工方法",
+    "shortName": "施工方法",
+    "approxQuestions": 5
+  },
+  {
+    "id": "inspection",
+    "officialNo": 5,
+    "name": "一般用電気工作物等の検査方法",
+    "shortName": "検査方法",
+    "approxQuestions": 4
+  },
+  {
+    "id": "wiring-diagram",
+    "officialNo": 6,
+    "name": "配線図",
+    "shortName": "配線図",
+    "approxQuestions": 20
+  },
+  {
+    "id": "law",
+    "officialNo": 7,
+    "name": "保安に関する法令",
+    "shortName": "法令",
+    "approxQuestions": 4
+  }
+]
