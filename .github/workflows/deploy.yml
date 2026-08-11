@@ -23,7 +23,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Playwright は実ブラウザ確認用。CI では単体テストしか回さないのでDLしない
       - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - run: npm test
       # リポジトリ名のサブパス配信になるので base を渡す
       - run: npm run build

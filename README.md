@@ -42,8 +42,21 @@ PWA のインストールには **HTTPS 配信** が必要で、PC の dev サ�
 Service Worker が登録されない。Sprint 1 の成果物は「ビルドすれば動く」ところまでで、
 **配信先の決定は残タスク**。
 
-- 候補: GitHub Pages(`BASE_PATH=/denko2-companion/ npm run build`)/ Cloudflare Pages / Netlify
-- 学習データは端末内のみ。配信はアプリシェルの静的配信だけで、記録は外へ出ない。
+配信先は **GitHub Pages**。`.github/workflows/deploy.yml` が main への push で
+build → test → デプロイまで通す。`BASE_PATH` はリポジトリ名から自動で入る。
+
+初回だけ手動:
+
+```powershell
+gh auth login                                   # 1回だけ
+powershell -ExecutionPolicy Bypass -File scripts\publish.ps1
+```
+
+- 公開URLは `https://<ユーザー名>.github.io/denko2-companion/`
+- 学習データは端末内のみ。配信はアプリシェルの静的配信だけで、記録は外へ出ない
+- **Git Bash から `BASE_PATH=/denko2-companion/ npm run build` してはいけない。**
+  MSYS がパスを `/Program Files/Git/...` に書き換え、参照先の壊れた bundle ができる。
+  PowerShell(`$env:BASE_PATH=...`)か CI を使う。実際にこれで一度壊れた。
 
 ## 構成
 
