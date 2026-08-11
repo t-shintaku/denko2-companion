@@ -1,0 +1,14 @@
+[
+  { "code": "wiring", "label": "配線・結線の誤り(未接続・極性違い・回路違い)" },
+  { "code": "core-damage", "label": "心線を折る・傷つける" },
+  { "code": "sheath", "label": "外装・絶縁被覆の剥ぎ取り不良(長さ不足・過剰・傷)" },
+  { "code": "crimp-mark", "label": "圧着マーク・スリーブサイズの誤り" },
+  { "code": "crimp-quality", "label": "圧着不良(圧着箇所が不適切・二重圧着・心線はみ出し)" },
+  { "code": "connector", "label": "差込形コネクタの差し込み不足・心線露出" },
+  { "code": "terminal", "label": "器具端子の締付け不良・心線の露出・被覆の噛み込み" },
+  { "code": "loop", "label": "輪づくりの不良(巻き方向・サイズ・重なり)" },
+  { "code": "ground", "label": "接地線の誤り(色・接続先)" },
+  { "code": "length", "label": "寸法違反(指定寸法の50%未満)" },
+  { "code": "incomplete", "label": "未完成・時間切れ" },
+  { "code": "other", "label": "その他" }
+]

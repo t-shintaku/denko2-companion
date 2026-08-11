@@ -8,7 +8,7 @@
  * - カリキュラムは絶対日付を持たない。受験日と開始日から実行時に配置する(FR-005)。
  */
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 /** JST の暦日。'YYYY-MM-DD' */
 export type IsoDate = string;
@@ -350,6 +350,29 @@ export type QuestionAttempt = {
   errorReason?: ErrorReason;
   /** false は準備度・正答率の集計から除外(無採点5問。AT-002) */
   scored: boolean;
+  /** どの受験セッションの1問か */
+  examId?: string;
+  /** 復習キューで解き直した日時。付くとキューから外れる */
+  reviewedAt?: IsoDateTime;
+};
+
+export type ExamKind = 'diagnostic-20' | 'topic-quiz' | 'mock-50';
+
+/** 小テスト・模試の1セッション(FR-010)。1問ごとの記録は QuestionAttempt 側 */
+export type MockExam = {
+  id: string;
+  takenAt: IsoDateTime;
+  jstDate: IsoDate;
+  kind: ExamKind;
+  /** 出典。年度・期・試験区分がわかる文字列 */
+  label: string;
+  totalQuestions: number;
+  correctCount: number;
+  /** かかった時間 */
+  minutes?: number;
+  /** 本番同様(50問120分)として実施したか。学科ゲートの「120分模試2回以上」に効く */
+  timed: boolean;
+  note?: string;
 };
 
 export type UnknownTerm = {
@@ -401,6 +424,7 @@ export type BackupFile = {
     adminTaskStates: AdminTaskState[];
     studySessions: StudySession[];
     questionAttempts: QuestionAttempt[];
+    mockExams: MockExam[];
     unknownTerms: UnknownTerm[];
     skillAttempts: SkillAttempt[];
     budgetItems: BudgetItem[];

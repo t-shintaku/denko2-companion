@@ -23,6 +23,7 @@ const TABLES = [
   'adminTaskStates',
   'studySessions',
   'questionAttempts',
+  'mockExams',
   'unknownTerms',
   'skillAttempts',
   'budgetItems',
@@ -47,6 +48,13 @@ export function buildBackup(
  */
 export function migrate(raw: BackupFile): { backup: BackupFile; migratedFrom?: number } {
   if (raw.schemaVersion === SCHEMA_VERSION) return { backup: raw };
+  if (raw.schemaVersion === 1) {
+    // v1 → v2: 模試セッション(mockExams)が無かった。空で足すだけでよい。
+    return {
+      backup: { ...raw, schemaVersion: SCHEMA_VERSION, data: { ...raw.data, mockExams: raw.data.mockExams ?? [] } },
+      migratedFrom: 1,
+    };
+  }
   if (raw.schemaVersion === 0) {
     // v0 → v1: studySessions に countsAsBasics が無かった。既定 true で補う。
     const migrated: BackupFile = {
@@ -54,6 +62,7 @@ export function migrate(raw: BackupFile): { backup: BackupFile; migratedFrom?: n
       schemaVersion: SCHEMA_VERSION,
       data: {
         ...raw.data,
+        mockExams: raw.data.mockExams ?? [],
         studySessions: raw.data.studySessions.map((s) => ({
           ...s,
           countsAsBasics: s.countsAsBasics ?? true,

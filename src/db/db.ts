@@ -10,6 +10,7 @@ import type {
   AdminTaskState,
   BudgetItem,
   LessonProgress,
+  MockExam,
   QuestionAttempt,
   SkillAttempt,
   StudySession,
@@ -23,13 +24,16 @@ export class Denko2Db extends Dexie {
   adminTaskStates!: Table<AdminTaskState, string>;
   studySessions!: Table<StudySession, string>;
   questionAttempts!: Table<QuestionAttempt, string>;
+  mockExams!: Table<MockExam, string>;
   unknownTerms!: Table<UnknownTerm, string>;
   skillAttempts!: Table<SkillAttempt, string>;
   budgetItems!: Table<BudgetItem, string>;
 
   constructor(name = 'denko2-companion') {
     super(name);
-    this.version(SCHEMA_VERSION).stores({
+
+    // v1: Sprint 1(初回設定・事務期限・レッスン)
+    this.version(1).stores({
       settings: 'id',
       lessonProgress: 'lessonId, completedAt',
       adminTaskStates: 'taskId, doneAt',
@@ -39,6 +43,16 @@ export class Denko2Db extends Dexie {
       skillAttempts: 'id, attemptedAt, candidateNo',
       budgetItems: 'id, category, status',
     });
+
+    // v2: Sprint 2(模試セッション・復習キュー)。既存データは消さずに引き継ぐ
+    this.version(2).stores({
+      questionAttempts: 'id, jstDate, topicId, scored, examId, reviewedAt',
+      mockExams: 'id, jstDate, kind, takenAt',
+    });
+
+    if (SCHEMA_VERSION !== 2) {
+      throw new Error(`SCHEMA_VERSION と Dexie のバージョン定義がずれている: ${SCHEMA_VERSION}`);
+    }
   }
 }
 

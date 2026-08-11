@@ -6,6 +6,7 @@ import type { Denko2Db } from './db';
 import { db as defaultDb } from './db';
 import { nowJstIso, todayJst } from '../domain/jst';
 import { buildBackup } from '../domain/backup';
+import { buildExamRecords, type ExamInput } from '../domain/academic';
 import { SCHEMA_VERSION } from '../domain/types';
 import type {
   AdminTaskState,
@@ -13,6 +14,7 @@ import type {
   BudgetItem,
   IsoDate,
   LessonProgress,
+  MockExam,
   QuestionAttempt,
   SessionKind,
   SkillAttempt,
@@ -27,6 +29,7 @@ export type VaultSnapshot = {
   adminTaskStates: Record<string, AdminTaskState>;
   studySessions: StudySession[];
   questionAttempts: QuestionAttempt[];
+  mockExams: MockExam[];
   unknownTerms: UnknownTerm[];
   skillAttempts: SkillAttempt[];
   budgetItems: BudgetItem[];
@@ -75,6 +78,7 @@ export class Repo {
       adminTaskStates,
       studySessions,
       questionAttempts,
+      mockExams,
       unknownTerms,
       skillAttempts,
       budgetItems,
@@ -84,6 +88,7 @@ export class Repo {
       this.db.adminTaskStates.toArray(),
       this.db.studySessions.toArray(),
       this.db.questionAttempts.toArray(),
+      this.db.mockExams.toArray(),
       this.db.unknownTerms.toArray(),
       this.db.skillAttempts.toArray(),
       this.db.budgetItems.toArray(),
@@ -95,6 +100,7 @@ export class Repo {
       adminTaskStates: Object.fromEntries(adminTaskStates.map((s) => [s.taskId, s])),
       studySessions,
       questionAttempts,
+      mockExams,
       unknownTerms,
       skillAttempts,
       budgetItems,
@@ -170,6 +176,53 @@ export class Repo {
     if (rows.length > 0) await this.db.unknownTerms.bulkPut(rows);
   }
 
+  /** 小テスト・模試を1セッションとして保存する(FR-010) */
+  async recordExam(input: ExamInput, now: Date = new Date()): Promise<MockExam> {
+    const examId = newId('exam');
+    const { exam, attempts } = buildExamRecords(
+      input,
+      { examId, attemptId: (i) => `${examId}_q${i + 1}` },
+      nowJstIso(now),
+      todayJst(now),
+    );
+    await this.db.transaction('rw', [this.db.mockExams, this.db.questionAttempts], async () => {
+      await this.db.mockExams.put(exam);
+      await this.db.questionAttempts.bulkPut(attempts);
+    });
+    return exam;
+  }
+
+  /** 復習キューから外す(解き直した) */
+  async markReviewed(attemptIds: string[], now: Date = new Date()): Promise<void> {
+    const stamp = nowJstIso(now);
+    await this.db.transaction('rw', this.db.questionAttempts, async () => {
+      for (const id of attemptIds) {
+        const a = await this.db.questionAttempts.get(id);
+        if (a) await this.db.questionAttempts.put({ ...a, reviewedAt: stamp });
+      }
+    });
+  }
+
+  async addSkillAttempt(
+    input: Omit<SkillAttempt, 'id' | 'attemptedAt'>,
+    now: Date = new Date(),
+  ): Promise<SkillAttempt> {
+    const attempt: SkillAttempt = { ...input, id: newId('skill'), attemptedAt: nowJstIso(now) };
+    await this.db.skillAttempts.put(attempt);
+    return attempt;
+  }
+
+  async saveBudgetItem(item: BudgetItem): Promise<void> {
+    await this.db.budgetItems.put(item);
+  }
+
+  async seedBudgetItems(items: BudgetItem[]): Promise<void> {
+    const existing = await this.db.budgetItems.toArray();
+    const known = new Set(existing.map((i) => i.id));
+    const fresh = items.filter((i) => !known.has(i.id));
+    if (fresh.length > 0) await this.db.budgetItems.bulkPut(fresh);
+  }
+
   async exportBackup(now: Date = new Date()): Promise<BackupFile> {
     const snapshot = await this.load();
     return buildBackup(
@@ -179,6 +232,7 @@ export class Repo {
         adminTaskStates: Object.values(snapshot.adminTaskStates),
         studySessions: snapshot.studySessions,
         questionAttempts: snapshot.questionAttempts,
+        mockExams: snapshot.mockExams,
         unknownTerms: snapshot.unknownTerms,
         skillAttempts: snapshot.skillAttempts,
         budgetItems: snapshot.budgetItems,
@@ -201,6 +255,7 @@ export class Repo {
         this.db.adminTaskStates,
         this.db.studySessions,
         this.db.questionAttempts,
+        this.db.mockExams,
         this.db.unknownTerms,
         this.db.skillAttempts,
         this.db.budgetItems,
@@ -212,6 +267,7 @@ export class Repo {
           this.db.adminTaskStates.clear(),
           this.db.studySessions.clear(),
           this.db.questionAttempts.clear(),
+          this.db.mockExams.clear(),
           this.db.unknownTerms.clear(),
           this.db.skillAttempts.clear(),
           this.db.budgetItems.clear(),
@@ -222,6 +278,7 @@ export class Repo {
           this.db.adminTaskStates.bulkPut(d.adminTaskStates),
           this.db.studySessions.bulkPut(d.studySessions),
           this.db.questionAttempts.bulkPut(d.questionAttempts),
+          this.db.mockExams.bulkPut(d.mockExams ?? []),
           this.db.unknownTerms.bulkPut(d.unknownTerms),
           this.db.skillAttempts.bulkPut(d.skillAttempts),
           this.db.budgetItems.bulkPut(d.budgetItems),
@@ -238,6 +295,7 @@ export class Repo {
       this.db.adminTaskStates.clear(),
       this.db.studySessions.clear(),
       this.db.questionAttempts.clear(),
+      this.db.mockExams.clear(),
       this.db.unknownTerms.clear(),
       this.db.skillAttempts.clear(),
       this.db.budgetItems.clear(),

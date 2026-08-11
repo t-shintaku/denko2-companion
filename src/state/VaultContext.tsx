@@ -12,7 +12,17 @@ import { adminTaskTemplates, curriculum, examCycle } from '../data';
 import { resolveAdminTasks, type ResolvedAdminTask } from '../domain/adminTasks';
 import { buildSchedule, type ScheduleResult } from '../domain/schedule';
 import { evaluateOnboarding, type OnboardingState } from '../domain/onboarding';
+import {
+  academicGate as computeAcademicGate,
+  reviewQueue as computeReviewQueue,
+  topicStats as computeTopicStats,
+  type AcademicGate,
+  type ReviewItem,
+  type TopicStat,
+} from '../domain/academic';
+import { skillGate as computeSkillGate } from '../domain/practical';
 import { todayJst } from '../domain/jst';
+import { topicIds } from '../data';
 import type { IsoDate, UserSettings } from '../domain/types';
 
 export type VaultValue = {
@@ -23,6 +33,10 @@ export type VaultValue = {
   schedule: ScheduleResult;
   adminTasks: ResolvedAdminTask[];
   onboarding: OnboardingState;
+  topicStats: TopicStat[];
+  academicGate: AcademicGate;
+  reviewQueue: ReviewItem[];
+  skillGate: ReturnType<typeof computeSkillGate>;
   reload: () => Promise<void>;
 };
 
@@ -31,6 +45,7 @@ const emptySnapshot: VaultSnapshot = {
   adminTaskStates: {},
   studySessions: [],
   questionAttempts: [],
+  mockExams: [],
   unknownTerms: [],
   skillAttempts: [],
   budgetItems: [],
@@ -79,7 +94,29 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       ungradedFiveCompletedAt: settings?.ungradedFiveCompletedAt,
     });
 
-    return { ready, today, snapshot, settings, schedule, adminTasks, onboarding, reload };
+    const topicStats = computeTopicStats(snapshot.questionAttempts, topicIds, today);
+    const academicGate = computeAcademicGate(
+      snapshot.questionAttempts,
+      snapshot.mockExams,
+      topicStats,
+    );
+    const reviewQueue = computeReviewQueue(snapshot.questionAttempts, topicStats);
+    const skillGate = computeSkillGate(snapshot.skillAttempts, snapshot.budgetItems);
+
+    return {
+      ready,
+      today,
+      snapshot,
+      settings,
+      schedule,
+      adminTasks,
+      onboarding,
+      topicStats,
+      academicGate,
+      reviewQueue,
+      skillGate,
+      reload,
+    };
   }, [snapshot, ready, today, reload]);
 
   return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;

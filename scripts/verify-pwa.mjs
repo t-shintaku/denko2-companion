@@ -60,10 +60,10 @@ check(
 
 // セットアップを終えて本体へ
 await page.getByRole('button', { name: 'はじめる' }).click();
-await page.getByRole('button', { name: 'ホーム' }).waitFor({ timeout: 15000 });
+await page.getByRole('button', { name: 'ホーム', exact: true }).waitFor({ timeout: 15000 });
 
 for (const tab of ['ホーム', '学科', '技能', '記録', '設定']) {
-  await page.getByRole('button', { name: tab }).click();
+  await page.getByRole('button', { name: tab, exact: true }).click();
   await page.waitForTimeout(250);
   ov = await horizontalOverflow();
   check(
@@ -74,7 +74,7 @@ for (const tab of ['ホーム', '学科', '技能', '記録', '設定']) {
 }
 
 // タブバーが親指の届く位置(画面下部)にあるか
-await page.getByRole('button', { name: 'ホーム' }).click();
+await page.getByRole('button', { name: 'ホーム', exact: true }).click();
 const tabBox = await page.locator('nav.tabbar').boundingBox();
 check(
   'タブバーが画面下部にある(親指で届く)',
@@ -148,7 +148,7 @@ await page.reload({ waitUntil: 'domcontentloaded' });
 let offlineOk = true;
 let offlineDetail = '';
 try {
-  await page.getByRole('button', { name: 'ホーム' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'ホーム', exact: true }).waitFor({ timeout: 15000 });
 } catch (e) {
   offlineOk = false;
   offlineDetail = String(e).slice(0, 200);
@@ -172,7 +172,7 @@ const offlineSettings = await page.evaluate(async () => {
 check('オフラインでも保存済みの設定が読める', offlineSettings === 1, `settings=${offlineSettings}件`);
 
 // オフラインで記録を追加できるか
-await page.getByRole('button', { name: '設定' }).click();
+await page.getByRole('button', { name: '設定', exact: true }).click();
 await page.waitForTimeout(300);
 const offlineInteractive = await page.getByRole('heading', { name: '設定' }).isVisible();
 check('オフラインでも画面遷移できる', offlineInteractive);

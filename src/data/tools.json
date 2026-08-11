@@ -1,0 +1,106 @@
+[
+  {
+    "id": "tool-pliers",
+    "category": "tool",
+    "label": "ペンチ(指定工具)",
+    "status": "planned",
+    "expectedYen": 2000,
+    "required": true
+  },
+  {
+    "id": "tool-driver-plus",
+    "category": "tool",
+    "label": "プラスドライバー(指定工具)",
+    "status": "planned",
+    "expectedYen": 700,
+    "required": true
+  },
+  {
+    "id": "tool-driver-minus",
+    "category": "tool",
+    "label": "マイナスドライバー(指定工具)",
+    "status": "planned",
+    "expectedYen": 700,
+    "required": true
+  },
+  {
+    "id": "tool-knife",
+    "category": "tool",
+    "label": "電工ナイフ(指定工具)",
+    "status": "planned",
+    "expectedYen": 1500,
+    "required": true
+  },
+  {
+    "id": "tool-scale",
+    "category": "tool",
+    "label": "スケール(指定工具)",
+    "status": "planned",
+    "expectedYen": 800,
+    "required": true
+  },
+  {
+    "id": "tool-pump-pliers",
+    "category": "tool",
+    "label": "ウォーターポンププライヤー(指定工具)",
+    "status": "planned",
+    "expectedYen": 1800,
+    "required": true
+  },
+  {
+    "id": "tool-crimp",
+    "category": "tool",
+    "label": "リングスリーブ用圧着工具(JIS C 9711適合・柄が黄色)",
+    "status": "planned",
+    "expectedYen": 4000,
+    "required": true
+  },
+  {
+    "id": "tool-stripper",
+    "category": "tool",
+    "label": "VVFストリッパー(指定工具ではないが時間短縮に効く)",
+    "status": "planned",
+    "expectedYen": 3500,
+    "required": false
+  },
+  {
+    "id": "material-practice-set",
+    "category": "material",
+    "label": "練習用 電線・器具セット(13問1周分)",
+    "status": "planned",
+    "expectedYen": 20000,
+    "required": true
+  },
+  {
+    "id": "material-second-round",
+    "category": "material",
+    "label": "2周目の電線・リングスリーブ(器具は再利用)",
+    "status": "planned",
+    "expectedYen": 9000,
+    "required": false
+  },
+  {
+    "id": "exam-fee",
+    "category": "exam",
+    "label": "受験手数料(インターネット申込・非課税)",
+    "status": "planned",
+    "expectedYen": 11100,
+    "required": true
+  },
+  {
+    "id": "license-fee",
+    "category": "license",
+    "label": "免状申請手数料(都道府県による。大阪府は5,300円)",
+    "status": "planned",
+    "expectedYen": 5300,
+    "required": true
+  },
+  {
+    "id": "travel-photo",
+    "category": "travel",
+    "label": "証明写真・交通費",
+    "status": "planned",
+    "expectedYen": 3000,
+    "required": false
+  }
+]
