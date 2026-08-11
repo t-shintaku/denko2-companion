@@ -7,7 +7,6 @@ const settings = {
   academicMode: 'cbt' as const,
   academicDate: '2026-10-24',
   skillDate: '2026-12-12',
-  academicReservationDeadline: undefined,
 };
 
 function resolve(now: Date, states: Record<string, AdminTaskState> = {}) {
@@ -21,16 +20,26 @@ function byId(tasks: ReturnType<typeof resolve>, id: string) {
 }
 
 describe('AT-001 事務期限', () => {
-  it('2026年度下期の日程が JSON の公式値と一致する', () => {
+  it('令和8年度下期の日程が受験案内PDFの記載と一致する', () => {
+    // 出典: https://www.shiken.or.jp/construction/upload/r8kmousikomiannai1.pdf(2026-08-11 本文確認)
     expect(examCycle.applicationStart).toBe('2026-08-17T10:00:00+09:00');
     expect(examCycle.applicationDeadline).toBe('2026-09-03T17:00:00+09:00');
+    expect(examCycle.paymentDeadline).toBe('2026-09-04T17:00:00+09:00');
+    expect(examCycle.cbtReservationStart).toBe('2026-09-09T10:00:00+09:00');
+    expect(examCycle.cbtReservationDeadline).toBe('2026-10-14T23:59:00+09:00');
     expect(examCycle.cbtWindowStart).toBe('2026-09-24');
     expect(examCycle.cbtWindowEnd).toBe('2026-11-08');
     expect(examCycle.writtenExamDate).toBe('2026-10-25');
     expect(examCycle.skillExamDates).toEqual(['2026-12-12', '2026-12-13']);
+    expect(examCycle.skillResultAnnouncement).toBe('2027-01-15T12:00:00+09:00');
     expect(examCycle.examFeeInternetYen).toBe(11100);
-    // 出どころを型で持ち、UI で「公式」と「本ツールの推定」を混ぜないこと
-    expect(examCycle.verification).toBe('requirements-doc');
+    // 一次資料の本文を読んで確認した値であることを型で残す
+    expect(examCycle.verification).toBe('fetched');
+  });
+
+  it('CBT予約期間は学科試験期間より前に閉じる(逆算では作れない関係)', () => {
+    expect(examCycle.cbtReservationDeadline < `${examCycle.cbtWindowEnd}T00:00:00+09:00`).toBe(true);
+    expect(examCycle.applicationDeadline < examCycle.paymentDeadline).toBe(true);
   });
 
   it('申込開始前は「受付前」で、クエストに昇格しない', () => {
@@ -89,22 +98,43 @@ describe('AT-001 事務期限', () => {
   it('受験日から逆算した期限は derived として印を付ける', () => {
     const tasks = resolve(new Date('2026-10-01T12:00:00+09:00'));
     const reservation = byId(tasks, 'cbt-reservation');
-    expect(reservation.dueSource).toBe('derived');
-    expect(reservation.needsUserConfirm).toBe(true);
-    expect(reservation.dueAt).toBe('2026-10-10T23:59:00+09:00'); // 受験日の14日前
+    // 公式値(受験案内PDF): 9/9 10:00 〜 10/14 23:59。受験日からの逆算ではない
+    expect(reservation.dueSource).toBe('official');
+    expect(reservation.needsUserConfirm).toBe(false);
+    expect(reservation.opensAt).toBe('2026-09-09T10:00:00+09:00');
+    expect(reservation.dueAt).toBe('2026-10-14T23:59:00+09:00');
   });
 
-  it('本人が公式で確認した期限を入れると user 優先になり、注意書きが消える', () => {
-    const tasks = resolveAdminTasks(
-      adminTaskTemplates,
-      {},
-      { ...settings, academicReservationDeadline: '2026-10-17' },
-      new Date('2026-10-01T12:00:00+09:00'),
-    );
-    const reservation = byId(tasks, 'cbt-reservation');
-    expect(reservation.dueSource).toBe('user');
-    expect(reservation.needsUserConfirm).toBe(false);
-    expect(reservation.dueAt).toBe('2026-10-17T23:59:00+09:00');
+  it('【回帰】CBT予約期限は受験日を後ろへずらしても動かない', () => {
+    // 逆算(受験日-14日)実装では、11/8受験のとき 10/25 という
+    // 公式締切(10/14)より後の日付を出してしまっていた
+    for (const academicDate of ['2026-09-24', '2026-10-24', '2026-11-08']) {
+      const tasks = resolveAdminTasks(
+        adminTaskTemplates,
+        {},
+        { ...settings, academicDate },
+        new Date('2026-09-20T12:00:00+09:00'),
+      );
+      expect(byId(tasks, 'cbt-reservation').dueAt).toBe('2026-10-14T23:59:00+09:00');
+    }
+  });
+
+  it('入金期限は申込締切の翌日(9/4)で、別のタスクとして立つ', () => {
+    const tasks = resolve(new Date('2026-09-03T18:00:00+09:00'));
+    // 申込は 9/3 17:00 で締切済み
+    expect(byId(tasks, 'application').urgency).toBe('overdue');
+    // 入金はまだ生きている。ここを同じ日にすると、払える日を1日潰す
+    expect(byId(tasks, 'payment').dueAt).toBe('2026-09-04T17:00:00+09:00');
+    expect(byId(tasks, 'payment').urgency).toBe('due-1');
+    expect(byId(tasks, 'payment').dueSource).toBe('official');
+    // 時刻はPDFに明記が無いので、何を確認すべきかを本文で出す
+    expect(byId(tasks, 'payment').confirmNote).toContain('時刻の明記が無い');
+  });
+
+  it('技能の合否発表は公式の固定日(2027-01-15)で、受験日から逆算しない', () => {
+    const tasks = resolve(new Date('2026-12-20T12:00:00+09:00'));
+    expect(byId(tasks, 'result').dueAt).toBe('2027-01-15T12:00:00+09:00');
+    expect(byId(tasks, 'result').dueSource).toBe('official');
   });
 
   it('受験日が未設定なら期限は未設定として扱い、偽の日付を作らない', () => {

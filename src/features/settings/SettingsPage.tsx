@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { examCycle, resources } from '../../data';
 import { repo } from '../../db/repo';
 import { APP_VERSION, backupFileName, validateBackup } from '../../domain/backup';
+import { buildIcs, icsFileName } from '../../domain/ics';
 import { formatJstDateTime, nowJstIso } from '../../domain/jst';
 import { SCHEMA_VERSION } from '../../domain/types';
 import { AdminTaskList } from '../milestones/AdminTaskList';
@@ -22,16 +23,26 @@ export function SettingsPage() {
     await reload();
   };
 
-  const doExport = async () => {
-    const backup = await repo.exportBackup();
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const download = (content: string, filename: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = backupFileName();
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const doExport = async () => {
+    const backup = await repo.exportBackup();
+    download(JSON.stringify(backup, null, 2), backupFileName(), 'application/json');
     setMessage(`書き出した(schemaVersion ${SCHEMA_VERSION})。`);
+  };
+
+  const doIcsExport = () => {
+    const ics = buildIcs(adminTasks);
+    download(ics, icsFileName(), 'text/calendar;charset=utf-8');
+    setMessage('期限をカレンダーへ書き出した。ファイルを開いてカレンダーへ取り込む。');
   };
 
   const doImport = async (file: File) => {
@@ -64,10 +75,17 @@ export function SettingsPage() {
           <select
             id="s-mode"
             value={settings.academicMode}
-            onChange={(e) => patch({ academicMode: e.target.value as UserSettings['academicMode'] })}
+            onChange={(e) => {
+              const mode = e.target.value as UserSettings['academicMode'];
+              void patch(
+                mode === 'paper'
+                  ? { academicMode: mode, academicDate: examCycle.writtenExamDate }
+                  : { academicMode: mode },
+              );
+            }}
           >
             <option value="cbt">CBT</option>
-            <option value="paper">筆記</option>
+            <option value="paper">筆記(全国一斉)</option>
             <option value="undecided">未定</option>
           </select>
         </div>
@@ -77,8 +95,14 @@ export function SettingsPage() {
             id="s-academic"
             type="date"
             value={settings.academicDate ?? ''}
+            disabled={settings.academicMode === 'paper'}
             onChange={(e) => patch({ academicDate: e.target.value || undefined })}
           />
+          {settings.academicMode === 'paper' && (
+            <p className="muted">
+              筆記方式は {examCycle.writtenExamDate} の全国一斉。日付は変更できない。
+            </p>
+          )}
         </div>
         {settings.academicMode === 'cbt' && (
           <>
@@ -90,23 +114,13 @@ export function SettingsPage() {
                 onChange={(e) => patch({ academicVenue: e.target.value })}
               />
             </div>
-            <div className="field">
-              <label htmlFor="s-reserve-due">
-                CBT会場予約の期限(公式で確認して入れる)
-              </label>
-              <input
-                id="s-reserve-due"
-                type="date"
-                value={settings.academicReservationDeadline ?? ''}
-                onChange={(e) =>
-                  patch({ academicReservationDeadline: e.target.value || undefined })
-                }
-              />
-              <p className="muted">
-                空欄のあいだは、本ツールが受験日の14日前を仮の期限として表示する。推定値である旨は
-                事務カードに出る。
-              </p>
-            </div>
+            <p className="notice">
+              <strong>CBT会場の予約期間: {formatJstDateTime(examCycle.cbtReservationStart)} 〜{' '}
+              {formatJstDateTime(examCycle.cbtReservationDeadline)}</strong>
+              <br />
+              受験申込みとは別手続きで、申込み時には予約できない。この期間内に予約が完了しないと
+              CBT方式・筆記方式ともに受験できない。予約変更は試験日の3日前まで。
+            </p>
             <label className="row">
               <input
                 type="checkbox"
@@ -119,7 +133,7 @@ export function SettingsPage() {
           </>
         )}
         <div className="field">
-          <label htmlFor="s-skill">技能の受験日</label>
+          <label htmlFor="s-skill">技能の受験日(仮)</label>
           <select
             id="s-skill"
             value={settings.skillDate ?? ''}
@@ -132,13 +146,20 @@ export function SettingsPage() {
               </option>
             ))}
           </select>
+          <p className="muted">
+            技能試験日は試験地によって決まる。ここは計画用の仮置きで、受験票で確定させる。
+          </p>
         </div>
         <p className="notice">
-          公式日程(確認日 {examCycle.lastVerified}・出典は
-          <a href={examCycle.sourceUrl} target="_blank" rel="noreferrer"> 試験センター</a>)。
+          出典:{' '}
+          <a href={examCycle.sourcePdfUrl ?? examCycle.sourceUrl} target="_blank" rel="noreferrer">
+            令和8年度下期 受験案内
+          </a>
+          (本文を読んで確認・{examCycle.lastVerified})。
           申込 {formatJstDateTime(examCycle.applicationStart)} 〜{' '}
-          {formatJstDateTime(examCycle.applicationDeadline)}。
-          この値は要件定義書から取り込んだもので、アプリからは検証していない。申込前に必ず自分で確認する。
+          {formatJstDateTime(examCycle.applicationDeadline)}、
+          入金期限 {formatJstDateTime(examCycle.paymentDeadline)}。
+          {examCycle.verificationNote}
         </p>
       </div>
 
@@ -199,6 +220,15 @@ export function SettingsPage() {
       </div>
 
       <h2>手続きの期限</h2>
+      <div className="card">
+        <p className="muted">
+          このアプリは開かなければ何も言わない。期限だけはスマホのカレンダーへ移しておく。
+          7日前と前日に通知が出る。
+        </p>
+        <button className="btn-primary btn-block" onClick={doIcsExport}>
+          期限をカレンダーへ書き出す(.ics)
+        </button>
+      </div>
       <AdminTaskList tasks={adminTasks} />
 
       <h2>教材カタログ</h2>

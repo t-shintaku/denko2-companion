@@ -42,6 +42,8 @@ export type ScheduleResult = {
   unplacedRequiredLessonIds: string[];
   /** 容量不足で外した任意レッスン */
   droppedOptionalLessonIds: string[];
+  /** どの1日の容量にも収まらないレッスン。時間設定を見直すか分割が要る */
+  oversizedLessonIds: string[];
   compressed: boolean;
   /** 学科セグメントの残り日数(受験日未定なら undefined) */
   academicDaysLeft?: number;
@@ -69,10 +71,16 @@ function makeDays(
   }));
 }
 
+/**
+ * 1日の容量を超えたら置かない。例外を作らない。
+ *
+ * 以前は「空の日なら容量超過でも1件は置く」という逃げを入れていたが、
+ * それだと平日35分の日に120分の模試が載る。載った時点でその日の計画は嘘になり、
+ * 「今日やること」を信じられなくなる。入る日が無いなら unplaced として表に出す。
+ */
 function place(day: ScheduledDay, lesson: CurriculumLesson): boolean {
   const cost = lesson.estimatedMinutes.standard;
-  // 1日の容量より重いレッスンでも、空の日には必ず1件は置く(そうしないと永久に置けない)
-  if (day.lessonIds.length > 0 && day.usedMinutes + cost > day.capacityMinutes) return false;
+  if (day.usedMinutes + cost > day.capacityMinutes) return false;
   day.lessonIds.push(lesson.id);
   day.usedMinutes += cost;
   return true;
@@ -194,11 +202,21 @@ export function buildSchedule(input: ScheduleInput): ScheduleResult {
     for (const id of day.lessonIds) byLessonId[id] = day.date;
   }
 
+  // 「入り切らなかった」の原因を分ける。日数不足なのか、1日の枠より重いのか。
+  const maxCapacity = allDays.reduce((m, d) => Math.max(m, d.capacityMinutes), 0);
+  const oversizedLessonIds = [...unplacedRequiredLessonIds, ...droppedOptionalLessonIds].filter(
+    (id) => {
+      const l = curriculum.lessons.find((x) => x.id === id);
+      return l !== undefined && l.estimatedMinutes.standard > maxCapacity;
+    },
+  );
+
   return {
     days: allDays,
     byLessonId,
     unplacedRequiredLessonIds,
     droppedOptionalLessonIds,
+    oversizedLessonIds,
     compressed: unplacedRequiredLessonIds.length > 0 || droppedOptionalLessonIds.length > 0,
     academicDaysLeft: academicDate ? diffDays(today, academicDate) : undefined,
   };

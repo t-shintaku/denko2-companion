@@ -33,6 +33,7 @@ export type ResolvedAdminTask = {
   dueAt?: IsoDateTime;
   dueSource: ValueSource;
   needsUserConfirm: boolean;
+  confirmNote?: string;
   opensAt?: IsoDateTime;
   doneAt?: IsoDateTime;
   daysLeft?: number;
@@ -54,15 +55,12 @@ const URGENCY_RANK: Record<AdminUrgency, number> = {
 
 function anchorDue(
   template: AdminTaskTemplate,
-  settings: Pick<UserSettings, 'academicDate' | 'skillDate' | 'academicReservationDeadline'>,
+  settings: Pick<UserSettings, 'academicDate' | 'skillDate'>,
 ): { dueAt?: IsoDateTime; source: ValueSource } {
   const a = template.anchor;
+  // 申込・入金・CBT会場予約・技能結果発表は年度固定の公式値。受験日から逆算しない。
+  // 逆算にすると、11月受験を選んだとき公式締切(10/14)より後の日付を出してしまう。
   if (a.kind === 'fixed') return { dueAt: template.dueAt, source: template.dueSource };
-
-  // CBT 会場予約だけは、本人が公式で確認した期限があればそれを最優先で使う
-  if (template.id === 'cbt-reservation' && settings.academicReservationDeadline) {
-    return { dueAt: jstDateTime(settings.academicReservationDeadline, '23:59'), source: 'user' };
-  }
 
   const base: IsoDate | undefined = a.kind === 'academic' ? settings.academicDate : settings.skillDate;
   if (!base) return { dueAt: undefined, source: template.dueSource };
@@ -72,10 +70,7 @@ function anchorDue(
 export function resolveAdminTasks(
   templates: AdminTaskTemplate[],
   states: Record<string, AdminTaskState>,
-  settings: Pick<
-    UserSettings,
-    'academicMode' | 'academicDate' | 'skillDate' | 'academicReservationDeadline'
-  >,
+  settings: Pick<UserSettings, 'academicMode' | 'academicDate' | 'skillDate'>,
   now: Date = new Date(),
 ): ResolvedAdminTask[] {
   return templates
@@ -114,6 +109,7 @@ export function resolveAdminTasks(
         template,
         dueAt,
         dueSource,
+        confirmNote: template.confirmNote,
         needsUserConfirm: template.needsUserConfirm && dueSource !== 'user',
         opensAt: template.opensAt,
         doneAt: state?.doneAt,

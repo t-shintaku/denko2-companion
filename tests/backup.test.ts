@@ -24,7 +24,12 @@ describe('AT-009 データ管理', () => {
       completedAt: '2026-08-11T20:00:00+09:00',
       takeaway: '接地',
     });
-    await repo.addSession({ durationMinutes: 25, kind: 'theory', lessonId: 'p0-l1' });
+    await repo.addSession({
+      durationMinutes: 25,
+      kind: 'theory',
+      lessonId: 'p0-l1',
+      countsAsBasics: true,
+    });
     await repo.setAdminTaskDone('mypage', true);
     await repo.addUnknownTerms(['ケーブル', 'スリーブ'], 'ungraded-five');
 

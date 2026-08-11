@@ -103,8 +103,7 @@ describe('カリキュラムJSONの整合', () => {
 });
 
 describe('事務タスクJSONの整合', () => {
-  it('FR-002 の11項目がすべてある', () => {
-    expect(adminTaskTemplates).toHaveLength(11);
+  it('FR-002 の項目が申込から免状受領まで揃っている', () => {
     const ids = adminTaskTemplates.map((t) => t.id);
     expect(ids).toEqual([
       'mypage',
@@ -113,6 +112,7 @@ describe('事務タスクJSONの整合', () => {
       'cbt-reservation',
       'ticket',
       'academic-exam',
+      'academic-result',
       'tools',
       'skill-exam',
       'result',
@@ -121,20 +121,34 @@ describe('事務タスクJSONの整合', () => {
     ]);
   });
 
-  it('公式手続きの期限を推定で置いているものには、必ず要確認フラグが立っている', () => {
-    // 'tools'(工具を揃える)だけは公式の締切ではなく本ツールが置いた準備目標なので対象外
-    const officialProcedures = ['cbt-reservation', 'ticket', 'result', 'license-apply', 'license-receive'];
+  it('推定で置いた期限には、必ず要確認フラグが立っている', () => {
+    // 'mypage'(申込に必要なので申込締切と同じ)と 'tools'(本ツールが置いた準備目標)は
+    // 公式手続きの締切そのものではないので対象外
+    const exempt = ['mypage', 'tools'];
     for (const t of adminTaskTemplates) {
-      if (officialProcedures.includes(t.id)) {
-        expect(t.dueSource, `${t.id}`).toBe('derived');
+      if (t.dueSource === 'derived' && !exempt.includes(t.id)) {
         expect(t.needsUserConfirm, `${t.id}`).toBe(true);
       }
     }
-    expect(adminTaskTemplates.find((t) => t.id === 'tools')?.needsUserConfirm).toBe(false);
   });
 
-  it('公式値として扱うのは申込締切と試験日だけ', () => {
+  it('公式値として扱うのは、受験案内で日付を確認できたものだけ', () => {
     const official = adminTaskTemplates.filter((t) => t.dueSource === 'official').map((t) => t.id);
-    expect(official).toEqual(['application', 'academic-exam', 'skill-exam']);
+    expect(official).toEqual([
+      'application', // 9/3 17:00
+      'payment', // 9/4
+      'cbt-reservation', // 9/9 10:00 〜 10/14 23:59
+      'academic-exam',
+      'skill-exam',
+      'result', // 令和9年1月15日 12:00
+    ]);
+  });
+
+  it('公式の固定期間を持つ手続きは、受験日アンカーで逆算していない', () => {
+    for (const id of ['application', 'payment', 'cbt-reservation', 'result']) {
+      const t = adminTaskTemplates.find((x) => x.id === id)!;
+      expect(t.anchor.kind, `${id}`).toBe('fixed');
+      expect(t.dueAt, `${id}`).toBeTruthy();
+    }
   });
 });

@@ -134,10 +134,14 @@ export class Repo {
   }
 
   async addSession(input: {
+    /** 実績時間。呼び出し側で実測または本人入力を通した値を渡すこと */
     durationMinutes: number;
+    estimatedMinutes?: number;
+    measuredMinutes?: number;
     kind: SessionKind;
     lessonId?: string;
-    countsAsBasics?: boolean;
+    /** 基礎180分ゲートへ算入するか。既定は false で、明示した場合だけ数える */
+    countsAsBasics: boolean;
     nextFix?: string;
     jstDate?: IsoDate;
   }, now: Date = new Date()): Promise<StudySession> {
@@ -146,10 +150,12 @@ export class Repo {
       startedAt: nowJstIso(now),
       jstDate: input.jstDate ?? todayJst(now),
       durationMinutes: input.durationMinutes,
+      estimatedMinutes: input.estimatedMinutes,
+      measuredMinutes: input.measuredMinutes,
       kind: input.kind,
       lessonId: input.lessonId,
       nextFix: input.nextFix,
-      countsAsBasics: input.countsAsBasics ?? input.kind !== 'mock',
+      countsAsBasics: input.countsAsBasics,
     };
     await this.db.studySessions.put(session);
     return session;

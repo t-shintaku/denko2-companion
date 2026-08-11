@@ -15,6 +15,15 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
   const set = <K extends keyof UserSettings>(key: K, value: UserSettings[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
+  // 筆記方式は全国一斉。日付は選べない。選ばせると計画も期限も狂う。
+  const setMode = (mode: UserSettings['academicMode']) =>
+    setDraft((d) => ({
+      ...d,
+      academicMode: mode,
+      academicDate: mode === 'paper' ? examCycle.writtenExamDate : d.academicDate,
+    }));
+  const paperFixed = draft.academicMode === 'paper';
+
   const save = async () => {
     setSaving(true);
     await repo.saveSettings({
@@ -40,13 +49,20 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
         </p>
         <ul className="plain muted">
           <li>申込: {formatJstDateTime(examCycle.applicationStart)} 〜 {formatJstDateTime(examCycle.applicationDeadline)}</li>
+          <li>入金期限: {formatJstDateTime(examCycle.paymentDeadline)}(申込締切の翌日。日が違う)</li>
+          <li>
+            CBT会場予約: {formatJstDateTime(examCycle.cbtReservationStart)} 〜{' '}
+            {formatJstDateTime(examCycle.cbtReservationDeadline)}
+          </li>
           <li>学科CBT: {examCycle.cbtWindowStart} 〜 {examCycle.cbtWindowEnd}</li>
-          <li>学科筆記: {examCycle.writtenExamDate}</li>
-          <li>技能: {examCycle.skillExamDates.join(' または ')}</li>
+          <li>学科筆記: {examCycle.writtenExamDate}(全国一斉)</li>
+          <li>技能: {examCycle.skillExamDates.join(' または ')}(試験地による)</li>
+          <li>受験手数料: {examCycle.examFeeInternetYen.toLocaleString()}円</li>
         </ul>
         <p className="notice">
-          この日程は要件定義書に記載された値(確認日 {examCycle.lastVerified})。
-          申込前に<a href={examCycle.sourceUrl} target="_blank" rel="noreferrer">公式ページ</a>で必ず自分の目で確認する。
+          出典は<a href={examCycle.sourcePdfUrl ?? examCycle.sourceUrl} target="_blank" rel="noreferrer">令和8年度下期受験案内</a>
+          (確認日 {examCycle.lastVerified})。{examCycle.feeNote}
+          {' '}申込前に<a href={examCycle.sourceUrl} target="_blank" rel="noreferrer">公式ページ</a>で最新を確認する。
         </p>
       </div>
 
@@ -57,27 +73,32 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
           <select
             id="mode"
             value={draft.academicMode}
-            onChange={(e) => set('academicMode', e.target.value as UserSettings['academicMode'])}
+            onChange={(e) => setMode(e.target.value as UserSettings['academicMode'])}
           >
             <option value="cbt">CBT(パソコンで受ける)</option>
-            <option value="paper">筆記({examCycle.writtenExamDate})</option>
+            <option value="paper">筆記({examCycle.writtenExamDate} 全国一斉)</option>
             <option value="undecided">まだ決めていない</option>
           </select>
         </div>
         <div className="field">
-          <label htmlFor="academicDate">学科の受験日(未定なら空欄でよい)</label>
+          <label htmlFor="academicDate">学科の受験日{paperFixed ? '(筆記は全国一斉で固定)' : '(未定なら空欄でよい)'}</label>
           <input
             id="academicDate"
             type="date"
             value={draft.academicDate ?? ''}
             min={examCycle.cbtWindowStart}
             max={examCycle.cbtWindowEnd}
+            disabled={paperFixed}
             onChange={(e) => set('academicDate', e.target.value || undefined)}
           />
-          <p className="muted">目安は 2026-10-24〜11-01。実際の予約枠に合わせて後で直す。</p>
+          <p className="muted">
+            {paperFixed
+              ? `筆記方式は ${examCycle.writtenExamDate} の全国一斉。日付は選べない。`
+              : `CBTは ${examCycle.cbtWindowStart}〜${examCycle.cbtWindowEnd} の中から予約する。目安は10月下旬。予約枠に合わせて後で直す。`}
+          </p>
         </div>
         <div className="field">
-          <label htmlFor="skillDate">技能の受験日</label>
+          <label htmlFor="skillDate">技能の受験日(仮)</label>
           <select
             id="skillDate"
             value={draft.skillDate ?? ''}
@@ -90,6 +111,10 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
               </option>
             ))}
           </select>
+          <p className="muted">
+            技能試験日は<strong>試験地によって決まる</strong>ので自分では選べない。
+            ここは計画用の仮置き。受験票が届いたら確定させる。
+          </p>
         </div>
       </div>
 

@@ -46,7 +46,8 @@ export function AdminTaskRow({ task }: { task: ResolvedAdminTask }) {
       </ul>
       {task.needsUserConfirm && (
         <p className="notice">
-          この期限は本ツールが受験日から逆算した推定値。公式で確認して設定タブから入れ直すこと。
+          {task.confirmNote ??
+            'この期限は本ツールが受験日から逆算した推定値。公式で確認して設定タブから入れ直すこと。'}
         </p>
       )}
       <div className="row">

@@ -182,6 +182,57 @@ describe('AT-004 再計画', () => {
     expect(lessonsOnDate(result, '2026-08-15')).toEqual(['b', 'c']); // 土
   });
 
+  it('【回帰】1日の容量を超えるレッスンは、空の日でも置かない', () => {
+    // 以前は「空の日なら容量超過でも1件は置く」という例外があり、
+    // 平日35分の日に120分の模試が載っていた
+    const lessons = [lesson('mock', 1, 120)];
+    const weekdayOnly = buildSchedule({
+      ...base,
+      weekdayMinutes: 35,
+      weekendMinutes: 35,
+      today: '2026-08-17', // 月
+      startDate: '2026-08-17',
+      academicDate: '2026-08-21', // 金まで。休日なし
+      curriculum: fakeCurriculum(lessons),
+    });
+    expect(weekdayOnly.days.every((d) => d.lessonIds.length === 0)).toBe(true);
+    expect(weekdayOnly.unplacedRequiredLessonIds).toEqual(['mock']);
+    // 「日数が足りない」ではなく「1日の枠より重い」と原因を分けて出す
+    expect(weekdayOnly.oversizedLessonIds).toEqual(['mock']);
+  });
+
+  it('重いレッスンは容量のある休日へ回る', () => {
+    const lessons = [lesson('mock', 1, 120)];
+    const result = buildSchedule({
+      ...base,
+      weekdayMinutes: 35,
+      weekendMinutes: 150,
+      today: '2026-08-17', // 月
+      startDate: '2026-08-17',
+      academicDate: '2026-08-23',
+      curriculum: fakeCurriculum(lessons),
+    });
+    expect(result.byLessonId.mock).toBe('2026-08-22'); // 土
+    expect(result.oversizedLessonIds).toEqual([]);
+    expect(result.days.every((d) => d.usedMinutes <= d.capacityMinutes)).toBe(true);
+  });
+
+  it('どの日も容量を超えない(実カリキュラム全体)', () => {
+    const result = buildSchedule({
+      today: '2026-08-11',
+      startDate: '2026-08-11',
+      academicDate: '2026-10-24',
+      skillDate: '2026-12-12',
+      weekdayMinutes: 35,
+      weekendMinutes: 150,
+      curriculum: realCurriculum,
+      progress: {},
+    });
+    for (const day of result.days) {
+      expect(day.usedMinutes, `${day.date}`).toBeLessThanOrEqual(day.capacityMinutes);
+    }
+  });
+
   it('受験日が未定でも学習は止まらない(仮の地平線を置く)', () => {
     const lessons = ['a', 'b'].map((id, i) => lesson(id, i + 1, 30));
     const result = buildSchedule({

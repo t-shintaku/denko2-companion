@@ -28,7 +28,6 @@ function makeContext(opts: {
     academicMode: 'cbt' as const,
     academicDate: '2026-10-24',
     skillDate: '2026-12-12',
-    academicReservationDeadline: undefined,
   };
   return {
     today: opts.today,

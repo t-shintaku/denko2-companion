@@ -70,7 +70,6 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       academicMode: settings?.academicMode ?? 'undecided',
       academicDate: settings?.academicDate,
       skillDate: settings?.skillDate ?? examCycle.skillExamDates[0],
-      academicReservationDeadline: settings?.academicReservationDeadline,
     });
 
     const onboarding = evaluateOnboarding(curriculum, snapshot.lessonProgress, snapshot.studySessions, {

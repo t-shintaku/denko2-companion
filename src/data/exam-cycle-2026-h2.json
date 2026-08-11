@@ -1,15 +1,21 @@
 {
   "id": "2026-h2",
-  "name": "2026年度 下期 第二種電気工事士試験",
+  "name": "令和8年度(2026年度) 下期 第二種電気工事士試験",
   "applicationStart": "2026-08-17T10:00:00+09:00",
   "applicationDeadline": "2026-09-03T17:00:00+09:00",
+  "paymentDeadline": "2026-09-04T17:00:00+09:00",
+  "cbtReservationStart": "2026-09-09T10:00:00+09:00",
+  "cbtReservationDeadline": "2026-10-14T23:59:00+09:00",
   "cbtWindowStart": "2026-09-24",
   "cbtWindowEnd": "2026-11-08",
   "writtenExamDate": "2026-10-25",
   "skillExamDates": ["2026-12-12", "2026-12-13"],
+  "skillResultAnnouncement": "2027-01-15T12:00:00+09:00",
   "examFeeInternetYen": 11100,
-  "examFeePaperYen": 12500,
+  "feeNote": "インターネット申込みの金額(非課税)。別途、事務手数料が申込者負担で必要。学科試験免除者も同額。",
   "sourceUrl": "https://www.shiken.or.jp/construction/second/",
+  "sourcePdfUrl": "https://www.shiken.or.jp/construction/upload/r8kmousikomiannai1.pdf",
   "lastVerified": "2026-08-11",
-  "verification": "requirements-doc"
+  "verification": "fetched",
+  "verificationNote": "令和8年度下期受験案内PDFの本文から抽出して確認(2026-08-11)。入金期限の時刻のみPDFに明記が無く、申込画面に表示される期限に従う。"
 }

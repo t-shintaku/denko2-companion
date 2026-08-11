@@ -11,6 +11,7 @@
 
 import type {
   Curriculum,
+  CurriculumLesson,
   LessonProgress,
   OnboardingStage,
   StudySession,
@@ -33,7 +34,19 @@ export type OnboardingState = {
   diagnosticManualUnlockOffered: boolean;
 };
 
-/** 基礎学習として数える時間。無採点5問など体験系は countsAsBasics=false で除外 */
+/**
+ * そのレッスンの学習時間を「基礎学習180分」へ算入してよいか。
+ *
+ * §6 は Step 1 オリエンテーション(60〜90分)と Step 3 基礎学習(3〜5時間)を別の段階として置いている。
+ * オリエンテーションを算入すると、標準見積100分ぶんが先に埋まり、
+ * 本来3時間必要な基礎が実質80分で診断解禁になる。
+ * 無採点5問(体験)も同じ理由で算入しない。
+ */
+export function countsAsBasics(lesson: Pick<CurriculumLesson, 'stage'>): boolean {
+  return lesson.stage === 'basics' || lesson.stage === 'regular';
+}
+
+/** 基礎学習として数える時間。オリエンテーション・無採点5問は countsAsBasics=false で除外 */
 export function basicsMinutes(sessions: StudySession[]): number {
   return sessions
     .filter((s) => s.countsAsBasics)

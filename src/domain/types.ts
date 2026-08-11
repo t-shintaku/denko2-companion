@@ -47,17 +47,24 @@ export type ExamCycle = {
   /** 申込開始。日付だけでなく時刻を持つ */
   applicationStart: IsoDateTime;
   applicationDeadline: IsoDateTime;
+  /** 受験手数料の入金期限。申込締切(9/3)とは別の日(9/4)なので独立して持つ */
+  paymentDeadline: IsoDateTime;
+  /** CBT会場予約は受験日からの逆算ではなく、年度ごとの固定期間 */
+  cbtReservationStart: IsoDateTime;
+  cbtReservationDeadline: IsoDateTime;
   cbtWindowStart?: IsoDate;
   cbtWindowEnd?: IsoDate;
   writtenExamDate?: IsoDate;
   skillExamDates: IsoDate[];
+  skillResultAnnouncement?: IsoDateTime;
   examFeeInternetYen: number;
-  examFeePaperYen: number;
+  feeNote?: string;
   sourceUrl: string;
-  /** 要件定義書に記載された確認日。アプリからURL到達性を検証した日付ではない */
+  sourcePdfUrl?: string;
   lastVerified: IsoDate;
-  /** 上記の値の検証方法。嘘をつかないための欄 */
+  /** 値の検証方法。嘘をつかないための欄。'fetched' は一次資料の本文を実際に読んだもの */
   verification: 'requirements-doc' | 'fetched' | 'user-confirmed';
+  verificationNote?: string;
 };
 
 export type AdminTaskCategory = 'application' | 'academic' | 'skill' | 'license';
@@ -80,8 +87,10 @@ export type AdminTaskTemplate = {
   dueAt?: IsoDateTime;
   anchor: AdminAnchor;
   dueSource: ValueSource;
-  /** true のとき UI に「推定・公式で要確認」を出す */
+  /** true のとき UI に確認を促す注意書きを出す */
   needsUserConfirm: boolean;
+  /** 何を確認すべきかの具体文。無ければ「受験日から逆算した推定値」の既定文を出す */
+  confirmNote?: string;
   /** CBT を選んだときだけ必要 など */
   appliesTo?: 'cbt' | 'paper';
   required: boolean;
@@ -231,8 +240,6 @@ export type UserSettings = {
   /** CBT/筆記の受験日。未定なら undefined */
   academicDate?: IsoDate;
   academicVenue?: string;
-  /** CBT 会場予約の期限。公式で確認して本人が入れる(needsUserConfirm) */
-  academicReservationDeadline?: IsoDate;
   academicReserved: boolean;
   skillDate?: IsoDate;
   weekdayMinutes: number;
@@ -301,7 +308,16 @@ export type StudySession = {
   startedAt: IsoDateTime;
   /** JST の暦日。集計とカレンダー用に非正規化して持つ */
   jstDate: IsoDate;
+  /**
+   * 実績時間。画面の滞在時間を実測し、本人が確認・修正した値。
+   * カリキュラムの見積(estimatedMinutes)を自動で入れてはいけない。
+   * ここが見積のままだと、クリックだけで基礎180分ゲートが開く。
+   */
   durationMinutes: number;
+  /** そのレッスンの見積時間。実績との差を見るために別で持つ */
+  estimatedMinutes?: number;
+  /** 実測値(参考)。本人が修正した場合、durationMinutes とは一致しない */
+  measuredMinutes?: number;
   kind: SessionKind;
   lessonId?: string;
   topicId?: TopicId;

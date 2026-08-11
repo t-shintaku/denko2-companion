@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { resolveResource } from '../../data';
+import { countsAsBasics } from '../../domain/onboarding';
 import { repo } from '../../db/repo';
 import { nowJstIso } from '../../domain/jst';
 import {
@@ -55,10 +56,25 @@ export function LessonPage({
   const [terms, setTerms] = useState<string[]>(['', '', '']);
   const [busy, setBusy] = useState(false);
 
+  // 学習時間は実測する。見積(estimatedMinutes)をそのまま実績にしない。
+  // 見積を自動記録すると、画面をクリックするだけで基礎180分ゲートが開いてしまう。
+  const openedAtRef = useRef<number>(Date.now());
+  const [actualMinutes, setActualMinutes] = useState<string>('');
+
   const steps = requiredSteps(lesson);
   const upcoming = nextStep(lesson, progress);
   const complete = isLessonComplete(lesson, progress);
   const isUngradedFive = lesson.stage === 'ungraded-five';
+
+  const measuredMinutes = () =>
+    Math.max(1, Math.round((Date.now() - openedAtRef.current) / 60_000));
+
+  // 「1点残す」まで来た時点で実測値を入れておく。本人はそのまま出すか直せる。
+  const reachedTakeaway = upcoming === 'takeaway';
+  useEffect(() => {
+    if (reachedTakeaway && actualMinutes === '') setActualMinutes(String(measuredMinutes()));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reachedTakeaway]);
 
   const resources = useMemo(
     () => lesson.resources.map(resolveResource).filter((r) => r !== undefined),
@@ -82,12 +98,17 @@ export function LessonPage({
       // 完了した瞬間にだけ学習セッションを1件記録する。
       // 動画を開いただけ(input のみ)では記録もXPも増えない(AT-003)。
       if (!before?.completedAt && next.completedAt) {
+        const measured = measuredMinutes();
+        const confirmed = Number(actualMinutes);
         await repo.addSession({
-          durationMinutes: lesson.estimatedMinutes[mode],
+          // 本人が確認・修正した実績時間。未入力なら実測値
+          durationMinutes: Number.isFinite(confirmed) && confirmed > 0 ? confirmed : measured,
+          measuredMinutes: measured,
+          estimatedMinutes: lesson.estimatedMinutes[mode],
           kind: PRACTICE_TO_SESSION[lesson.practice.kind] ?? 'theory',
           lessonId: lesson.id,
-          // 無採点5問は「体験」であって基礎学習時間に数えない(§6 Step 2)
-          countsAsBasics: !isUngradedFive,
+          // オリエンテーション(§6 Step 1)と無採点5問(Step 2)は基礎学習(Step 3)ではない
+          countsAsBasics: countsAsBasics(lesson),
           nextFix: takeaway,
         });
         if (isUngradedFive && settings) {
@@ -296,6 +317,35 @@ export function LessonPage({
           value={takeaway}
           onChange={(e) => setTakeaway(e.target.value)}
         />
+        <div className="field" style={{ marginTop: 12 }}>
+          <label htmlFor="actual-minutes">実際にかかった時間(分)</label>
+          <div className="row">
+            <input
+              id="actual-minutes"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={600}
+              style={{ flex: 1 }}
+              value={actualMinutes}
+              onChange={(e) => setActualMinutes(e.target.value)}
+            />
+            <button
+              type="button"
+              className="btn-sm"
+              onClick={() => setActualMinutes(String(measuredMinutes()))}
+            >
+              計測値を使う
+            </button>
+          </div>
+          <p className="muted">
+            この画面を開いてからの実測値を入れている。動画を別の場所で見た分などは自分で直す。
+            記録するのは見積({lesson.estimatedMinutes[mode]}分)ではなく、この実績。
+            {countsAsBasics(lesson)
+              ? ' この時間は基礎学習180分に算入される。'
+              : ' このレッスンは入口段階なので、基礎学習180分には算入しない。'}
+          </p>
+        </div>
         <button
           className="btn-primary btn-block"
           disabled={busy || takeaway.trim() === ''}

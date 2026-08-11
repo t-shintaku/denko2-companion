@@ -79,6 +79,50 @@ describe('Sprint 1 の通し動作', () => {
     expect(await screen.findByText(/完了。XP \+10/)).toBeInTheDocument();
   });
 
+  it('【回帰】筆記方式を選ぶと学科日が公式日へ固定され、変更できない', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderApp();
+
+    const modeSelect = await screen.findByLabelText('方式');
+    // CBTのあいだは自由入力できる
+    const dateInput = screen.getByLabelText(/学科の受験日/) as HTMLInputElement;
+    expect(dateInput.disabled).toBe(false);
+
+    await user.selectOptions(modeSelect, 'paper');
+
+    const fixed = screen.getByLabelText(/学科の受験日/) as HTMLInputElement;
+    expect(fixed.value).toBe('2026-10-25');
+    expect(fixed.disabled).toBe(true);
+    expect(screen.getByText(/全国一斉。日付は選べない/)).toBeInTheDocument();
+  });
+
+  it('技能日は試験地で決まると明示する', async () => {
+    renderApp();
+    await screen.findByRole('button', { name: 'はじめる' });
+    expect(screen.getByText(/試験地によって決まる/)).toBeInTheDocument();
+  });
+
+  it('レッスン完了時に、見積ではなく実績時間を入力させる', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderApp();
+    await user.click(await screen.findByRole('button', { name: 'はじめる' }));
+    await user.click(await screen.findByRole('button', { name: 'はじめる' }));
+
+    await user.click(await screen.findByRole('button', { name: '見たので次へ' }));
+    const recallSection = screen.getByRole('heading', { name: '2. 閉じて答える' }).closest('section')!;
+    await user.type(within(recallSection).getAllByRole('textbox')[0]!, 'a');
+    await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
+    const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
+    await user.type(within(practiceSection).getByLabelText('やったことのメモ'), 'b');
+    await user.click(within(practiceSection).getByRole('button', { name: /保存/ }));
+
+    // 「1点残す」へ到達した時点で、実測値が入る
+    const minutes = screen.getByLabelText('実際にかかった時間(分)') as HTMLInputElement;
+    await waitFor(() => expect(Number(minutes.value)).toBeGreaterThan(0));
+    // オリエンテーションは基礎180分に算入しないと明示する
+    expect(screen.getByText(/基礎学習180分には算入しない/)).toBeInTheDocument();
+  });
+
   it('設定タブでバックアップを書き出せる', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
