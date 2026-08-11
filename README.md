@@ -3,9 +3,8 @@
 第二種電気工事士 **2026年度下期** に、電気知識ゼロから独学で合格し、**免状を受領する**までを伴走する
 ローカルファーストPWA。
 
-- 要件の正本: `G:\マイドライブ\AI Context Hub\projects\electrician-class-2-tool-requirements-final.md`
-- 実装状況の正本: `G:\マイドライブ\AI Context Hub\projects\electrician-class-2-tool-implementation.md`
-- 旧要件定義・修正書・追加要件は検討履歴。実装要件には使わない。
+要件と実装状況の正本は、作者のローカルなノート(非公開)にある。
+このリポジトリは実装のみ。学習データは端末の IndexedDB に入り、外部へ送信しない。
 
 ## 動かす
 
@@ -23,17 +22,16 @@ Node 24 / npm 11 で確認。
 
 ## なぜ Google Drive の外にあるのか
 
-保管庫(`G:\マイドライブ\AI Context Hub`)の中に置くと **`npm install` が完走しない**。
+Google Drive の同期フォルダ内に置くと **`npm install` が完走しない**。
 実際に `EPERM: operation not permitted, rmdir` → `EBADF: bad file descriptor` で失敗した。
 `node_modules` だけをジャンクションで逃がす手も試したが、
 Google Drive のボリュームは NTFS ジャンクションを作れない(`Local NTFS volumes are required`)。
 
-よって要件書 §14 の逃げ道どおり **別リポジトリ・Drive外** に置いている。
-保管庫には要件書と実装メモ(と将来の週次Markdown)だけを残す。
+よって **Drive 外**に置いている。ノート側には要件と実装メモだけを残す。
 
 **バックアップは Drive 任せにできない。** GitHub へ push するか、
-`dist/` とソースを定期的にコピーすること。学習データ自体は端末の IndexedDB にあり、
-アプリの「設定 → JSONへ書き出す」で Drive へ保存できる(こちらが本命)。
+学習データ自体は端末の IndexedDB にあり、アプリの「設定 → JSONへ書き出す」で
+任意の場所へ保存できる(こちらが本命)。
 
 ## スマホで使うには配信先が要る(未決)
 

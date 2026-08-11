@@ -90,7 +90,7 @@
   {
     "id": "license-fee",
     "category": "license",
-    "label": "免状申請手数料(都道府県による。大阪府は5,300円)",
+    "label": "免状申請手数料(都道府県による。5,000円台のことが多い)",
     "status": "planned",
     "expectedYen": 5300,
     "required": true

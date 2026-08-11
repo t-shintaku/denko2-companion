@@ -133,7 +133,7 @@
     "order": 11,
     "category": "license",
     "title": "免状を申請する",
-    "description": "住民票のある都道府県へ第二種電気工事士免状を申請する。必要書類・手数料は都道府県による(大阪府なら5,300円)。合格しただけでは工事はできない。",
+    "description": "住民票のある都道府県へ第二種電気工事士免状を申請する。必要書類・手数料は都道府県による(5,000円台のことが多い)。合格しただけでは工事はできない。",
     "anchor": { "kind": "skill", "offsetDays": 70 },
     "dueSource": "derived",
     "needsUserConfirm": true,
