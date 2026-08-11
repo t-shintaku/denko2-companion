@@ -139,6 +139,22 @@ describe('Sprint 1 の通し動作', () => {
     clickSpy.mockRestore();
   });
 
+  it('設定タブに端末間の同期があり、既定では未接続で外へ出ない', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+
+    renderApp();
+    await user.click(await screen.findByRole('button', { name: 'はじめる' }));
+    await user.click(await screen.findByRole('button', { name: '設定' }));
+
+    expect(await screen.findByText('端末間の同期')).toBeInTheDocument();
+    expect(await screen.findByText(/未接続/)).toBeInTheDocument();
+    expect(await screen.findByLabelText('GitHub のトークン')).toBeInTheDocument();
+    // つなぐまでは通信しない(既定でローカルのまま)
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
   it('全削除は2段階の確認を要求する', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderApp();

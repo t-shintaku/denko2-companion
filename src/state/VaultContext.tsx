@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { repo, type VaultSnapshot } from '../db/repo';
+import { onRepoChange, repo, type VaultSnapshot } from '../db/repo';
+import { syncEngine } from '../sync/engine';
 import { adminTaskTemplates, curriculum, examCycle } from '../data';
 import { resolveAdminTasks, type ResolvedAdminTask } from '../domain/adminTasks';
 import { buildSchedule, type ScheduleResult } from '../domain/schedule';
@@ -23,7 +24,7 @@ import {
 import { skillGate as computeSkillGate } from '../domain/practical';
 import { todayJst } from '../domain/jst';
 import { topicIds } from '../data';
-import type { IsoDate, UserSettings } from '../domain/types';
+import type { IsoDate, SyncStatus, UserSettings } from '../domain/types';
 
 export type VaultValue = {
   ready: boolean;
@@ -38,6 +39,10 @@ export type VaultValue = {
   reviewQueue: ReviewItem[];
   skillGate: ReturnType<typeof computeSkillGate>;
   reload: () => Promise<void>;
+  /** 端末間同期の状態。設定画面と各タブの表示に使う */
+  syncStatus: SyncStatus;
+  /** 手で押したときの同期。間隔の制限を無視して必ず走る */
+  syncNow: () => Promise<void>;
 };
 
 const emptySnapshot: VaultSnapshot = {
@@ -56,6 +61,7 @@ const VaultContext = createContext<VaultValue | undefined>(undefined);
 export function VaultProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<VaultSnapshot>(emptySnapshot);
   const [ready, setReady] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ phase: 'off' });
   const today = todayJst();
 
   const reload = useCallback(async () => {
@@ -67,6 +73,37 @@ export function VaultProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void reload();
   }, [reload]);
+
+  // 端末間同期。IndexedDB は端末ごとに別なので、ここで繋がないと
+  // スマホ・PC・タブレットが別々の正答率とゲート判定を出し続ける。
+  useEffect(() => {
+    syncEngine.onPulled = reload;
+    const unsubscribeStatus = syncEngine.subscribe(setSyncStatus);
+    const unsubscribeRepo = onRepoChange(() => syncEngine.scheduleSoon());
+
+    void syncEngine.load().then((config) => {
+      if (config) void syncEngine.syncNow(true);
+    });
+
+    const onOnline = () => void syncEngine.syncNow(true);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void syncEngine.syncNow();
+    };
+    window.addEventListener('online', onOnline);
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      unsubscribeStatus();
+      unsubscribeRepo();
+      window.removeEventListener('online', onOnline);
+      document.removeEventListener('visibilitychange', onVisible);
+      syncEngine.onPulled = undefined;
+    };
+  }, [reload]);
+
+  const syncNow = useCallback(async () => {
+    await syncEngine.syncNow(true);
+  }, []);
 
   const value = useMemo<VaultValue>(() => {
     const settings = snapshot.settings;
@@ -116,8 +153,10 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       reviewQueue,
       skillGate,
       reload,
+      syncStatus,
+      syncNow,
     };
-  }, [snapshot, ready, today, reload]);
+  }, [snapshot, ready, today, reload, syncStatus, syncNow]);
 
   return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>;
 }

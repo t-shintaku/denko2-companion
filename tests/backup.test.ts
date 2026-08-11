@@ -128,6 +128,51 @@ describe('AT-009 データ管理', () => {
     expect(result.backup.data.studySessions[0]?.countsAsBasics).toBe(true);
   });
 
+  it('同期前(v2)の書き出しを読むと、全行に updatedAt が埋まる', () => {
+    // 埋め忘れると、その行は同期のたびに「最古」として扱われ、
+    // 他端末の古い版に負け続ける
+    const v2 = {
+      kind: 'denko2-companion-backup',
+      schemaVersion: 2,
+      exportedAt: '2026-08-11T10:00:00+09:00',
+      appVersion: '0.1.0',
+      data: {
+        ...emptyData(),
+        studySessions: [
+          {
+            id: 's1',
+            startedAt: '2026-08-11T20:00:00+09:00',
+            jstDate: '2026-08-11',
+            durationMinutes: 25,
+            kind: 'theory',
+            countsAsBasics: true,
+          } as never,
+        ],
+        questionAttempts: [
+          {
+            id: 'q1',
+            attemptedAt: '2026-08-11T21:00:00+09:00',
+            jstDate: '2026-08-11',
+            source: 'x',
+            questionRef: '1',
+            topicId: 'basic-theory',
+            correct: true,
+            confidence: 3,
+            scored: true,
+          } as never,
+        ],
+      },
+    };
+
+    const result = validateBackup(JSON.stringify(v2));
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.migratedFrom).toBe(2);
+    expect(result.backup.data.studySessions[0]?.updatedAt).toBe('2026-08-11T20:00:00+09:00');
+    expect(result.backup.data.questionAttempts[0]?.updatedAt).toBe('2026-08-11T21:00:00+09:00');
+  });
+
   it('将来テーブルが増えても、欠けているテーブルは空として扱う', () => {
     const partial = {
       kind: 'denko2-companion-backup',

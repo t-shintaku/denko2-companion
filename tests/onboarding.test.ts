@@ -30,6 +30,7 @@ function session(minutes: number, countsAsBasics = true): StudySession {
   return {
     id: `s${Math.random()}`,
     startedAt: '2026-08-12T10:00:00+09:00',
+    updatedAt: "2026-01-01T00:00:00+09:00",
     jstDate: '2026-08-12',
     durationMinutes: minutes,
     kind: 'theory',

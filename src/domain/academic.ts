@@ -327,6 +327,7 @@ export function buildExamRecords(
     minutes: input.minutes,
     timed: input.timed,
     note: input.note,
+    updatedAt: at,
   };
   const attempts: QuestionAttempt[] = input.questions.map((q, i) => ({
     id: ids.attemptId(i),
@@ -340,6 +341,7 @@ export function buildExamRecords(
     errorReason: q.correct ? undefined : q.errorReason,
     scored: true,
     examId: ids.examId,
+    updatedAt: at,
   }));
   return { exam, attempts };
 }

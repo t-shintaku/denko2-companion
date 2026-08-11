@@ -23,6 +23,7 @@ function att(
   return {
     id: `s${seq}`,
     attemptedAt: `${day}T10:${String(seq % 60).padStart(2, '0')}:00+09:00`,
+    updatedAt: "2026-01-01T00:00:00+09:00",
     candidateNo,
     workMinutes,
     completed: true,
@@ -146,10 +147,10 @@ describe('FR-011 候補13問の状態', () => {
 describe('AT-008 予算', () => {
   it('所有・借用・購入予定・購入済を区別する', () => {
     const items: BudgetItem[] = [
-      { id: '1', category: 'tool', label: '所有', status: 'owned', required: true },
-      { id: '2', category: 'tool', label: '借用', status: 'borrowable', required: true },
-      { id: '3', category: 'tool', label: '予定', status: 'planned', expectedYen: 4000, required: true },
-      { id: '4', category: 'tool', label: '購入済', status: 'purchased', actualYen: 3800, required: true },
+      { id: '1', category: 'tool', label: '所有', status: 'owned', required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
+      { id: '2', category: 'tool', label: '借用', status: 'borrowable', required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
+      { id: '3', category: 'tool', label: '予定', status: 'planned', expectedYen: 4000, required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
+      { id: '4', category: 'tool', label: '購入済', status: 'purchased', actualYen: 3800, required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
     ];
     const s = budgetSummary(items);
     expect(s.actualYen).toBe(3800);
@@ -159,9 +160,9 @@ describe('AT-008 予算', () => {
 
   it('実支出の合計が正しい', () => {
     const items: BudgetItem[] = [
-      { id: '1', category: 'exam', label: '受験料', status: 'purchased', actualYen: 11100, required: true },
-      { id: '2', category: 'tool', label: '圧着工具', status: 'purchased', actualYen: 4200, required: true },
-      { id: '3', category: 'material', label: '練習材料', status: 'planned', expectedYen: 20000, required: true },
+      { id: '1', category: 'exam', label: '受験料', status: 'purchased', actualYen: 11100, required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
+      { id: '2', category: 'tool', label: '圧着工具', status: 'purchased', actualYen: 4200, required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
+      { id: '3', category: 'material', label: '練習材料', status: 'planned', expectedYen: 20000, required: true, updatedAt: "2026-01-01T00:00:00+09:00" },
     ];
     expect(budgetSummary(items).actualYen).toBe(15300);
   });

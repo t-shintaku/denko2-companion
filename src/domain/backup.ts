@@ -6,7 +6,7 @@
  */
 
 import { nowJstIso } from './jst';
-import { SCHEMA_VERSION } from './types';
+import { SCHEMA_VERSION, SEED_UPDATED_AT } from './types';
 import type { BackupFile } from './types';
 
 export const APP_VERSION = '0.1.0';
@@ -44,34 +44,68 @@ export function buildBackup(
 
 /**
  * 旧 schemaVersion からの移行(AT-009)。
- * v1 が初版なので現時点では恒等変換だが、経路を先に作って移行テストを回せる形にしておく。
+ * 段ごとの変換を順に当てる。分岐を版ごとにコピーすると、版が増えたとき
+ * 「v1のときだけ updatedAt を足し忘れる」ような穴が必ず開く。
  */
 export function migrate(raw: BackupFile): { backup: BackupFile; migratedFrom?: number } {
   if (raw.schemaVersion === SCHEMA_VERSION) return { backup: raw };
-  if (raw.schemaVersion === 1) {
-    // v1 → v2: 模試セッション(mockExams)が無かった。空で足すだけでよい。
-    return {
-      backup: { ...raw, schemaVersion: SCHEMA_VERSION, data: { ...raw.data, mockExams: raw.data.mockExams ?? [] } },
-      migratedFrom: 1,
-    };
+  if (raw.schemaVersion > SCHEMA_VERSION || raw.schemaVersion < 0) {
+    throw new Error(`unsupported schemaVersion: ${raw.schemaVersion}`);
   }
-  if (raw.schemaVersion === 0) {
+
+  const from = raw.schemaVersion;
+  let data = raw.data;
+
+  if (from < 1) {
     // v0 → v1: studySessions に countsAsBasics が無かった。既定 true で補う。
-    const migrated: BackupFile = {
-      ...raw,
-      schemaVersion: SCHEMA_VERSION,
-      data: {
-        ...raw.data,
-        mockExams: raw.data.mockExams ?? [],
-        studySessions: raw.data.studySessions.map((s) => ({
-          ...s,
-          countsAsBasics: s.countsAsBasics ?? true,
-        })),
-      },
+    data = {
+      ...data,
+      studySessions: (data.studySessions ?? []).map((s) => ({
+        ...s,
+        countsAsBasics: s.countsAsBasics ?? true,
+      })),
     };
-    return { backup: migrated, migratedFrom: 0 };
   }
-  throw new Error(`unsupported schemaVersion: ${raw.schemaVersion}`);
+
+  if (from < 2) {
+    // v1 → v2: 模試セッション(mockExams)が無かった。空で足すだけでよい。
+    data = { ...data, mockExams: data.mockExams ?? [] };
+  }
+
+  if (from < 3) {
+    // v2 → v3: 端末間同期のため全行へ updatedAt を足す。
+    // 実在の時刻から埋め戻す。無ければ「最古」として扱われる値を入れ、
+    // 他端末の実データに勝たせない。
+    data = {
+      ...data,
+      studySessions: (data.studySessions ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? r.startedAt ?? SEED_UPDATED_AT,
+      })),
+      questionAttempts: (data.questionAttempts ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? r.reviewedAt ?? r.attemptedAt ?? SEED_UPDATED_AT,
+      })),
+      mockExams: (data.mockExams ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? r.takenAt ?? SEED_UPDATED_AT,
+      })),
+      unknownTerms: (data.unknownTerms ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? r.resolvedAt ?? r.createdAt ?? SEED_UPDATED_AT,
+      })),
+      skillAttempts: (data.skillAttempts ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? r.attemptedAt ?? SEED_UPDATED_AT,
+      })),
+      budgetItems: (data.budgetItems ?? []).map((r) => ({
+        ...r,
+        updatedAt: r.updatedAt ?? SEED_UPDATED_AT,
+      })),
+    };
+  }
+
+  return { backup: { ...raw, schemaVersion: SCHEMA_VERSION, data }, migratedFrom: from };
 }
 
 export function validateBackup(text: string): ValidationResult {

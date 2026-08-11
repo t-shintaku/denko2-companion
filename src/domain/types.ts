@@ -8,7 +8,25 @@
  * - カリキュラムは絶対日付を持たない。受験日と開始日から実行時に配置する(FR-005)。
  */
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
+
+/**
+ * 端末間同期のマージ基準。**全ユーザーデータが updatedAt を持つ**(v3)。
+ *
+ * 派生値(attemptedAt など)から更新時刻を推測する作りにはしない。
+ * 推測式は「あとで編集できる欄が1つ増えた」瞬間に静かに壊れ、
+ * 壊れたことが同期の取りこぼしとしてしか現れない。1本の明示欄で揃える。
+ */
+export type Synced = {
+  updatedAt: IsoDateTime;
+};
+
+/**
+ * カタログ由来の既定レコード(工具・材料)の updatedAt。
+ * 実在の更新より必ず古い値にしておく。そうしないと、新しい端末が既定値を播いた瞬間に
+ * 「購入済み」を上書きして消してしまう。
+ */
+export const SEED_UPDATED_AT = '1970-01-01T00:00:00+09:00';
 
 /** JST の暦日。'YYYY-MM-DD' */
 export type IsoDate = string;
@@ -326,6 +344,7 @@ export type StudySession = {
   nextFix?: string;
   /** 基礎学習180分の集計対象か。無採点5問など体験系は false */
   countsAsBasics: boolean;
+  updatedAt: IsoDateTime;
 };
 
 export type ErrorReason =
@@ -354,6 +373,7 @@ export type QuestionAttempt = {
   examId?: string;
   /** 復習キューで解き直した日時。付くとキューから外れる */
   reviewedAt?: IsoDateTime;
+  updatedAt: IsoDateTime;
 };
 
 export type ExamKind = 'diagnostic-20' | 'topic-quiz' | 'mock-50';
@@ -373,6 +393,7 @@ export type MockExam = {
   /** 本番同様(50問120分)として実施したか。学科ゲートの「120分模試2回以上」に効く */
   timed: boolean;
   note?: string;
+  updatedAt: IsoDateTime;
 };
 
 export type UnknownTerm = {
@@ -383,6 +404,7 @@ export type UnknownTerm = {
   origin: string;
   resolvedAt?: IsoDateTime;
   explanation?: string;
+  updatedAt: IsoDateTime;
 };
 
 export type SkillAttempt = {
@@ -396,6 +418,7 @@ export type SkillAttempt = {
   defectCodes: string[];
   photoIds: string[];
   nextFix?: string;
+  updatedAt: IsoDateTime;
 };
 
 export type BudgetItem = {
@@ -407,11 +430,47 @@ export type BudgetItem = {
   actualYen?: number;
   purchasedAt?: IsoDate;
   required: boolean;
+  updatedAt: IsoDateTime;
 };
 
 // ---------------------------------------------------------------------------
 // バックアップ
 // ---------------------------------------------------------------------------
+
+/**
+ * 端末間同期の設定(FR-019拡張)。**バックアップJSONには含めない**。
+ * トークンが書き出しファイルに混ざると、Driveへ置いた瞬間に事故になる。
+ */
+export type SyncConfig = {
+  id: 'main';
+  provider: 'github';
+  owner: string;
+  repo: string;
+  branch: string;
+  path: string;
+  /** GitHub のトークン。この端末のブラウザから出さない */
+  token: string;
+  /** どの端末が最後に書いたかを画面に出すための名前 */
+  deviceName: string;
+  lastSyncedAt?: IsoDateTime;
+  /** 直前に読んだリモートの sha。これが合わなければ他端末が先に書いている */
+  remoteSha?: string;
+  /** 最後に送った内容の指紋。同じなら送らない(空コミットを積まない) */
+  lastPushedDigest?: string;
+};
+
+export type SyncPhase = 'off' | 'idle' | 'syncing' | 'error' | 'offline';
+
+export type SyncStatus = {
+  phase: SyncPhase;
+  lastSyncedAt?: IsoDateTime;
+  /** 画面に出す人間向けの一行 */
+  message?: string;
+  /** 直近の同期で取り込んだ件数 */
+  pulled?: number;
+  /** 直近の同期で送った件数 */
+  pushed?: number;
+};
 
 export type BackupFile = {
   kind: 'denko2-companion-backup';

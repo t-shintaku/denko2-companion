@@ -24,6 +24,7 @@ function attempt(
   return {
     id: `a${i}`,
     attemptedAt: `${day}T10:${String(i % 60).padStart(2, '0')}:00+09:00`,
+    updatedAt: "2026-01-01T00:00:00+09:00",
     jstDate: day,
     source: 'test',
     questionRef: `第${i}問`,
@@ -38,6 +39,7 @@ function mock(id: string, correct: number, timed = false, day = '2026-10-01'): M
   return {
     id,
     takenAt: `${day}T10:00:00+09:00`,
+    updatedAt: "2026-01-01T00:00:00+09:00",
     jstDate: day,
     kind: 'mock-50',
     label: id,

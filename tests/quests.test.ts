@@ -84,6 +84,7 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
       {
         id: 's1',
         startedAt: '2026-08-11T20:00:00+09:00',
+        updatedAt: "2026-01-01T00:00:00+09:00",
         jstDate: '2026-08-11',
         durationMinutes: 25,
         kind: 'theory',
@@ -107,6 +108,7 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
       {
         id: 's1',
         startedAt: '2026-08-11T20:00:00+09:00',
+        updatedAt: "2026-01-01T00:00:00+09:00",
         jstDate: '2026-08-11',
         durationMinutes: 25,
         kind: 'theory',

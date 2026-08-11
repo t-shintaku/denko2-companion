@@ -49,6 +49,7 @@ describe('基礎180分の算入範囲', () => {
     const sessions: StudySession[] = orientation.map((l, i) => ({
       id: `s${i}`,
       startedAt: '2026-08-12T10:00:00+09:00',
+      updatedAt: "2026-01-01T00:00:00+09:00",
       jstDate: '2026-08-12',
       durationMinutes: l.estimatedMinutes.standard,
       kind: 'theory',
@@ -70,6 +71,7 @@ describe('基礎180分の算入範囲', () => {
     const orientationOnly: StudySession[] = [...orientation, ungraded].map((l, i) => ({
       id: `o${i}`,
       startedAt: '2026-08-12T10:00:00+09:00',
+      updatedAt: "2026-01-01T00:00:00+09:00",
       jstDate: '2026-08-12',
       durationMinutes: l.estimatedMinutes.standard,
       kind: 'theory',
@@ -95,6 +97,7 @@ describe('基礎180分の算入範囲', () => {
         {
           id: 'b1',
           startedAt: '2026-08-20T10:00:00+09:00',
+          updatedAt: "2026-01-01T00:00:00+09:00",
           jstDate: '2026-08-20',
           durationMinutes: BASICS_REQUIRED_MINUTES,
           kind: 'theory',

@@ -6,6 +6,7 @@ import { buildIcs, icsFileName } from '../../domain/ics';
 import { formatJstDateTime, nowJstIso } from '../../domain/jst';
 import { SCHEMA_VERSION } from '../../domain/types';
 import { AdminTaskList } from '../milestones/AdminTaskList';
+import { SyncPanel } from './SyncPanel';
 import { useVault } from '../../state/VaultContext';
 import type { UserSettings } from '../../domain/types';
 
@@ -252,10 +253,13 @@ export function SettingsPage() {
         </ul>
       </div>
 
+      <SyncPanel />
+
       <h2>バックアップ</h2>
       <div className="card">
         <p className="muted">
-          データはこの端末の中だけにある。アカウントもサーバーもない。端末を初期化すると消える。
+          同期をつないでいれば、書き込みのたびに非公開リポジトリへコミットが残る(=履歴つきバックアップ)。
+          つないでいない場合、データはこの端末の中だけにあり、端末を初期化すると消える。
           月に一度は書き出してGoogle Driveへ置く。
         </p>
         <div className="stack">

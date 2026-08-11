@@ -7,7 +7,7 @@ import { db as defaultDb } from './db';
 import { nowJstIso, todayJst } from '../domain/jst';
 import { buildBackup } from '../domain/backup';
 import { buildExamRecords, type ExamInput } from '../domain/academic';
-import { SCHEMA_VERSION } from '../domain/types';
+import { SCHEMA_VERSION, SEED_UPDATED_AT } from '../domain/types';
 import type {
   AdminTaskState,
   BackupFile,
@@ -19,9 +19,32 @@ import type {
   SessionKind,
   SkillAttempt,
   StudySession,
+  SyncConfig,
   UnknownTerm,
   UserSettings,
 } from '../domain/types';
+
+/**
+ * 書き込みが起きたことの通知。同期エンジンがこれを拾って送信を予約する。
+ * 画面側の呼び出し(19か所)を書き換えずに済むよう、入口である Repo 側で鳴らす。
+ */
+type ChangeListener = () => void;
+const changeListeners = new Set<ChangeListener>();
+
+export function onRepoChange(listener: ChangeListener): () => void {
+  changeListeners.add(listener);
+  return () => changeListeners.delete(listener);
+}
+
+function emitChange(): void {
+  for (const listener of changeListeners) {
+    try {
+      listener();
+    } catch {
+      // 通知先の失敗で保存を巻き戻さない。同期が遅れるだけにする
+    }
+  }
+}
 
 export type VaultSnapshot = {
   settings?: UserSettings;
@@ -109,10 +132,12 @@ export class Repo {
 
   async saveSettings(settings: UserSettings, now: Date = new Date()): Promise<void> {
     await this.db.settings.put({ ...settings, updatedAt: nowJstIso(now) });
+    emitChange();
   }
 
   async saveLessonProgress(progress: LessonProgress): Promise<void> {
     await this.db.lessonProgress.put(progress);
+    emitChange();
   }
 
   async setAdminTaskDone(
@@ -127,6 +152,7 @@ export class Repo {
       doneAt: done ? nowJstIso(now) : undefined,
       updatedAt: nowJstIso(now),
     });
+    emitChange();
   }
 
   async setAdminTaskDue(taskId: string, dueAt: string | undefined, now = new Date()): Promise<void> {
@@ -137,6 +163,7 @@ export class Repo {
       dueOverrideAt: dueAt,
       updatedAt: nowJstIso(now),
     });
+    emitChange();
   }
 
   async addSession(input: {
@@ -162,8 +189,10 @@ export class Repo {
       lessonId: input.lessonId,
       nextFix: input.nextFix,
       countsAsBasics: input.countsAsBasics,
+      updatedAt: nowJstIso(now),
     };
     await this.db.studySessions.put(session);
+    emitChange();
     return session;
   }
 
@@ -172,8 +201,17 @@ export class Repo {
       .map((t) => t.trim())
       .filter(Boolean)
       .slice(0, 3) // 最大3つ(FR-003)
-      .map((term) => ({ id: newId('term'), term, createdAt: nowJstIso(now), origin }));
-    if (rows.length > 0) await this.db.unknownTerms.bulkPut(rows);
+      .map((term) => ({
+        id: newId('term'),
+        term,
+        createdAt: nowJstIso(now),
+        origin,
+        updatedAt: nowJstIso(now),
+      }));
+    if (rows.length > 0) {
+      await this.db.unknownTerms.bulkPut(rows);
+      emitChange();
+    }
   }
 
   /** 小テスト・模試を1セッションとして保存する(FR-010) */
@@ -189,6 +227,7 @@ export class Repo {
       await this.db.mockExams.put(exam);
       await this.db.questionAttempts.bulkPut(attempts);
     });
+    emitChange();
     return exam;
   }
 
@@ -198,29 +237,47 @@ export class Repo {
     await this.db.transaction('rw', this.db.questionAttempts, async () => {
       for (const id of attemptIds) {
         const a = await this.db.questionAttempts.get(id);
-        if (a) await this.db.questionAttempts.put({ ...a, reviewedAt: stamp });
+        if (a) await this.db.questionAttempts.put({ ...a, reviewedAt: stamp, updatedAt: stamp });
       }
     });
+    emitChange();
   }
 
   async addSkillAttempt(
-    input: Omit<SkillAttempt, 'id' | 'attemptedAt'>,
+    input: Omit<SkillAttempt, 'id' | 'attemptedAt' | 'updatedAt'>,
     now: Date = new Date(),
   ): Promise<SkillAttempt> {
-    const attempt: SkillAttempt = { ...input, id: newId('skill'), attemptedAt: nowJstIso(now) };
+    const attempt: SkillAttempt = {
+      ...input,
+      id: newId('skill'),
+      attemptedAt: nowJstIso(now),
+      updatedAt: nowJstIso(now),
+    };
     await this.db.skillAttempts.put(attempt);
+    emitChange();
     return attempt;
   }
 
-  async saveBudgetItem(item: BudgetItem): Promise<void> {
-    await this.db.budgetItems.put(item);
+  async saveBudgetItem(item: BudgetItem, now: Date = new Date()): Promise<void> {
+    await this.db.budgetItems.put({ ...item, updatedAt: nowJstIso(now) });
+    emitChange();
   }
 
+  /**
+   * カタログ既定の播き直し。updatedAt は SEED_UPDATED_AT(1970年)で入れる。
+   * 現在時刻を入れると、新しい端末が初めて技能タブを開いた瞬間に
+   * 他端末の「購入済み」を既定値で上書きしてしまう。既定値は常に負ける側に置く。
+   */
   async seedBudgetItems(items: BudgetItem[]): Promise<void> {
     const existing = await this.db.budgetItems.toArray();
     const known = new Set(existing.map((i) => i.id));
-    const fresh = items.filter((i) => !known.has(i.id));
-    if (fresh.length > 0) await this.db.budgetItems.bulkPut(fresh);
+    const fresh = items
+      .filter((i) => !known.has(i.id))
+      .map((i) => ({ ...i, updatedAt: SEED_UPDATED_AT }));
+    if (fresh.length > 0) {
+      await this.db.budgetItems.bulkPut(fresh);
+      emitChange();
+    }
   }
 
   async exportBackup(now: Date = new Date()): Promise<BackupFile> {
@@ -285,10 +342,73 @@ export class Repo {
         ]);
       },
     );
+    emitChange();
   }
 
-  /** 全削除。呼び出し側で2段階確認とバックアップ案内を行う(FR-019) */
+  /**
+   * 同期で合体した結果を書き戻す。**clear を1回も呼ばない**のが importBackup との違い。
+   *
+   * 同期は「片方に無い = 消された」と解釈しない(merge.ts の不変条件1)。
+   * ここで clear を入れると、リモートがまだ空の初回同期で、この端末の記録が消える。
+   */
+  async applyMerged(d: BackupFile['data']): Promise<void> {
+    await this.db.transaction(
+      'rw',
+      [
+        this.db.settings,
+        this.db.lessonProgress,
+        this.db.adminTaskStates,
+        this.db.studySessions,
+        this.db.questionAttempts,
+        this.db.mockExams,
+        this.db.unknownTerms,
+        this.db.skillAttempts,
+        this.db.budgetItems,
+      ],
+      async () => {
+        await Promise.all([
+          this.db.settings.bulkPut(d.settings),
+          this.db.lessonProgress.bulkPut(d.lessonProgress),
+          this.db.adminTaskStates.bulkPut(d.adminTaskStates),
+          this.db.studySessions.bulkPut(d.studySessions),
+          this.db.questionAttempts.bulkPut(d.questionAttempts),
+          this.db.mockExams.bulkPut(d.mockExams ?? []),
+          this.db.unknownTerms.bulkPut(d.unknownTerms),
+          this.db.skillAttempts.bulkPut(d.skillAttempts),
+          this.db.budgetItems.bulkPut(d.budgetItems),
+        ]);
+      },
+    );
+    // ここでは emitChange しない。同期の書き戻しがまた同期を呼ぶ輪を作らないため
+  }
+
+  async getSyncConfig(): Promise<SyncConfig | undefined> {
+    return this.db.syncMeta.get('main');
+  }
+
+  async saveSyncConfig(config: SyncConfig): Promise<void> {
+    await this.db.syncMeta.put(config);
+  }
+
+  async patchSyncConfig(patch: Partial<SyncConfig>): Promise<void> {
+    const current = await this.db.syncMeta.get('main');
+    if (!current) return;
+    await this.db.syncMeta.put({ ...current, ...patch });
+  }
+
+  async clearSyncConfig(): Promise<void> {
+    await this.db.syncMeta.clear();
+  }
+
+  /**
+   * 全削除。呼び出し側で2段階確認とバックアップ案内を行う(FR-019)。
+   *
+   * 同期設定も一緒に消す。残したままだと次の同期でクラウドから全部戻ってきて、
+   * 「消したのに消えていない」という一番たちの悪い状態になる。
+   * なお**クラウド側のデータは消さない**。この端末が真っ白になるだけ。
+   */
   async wipe(): Promise<void> {
+    await this.db.syncMeta.clear();
     await Promise.all([
       this.db.settings.clear(),
       this.db.lessonProgress.clear(),
