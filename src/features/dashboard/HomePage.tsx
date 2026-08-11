@@ -5,6 +5,7 @@ import { formatJstShort } from '../../domain/jst';
 import { MODE_LABEL, modeForBudget } from '../../domain/lessons';
 import { STAGE_HINT, STAGE_LABEL } from '../../domain/onboarding';
 import { REASON_LABEL, buildTodayQuests, daysSinceLastActivity } from '../../domain/quests';
+import { comebackCount, mockTrend, reviewProgress, weekSummary } from '../../domain/growth';
 import { useVault } from '../../state/VaultContext';
 import { AdminTaskRow } from '../milestones/AdminTaskList';
 import type { LessonMode } from '../../domain/types';
@@ -27,6 +28,10 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
   const urgent = actionableAdminTasks(adminTasks);
   const gap = daysSinceLastActivity(snapshot.studySessions, snapshot.lessonProgress, today);
+  const week = weekSummary(snapshot.studySessions, today);
+  const comebacks = comebackCount(snapshot.studySessions);
+  const trend = mockTrend(snapshot.mockExams);
+  const review = reviewProgress(snapshot.questionAttempts);
   const basicsPct = Math.min(
     100,
     Math.round((onboarding.basicsMinutes / onboarding.basicsRequiredMinutes) * 100),
@@ -43,10 +48,30 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         <div className="card card--accent">
           <strong>{gap}日ぶり。おかえり。</strong>
           <p className="muted">
-            失点ではない。連続日数は数えていない。今日は10分だけ戻せば十分。
+            失点ではない。連続日数は数えていない。数えているのは戻ってきた回数(いま{comebacks + 1}回目)。
+            下の「今日のクエスト」の1件だけやれば、それで今日は十分。
           </p>
         </div>
       )}
+
+      <div className="card">
+        <div className="row row--between">
+          <strong>今週やった日</strong>
+          <span className="badge">{week.days} / 7 日</span>
+        </div>
+        <p className="muted">
+          今週 {week.minutes}分。
+          {week.daysDelta > 0
+            ? ` 先週の同じ時点より${week.daysDelta}日多い。`
+            : week.daysDelta < 0
+              ? ` 先週の同じ時点より${Math.abs(week.daysDelta)}日少ない。取り返す必要はない。今日1日でいい。`
+              : ' 先週の同じ時点と同じペース。'}
+          {trend.latest !== undefined && ` 模試の最新は${trend.latest}点`}
+          {trend.delta !== undefined &&
+            (trend.delta >= 0 ? `(前回より+${trend.delta}点)。` : `(前回より${trend.delta}点)。`)}
+          {review.solved > 0 && ` 復習で解けるようになった問題 ${review.solved}問。`}
+        </p>
+      </div>
 
       {urgent[0] && (
         <>

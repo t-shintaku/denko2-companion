@@ -6,7 +6,7 @@ import type { Denko2Db } from './db';
 import { db as defaultDb } from './db';
 import { nowJstIso, todayJst } from '../domain/jst';
 import { buildBackup } from '../domain/backup';
-import { buildExamRecords, type ExamInput } from '../domain/academic';
+import { applyReview, buildExamRecords, type ExamInput } from '../domain/academic';
 import { SCHEMA_VERSION, SEED_UPDATED_AT } from '../domain/types';
 import type {
   AdminTaskState,
@@ -231,13 +231,22 @@ export class Repo {
     return exam;
   }
 
-  /** 復習キューから外す(解き直した) */
-  async markReviewed(attemptIds: string[], now: Date = new Date()): Promise<void> {
+  /**
+   * 解き直しの記録。**解けたかどうかを必ず受け取る。**
+   * 「解き直した」を押しただけで永久にキューから消すと、覚えていない問題が
+   * 静かに消える。解けたら間隔を広げ、解けなければ翌日また出す。
+   */
+  async markReviewed(
+    attemptIds: string[],
+    correct: boolean,
+    now: Date = new Date(),
+  ): Promise<void> {
     const stamp = nowJstIso(now);
+    const today = todayJst(now);
     await this.db.transaction('rw', this.db.questionAttempts, async () => {
       for (const id of attemptIds) {
         const a = await this.db.questionAttempts.get(id);
-        if (a) await this.db.questionAttempts.put({ ...a, reviewedAt: stamp, updatedAt: stamp });
+        if (a) await this.db.questionAttempts.put(applyReview(a, correct, stamp, today));
       }
     });
     emitChange();
@@ -248,6 +257,7 @@ export class Repo {
     now: Date = new Date(),
   ): Promise<SkillAttempt> {
     const attempt: SkillAttempt = {
+      kind: 'candidate',
       ...input,
       id: newId('skill'),
       attemptedAt: nowJstIso(now),
@@ -255,6 +265,40 @@ export class Repo {
     };
     await this.db.skillAttempts.put(attempt);
     emitChange();
+    return attempt;
+  }
+
+  /**
+   * 反復欠陥の部分練習(drill)。その工程だけを繰り返した記録。
+   * 候補問題の1回としては数えない(13問到達や直近3作品の判定に混ぜない)。
+   */
+  async addDefectDrill(
+    input: { codes: string[]; minutes: number; note?: string },
+    now: Date = new Date(),
+  ): Promise<SkillAttempt> {
+    const attempt = await this.addSkillAttempt(
+      {
+        kind: 'drill',
+        candidateNo: 0,
+        workMinutes: Math.max(1, input.minutes),
+        completed: true,
+        defectFree: true,
+        defectCodes: [],
+        clearedDefectCodes: input.codes,
+        photoIds: [],
+        nextFix: input.note,
+      },
+      now,
+    );
+    await this.addSession(
+      {
+        durationMinutes: Math.max(1, input.minutes),
+        kind: 'basic-skill',
+        countsAsBasics: false,
+        nextFix: input.note,
+      },
+      now,
+    );
     return attempt;
   }
 

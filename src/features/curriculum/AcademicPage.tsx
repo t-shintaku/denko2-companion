@@ -4,13 +4,17 @@ import { repo } from '../../db/repo';
 import {
   ERROR_REASON_LABEL,
   OFFICIAL_PASS_SCORE,
+  RECENT_WINDOW,
   REVIEW_REASON_LABEL,
   TARGET_AVERAGE_SCORE,
   TOPIC_MIN_SAMPLE,
+  excludedMocks,
   mocks,
   recentAverageScore,
   scoreOf,
 } from '../../domain/academic';
+import { mockTrend, reviewProgress, topicMoves } from '../../domain/growth';
+import { topicIds } from '../../data';
 import { formatJstShort } from '../../domain/jst';
 import { completionRatio, isLessonComplete, modeForBudget } from '../../domain/lessons';
 import { STAGE_LABEL } from '../../domain/onboarding';
@@ -41,6 +45,10 @@ export function AcademicPage({
   const currentRank = stageRank[onboarding.stage] ?? 4;
   const mockList = mocks(snapshot.mockExams);
   const avg = recentAverageScore(snapshot.mockExams, 3);
+  const excluded = excludedMocks(snapshot.mockExams);
+  const trend = mockTrend(snapshot.mockExams);
+  const moves = topicMoves(snapshot.questionAttempts, topicIds);
+  const review = reviewProgress(snapshot.questionAttempts);
 
   return (
     <main className="app">
@@ -80,8 +88,8 @@ export function AcademicPage({
             <tr>
               <th>科目</th>
               <th>累計</th>
-              <th>正答率</th>
-              <th>直近20問</th>
+              <th>累計正答率</th>
+              <th>直近{RECENT_WINDOW}問(判定はこちら)</th>
               <th>最終</th>
             </tr>
           </thead>
@@ -94,17 +102,27 @@ export function AcademicPage({
                   {s.accuracy === undefined
                     ? '—'
                     : `${Math.round(s.accuracy * 100)}%`}
-                  {s.started && !s.hasSample && (
-                    <span className="muted"> (判定に{TOPIC_MIN_SAMPLE}問必要)</span>
-                  )}
-                  {s.started && s.hasSample && !s.meetsMinimum && (
-                    <span className="badge badge--warn"> 未達</span>
-                  )}
                 </td>
                 <td>
                   {s.recentAccuracy === undefined
                     ? '—'
                     : `${Math.round(s.recentAccuracy * 100)}%`}
+                  {s.started && !s.hasSample && (
+                    <span className="muted"> (判定に直近{TOPIC_MIN_SAMPLE}問必要)</span>
+                  )}
+                  {s.started && s.hasSample && !s.meetsMinimum && (
+                    <span className="badge badge--warn"> 未達</span>
+                  )}
+                  {(() => {
+                    const move = moves.find((m) => m.topicId === s.topicId);
+                    if (!move || Math.abs(move.delta) < 0.05) return null;
+                    return (
+                      <span className={move.delta > 0 ? 'badge badge--ok' : 'badge badge--warn'}>
+                        {move.delta > 0 ? '↑' : '↓'}
+                        {Math.abs(Math.round(move.delta * 100))}pt
+                      </span>
+                    );
+                  })()}
                 </td>
                 <td>{s.lastAttemptedOn ? formatJstShort(s.lastAttemptedOn) : '—'}</td>
               </tr>
@@ -123,10 +141,12 @@ export function AcademicPage({
           <>
             <p className="muted">
               誤答だけでなく「自信の低い正解」も同じ重みで入れている。まぐれ当たりは次に落ちる。
+              解けたら翌日 → 3日後 → 7日後 → 14日後と間隔を空けて戻ってくる。
+              4つの間隔をすべて解けたら卒業。解けなければ翌日また出る。
             </p>
             <ul className="plain stack">
               {reviewQueue.slice(0, 10).map((item) => (
-                <li key={item.attempt.id} className="row row--between">
+                <li key={item.attempt.id} className="stack" style={{ marginBottom: 12 }}>
                   <span>
                     {topicName(item.attempt.topicId)} — {item.attempt.questionRef}
                     <br />
@@ -136,17 +156,31 @@ export function AcademicPage({
                         ? ` / ${ERROR_REASON_LABEL[item.attempt.errorReason]}`
                         : ''}
                       {` / ${formatJstShort(item.attempt.jstDate)}`}
+                      {item.attempt.reviewCount
+                        ? ` / 解き直し${item.attempt.reviewCount}回目まで通過`
+                        : ''}
                     </span>
                   </span>
-                  <button
-                    className="btn-sm"
-                    onClick={async () => {
-                      await repo.markReviewed([item.attempt.id]);
-                      await reload();
-                    }}
-                  >
-                    解き直した
-                  </button>
+                  <div className="row">
+                    <button
+                      className="btn-primary btn-sm"
+                      onClick={async () => {
+                        await repo.markReviewed([item.attempt.id], true);
+                        await reload();
+                      }}
+                    >
+                      ○ 解けた
+                    </button>
+                    <button
+                      className="btn-sm"
+                      onClick={async () => {
+                        await repo.markReviewed([item.attempt.id], false);
+                        await reload();
+                      }}
+                    >
+                      × まだ(明日また出す)
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -176,12 +210,35 @@ export function AcademicPage({
         </p>
       </div>
 
+      {excluded.length > 0 && (
+        <p className="notice">
+          {excluded.length}件の模試を集計から外している(50問でない、または正答数が0〜問題数の範囲外)。
+          点数の水増しは受験の判断をそのまま誤らせるので、集計側でも弾いている。
+        </p>
+      )}
+
       {mockList.length > 0 && (
         <div className="card">
           <div className="row row--between">
             <strong>模試の推移</strong>
             {avg !== undefined && <span className="badge">直近3回平均 {avg.toFixed(1)}点</span>}
           </div>
+          <p className="muted">
+            {trend.latest !== undefined && `最新 ${trend.latest}点`}
+            {trend.delta !== undefined && (
+              <span className={trend.delta >= 0 ? 'badge badge--ok' : 'badge badge--warn'}>
+                {trend.delta >= 0 ? `前回より+${trend.delta}点` : `前回より${trend.delta}点`}
+              </span>
+            )}
+            {trend.best !== undefined && ` / 自己最高 ${trend.best}点`}
+          </p>
+          {review.solved > 0 && (
+            <p className="muted">
+              復習で解き直して解けた問題: <strong>{review.solved}</strong> 問
+              {review.graduated > 0 && `(うち${review.graduated}問は間隔をすべて通過して卒業)`}
+              {review.pending > 0 && ` / 残り ${review.pending} 問`}
+            </p>
+          )}
           <ul className="plain">
             {[...mockList].reverse().map((e) => (
               <li key={e.id} className="row row--between">

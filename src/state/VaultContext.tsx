@@ -137,7 +137,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       snapshot.mockExams,
       topicStats,
     );
-    const reviewQueue = computeReviewQueue(snapshot.questionAttempts, topicStats);
+    const reviewQueue = computeReviewQueue(snapshot.questionAttempts, topicStats, 30, today);
     const skillGate = computeSkillGate(snapshot.skillAttempts, snapshot.budgetItems);
 
     return {

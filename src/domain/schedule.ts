@@ -9,6 +9,7 @@
  */
 
 import { addDays, dateRange, diffDays, isWeekend } from './jst';
+import { scheduleCost } from './lessons';
 import type {
   Curriculum,
   CurriculumLesson,
@@ -53,6 +54,15 @@ function isComplete(progress: LessonProgress | undefined): boolean {
   return Boolean(progress?.completedAt);
 }
 
+/**
+ * 1日の枠に対して数える所要時間。
+ * 段階に明示時間があるレッスンは、その合計を下回る見積では積まない
+ * (「今日は120分の模試」と表示しながら予定表では60分として2本積む、を防ぐ)。
+ */
+function costOf(lesson: CurriculumLesson): number {
+  return scheduleCost(lesson);
+}
+
 function capacityOf(date: IsoDate, weekdayMinutes: number, weekendMinutes: number): number {
   return isWeekend(date) ? weekendMinutes : weekdayMinutes;
 }
@@ -79,7 +89,7 @@ function makeDays(
  * 「今日やること」を信じられなくなる。入る日が無いなら unplaced として表に出す。
  */
 function place(day: ScheduledDay, lesson: CurriculumLesson): boolean {
-  const cost = lesson.estimatedMinutes.standard;
+  const cost = costOf(lesson);
   if (day.usedMinutes + cost > day.capacityMinutes) return false;
   day.lessonIds.push(lesson.id);
   day.usedMinutes += cost;
@@ -207,7 +217,7 @@ export function buildSchedule(input: ScheduleInput): ScheduleResult {
   const oversizedLessonIds = [...unplacedRequiredLessonIds, ...droppedOptionalLessonIds].filter(
     (id) => {
       const l = curriculum.lessons.find((x) => x.id === id);
-      return l !== undefined && l.estimatedMinutes.standard > maxCapacity;
+      return l !== undefined && costOf(l) > maxCapacity;
     },
   );
 

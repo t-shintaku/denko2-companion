@@ -217,6 +217,14 @@ export type CurriculumLesson = {
   objective: string;
   prerequisites: string[];
   estimatedMinutes: { minimum: number; standard: number; deep: number };
+  /**
+   * 段階ごとの実時間(分)。**時間が動かない作業をここで固定する**。
+   *
+   * 120分の模試や40分の候補問題は、レッスン全体の見積を比率で割ると
+   * 「18分」「12分」と表示されてしまう。作業が短くなったのではなく数字だけが縮む。
+   * ここに書いた段階は比率配分を使わず、そのままの分数を出す。
+   */
+  stepMinutes?: { input?: number; recall?: number; practice?: number; takeaway?: number };
   resources: string[];
   recallPrompts: RecallPrompt[];
   practice: PracticeSpec;
@@ -371,8 +379,17 @@ export type QuestionAttempt = {
   scored: boolean;
   /** どの受験セッションの1問か */
   examId?: string;
-  /** 復習キューで解き直した日時。付くとキューから外れる */
+  /** 最後に解き直した日時 */
   reviewedAt?: IsoDateTime;
+  /**
+   * 解き直した回数。**1回押しただけで永久に消さない**ための欄。
+   * 忘れる前提で翌日・3日後・7日後・14日後と間隔を空けて戻す(FR-009)。
+   */
+  reviewCount?: number;
+  /** 次に戻す日。この日を過ぎるまで復習キューに出さない */
+  nextReviewOn?: IsoDate;
+  /** 直近の解き直しで解けたか。false なら間隔を翌日へ戻す */
+  lastReviewCorrect?: boolean;
   updatedAt: IsoDateTime;
 };
 
@@ -407,15 +424,33 @@ export type UnknownTerm = {
   updatedAt: IsoDateTime;
 };
 
+/**
+ * 技能の記録。1題まるごと作った記録('candidate')と、
+ * 反復欠陥の工程だけを繰り返した部分練習('drill')を型で分ける。
+ *
+ * 分けないと困ること: 部分練習を候補問題の1回として数えると、
+ * 「13問すべて施工」「直近3作品が35分以内」が部分練習で通ってしまう。
+ * 逆に部分練習を記録できないと、反復欠陥に対策した事実がどこにも残らない。
+ */
+export type SkillAttemptKind = 'candidate' | 'drill';
+
 export type SkillAttempt = {
   id: string;
   attemptedAt: IsoDateTime;
+  /** 既定は 'candidate'(旧データは全部これ) */
+  kind?: SkillAttemptKind;
+  /** drill のときは対象外なので 0 を入れる */
   candidateNo: number;
   diagramMinutes?: number;
   workMinutes: number;
   completed: boolean;
   defectFree: boolean;
   defectCodes: string[];
+  /**
+   * この練習で対策した欠陥コード(drill 用)。
+   * ここに入れた欠陥は「対策済み」として反復欠陥から降りる。再発したらまた上がる。
+   */
+  clearedDefectCodes?: string[];
   photoIds: string[];
   nextFix?: string;
   updatedAt: IsoDateTime;

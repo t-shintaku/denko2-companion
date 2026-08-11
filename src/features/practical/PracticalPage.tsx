@@ -7,12 +7,14 @@ import {
   BUDGET_CATEGORY_LABEL,
   BUDGET_STATUS_LABEL,
   CANDIDATE_STATUS_LABEL,
+  DEFECT_CLEAR_RUNS,
   EXAM_MINUTES,
   TARGET_MINUTES,
   budgetSummary,
   candidateStates,
   repeatDefects,
 } from '../../domain/practical';
+import { skillTrend } from '../../domain/growth';
 import { useVault } from '../../state/VaultContext';
 import type { BudgetItem, LessonMode } from '../../domain/types';
 
@@ -23,6 +25,7 @@ export function PracticalPage({
 }) {
   const { snapshot, skillGate, reload } = useVault();
   const [recording, setRecording] = useState<number | undefined>();
+  const [drill, setDrill] = useState<string | undefined>();
 
   // 工具・材料の初期候補を一度だけ入れる(FR-012)。既存は上書きしない
   useEffect(() => {
@@ -33,6 +36,25 @@ export function PracticalPage({
 
   const states = candidateStates(snapshot.skillAttempts);
   const repeats = repeatDefects(snapshot.skillAttempts);
+  const trend = skillTrend(snapshot.skillAttempts);
+  // 2周目に「どれを作り直すか」で迷わせない。欠陥が出た題 → 時間超過の題 → 未着手 の順
+  const weakest = states
+    .map((s) => {
+      if (s.attempts > 0 && s.defectFreeCount === 0)
+        return { candidateNo: s.candidateNo, rank: 0, why: 'まだ欠陥なしで作れていない' };
+      if (s.worstOfRecentThree !== undefined && s.worstOfRecentThree > TARGET_MINUTES)
+        return {
+          candidateNo: s.candidateNo,
+          rank: 1,
+          why: `直近で${s.worstOfRecentThree}分(目標${TARGET_MINUTES}分)`,
+        };
+      if (s.status === 'untouched')
+        return { candidateNo: s.candidateNo, rank: 2, why: 'まだ触れていない' };
+      return undefined;
+    })
+    .filter((x): x is { candidateNo: number; rank: number; why: string } => x !== undefined)
+    .sort((a, b) => a.rank - b.rank || a.candidateNo - b.candidateNo)
+    .slice(0, 3);
   const summary = budgetSummary(snapshot.budgetItems);
   const skillLessons = curriculum.lessons.filter(
     (l) => l.skillTouch || l.phaseId === 'phase-5' || l.phaseId === 'phase-6',
@@ -42,6 +64,9 @@ export function PracticalPage({
 
   if (recording !== undefined) {
     return <AttemptForm candidateNo={recording} onClose={() => setRecording(undefined)} />;
+  }
+  if (drill !== undefined) {
+    return <DrillForm code={drill} onClose={() => setDrill(undefined)} />;
   }
 
   return (
@@ -68,7 +93,8 @@ export function PracticalPage({
       <h2>候補問題 No.1〜13</h2>
       <p className="muted">
         本番は {EXAM_MINUTES} 分、合格基準は作品に欠陥がないこと。練習の目標は {TARGET_MINUTES} 分。
-        速さの指標は最速ではなく直近3回の中央値で見る。
+        <strong>時間はすべて複線図＋施工の合計</strong>で見る(本番の{EXAM_MINUTES}分に複線図が含まれるため)。
+        速さの指標は最速ではなく直近3回の中央値。
       </p>
       <div className="card">
         {states.map((s) => (
@@ -121,13 +147,108 @@ export function PracticalPage({
             同じ欠陥が2回出ると、ここに上がる。上がったら候補問題を丸ごと作り直さず、その工程だけ繰り返す。
           </p>
         ) : (
+          <>
+            <p className="muted">
+              上がったら、その工程だけを繰り返して「対策した」を押す。
+              押さなくても、再発なしで{DEFECT_CLEAR_RUNS}作品を作れば自動で降りる。
+              <strong>降りる道があるので、ここでゲートが永久に閉じることはない。</strong>
+              再発すればまた上がる。
+            </p>
+            <ul className="plain stack">
+              {repeats.map((r) => (
+                <li key={r.code} className="stack" style={{ marginBottom: 12 }}>
+                  <div className="row row--between">
+                    <span>{defectLabel(r.code)}</span>
+                    <span className={r.resolved ? 'badge badge--ok' : 'badge badge--danger'}>
+                      {r.resolved
+                        ? r.resolvedBy === 'drill'
+                          ? '対策済み'
+                          : `再発なし${r.cleanRuns}作品`
+                        : `${r.count}回 / 直近 ${formatJstShort(r.lastOn)}`}
+                    </span>
+                  </div>
+                  {!r.resolved && (
+                    <div className="row row--between">
+                      <span className="muted">
+                        最後に出てから再発なし {r.cleanRuns} / {DEFECT_CLEAR_RUNS} 作品
+                      </span>
+                      <button
+                        className="btn-sm"
+                        onClick={() => setDrill(r.code)}
+                        aria-label={`${defectLabel(r.code)} の部分練習を記録`}
+                      >
+                        この工程を練習した
+                      </button>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      <h2>いまの伸び</h2>
+      <div className="card">
+        {trend.attempts === 0 ? (
+          <p className="muted">
+            1題でも記録すると、ここに合計時間と欠陥の推移が出る。まずNo.1を1題。
+          </p>
+        ) : (
           <ul className="plain stack">
-            {repeats.map((r) => (
-              <li key={r.code} className="row row--between">
-                <span>{defectLabel(r.code)}</span>
-                <span className="badge badge--danger">
-                  {r.count}回 / 直近 {formatJstShort(r.lastOn)}
+            <li>
+              作った作品: <strong>{trend.attempts}</strong> 点
+              {trend.recentMinutes.length > 0 && (
+                <>
+                  {' '}／ 直近3作品 {trend.recentMinutes.join(' / ')} 分(複線図込み)
+                </>
+              )}
+            </li>
+            {trend.minutesDelta !== undefined && (
+              <li>
+                {trend.minutesDelta < 0 ? (
+                  <span className="badge badge--ok">
+                    その前の3作品より平均 {Math.abs(Math.round(trend.minutesDelta))} 分速い
+                  </span>
+                ) : trend.minutesDelta === 0 ? (
+                  <span className="badge">その前の3作品と同じ速さ</span>
+                ) : (
+                  <span className="badge badge--warn">
+                    その前の3作品より平均 {Math.round(trend.minutesDelta)} 分遅い
+                  </span>
+                )}
+              </li>
+            )}
+            <li>
+              直近5作品の欠陥 {trend.recentDefects} 件
+              {trend.defectsDelta !== undefined && (
+                <span className={trend.defectsDelta <= 0 ? 'badge badge--ok' : 'badge badge--warn'}>
+                  {trend.defectsDelta === 0
+                    ? ' 前の5作品と同数'
+                    : trend.defectsDelta < 0
+                      ? ` 前の5作品より${Math.abs(trend.defectsDelta)}件少ない`
+                      : ` 前の5作品より${trend.defectsDelta}件多い`}
                 </span>
+              )}
+            </li>
+          </ul>
+        )}
+      </div>
+
+      <h2>次に作り直す1題</h2>
+      <div className="card">
+        {weakest.length === 0 ? (
+          <p className="muted">まだ判断材料がない。未着手の番号から順に1題ずつ作る。</p>
+        ) : (
+          <ul className="plain stack">
+            {weakest.map((w) => (
+              <li key={w.candidateNo} className="row row--between">
+                <span>
+                  <strong>No.{w.candidateNo}</strong> — {w.why}
+                </span>
+                <button className="btn-sm" onClick={() => setRecording(w.candidateNo)}>
+                  記録する
+                </button>
               </li>
             ))}
           </ul>
@@ -243,6 +364,73 @@ function BudgetRow({ item }: { item: BudgetItem }) {
   );
 }
 
+/**
+ * 反復欠陥の部分練習。**候補問題1回としては数えない。**
+ * ここを候補問題の記録に混ぜると、部分練習だけで「13問すべて施工」が通ってしまう。
+ */
+function DrillForm({ code, onClose }: { code: string; onClose: () => void }) {
+  const { reload } = useVault();
+  const [minutes, setMinutes] = useState('10');
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setBusy(true);
+    try {
+      await repo.addDefectDrill({
+        codes: [code],
+        minutes: Number(minutes || 0),
+        note: note || undefined,
+      });
+      await reload();
+      onClose();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <main className="app">
+      <button className="btn-sm" onClick={onClose}>
+        ← 戻る
+      </button>
+      <h1>この工程だけ練習した</h1>
+      <div className="notice notice--safety">非通電の試験用材料のみ。</div>
+      <div className="card">
+        <p>
+          <strong>{defectLabel(code)}</strong>
+        </p>
+        <p className="muted">
+          候補問題を丸ごと作り直さない。出た欠陥の工程だけを繰り返す。
+          記録すると反復欠陥から降り、技能ゲートが再び開く。同じ欠陥が次に出れば、また上がる。
+        </p>
+        <div className="field">
+          <label htmlFor="drill-minutes">かかった時間(分)</label>
+          <input
+            id="drill-minutes"
+            type="number"
+            inputMode="numeric"
+            min={1}
+            value={minutes}
+            onChange={(e) => setMinutes(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="drill-note">何を変えたか(任意)</label>
+          <textarea id="drill-note" value={note} onChange={(e) => setNote(e.target.value)} />
+        </div>
+        <button
+          className="btn-primary btn-block"
+          disabled={busy || Number(minutes) <= 0}
+          onClick={submit}
+        >
+          {busy ? '保存中…' : '対策したとして記録する'}
+        </button>
+      </div>
+    </main>
+  );
+}
+
 function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: () => void }) {
   const { reload } = useVault();
   const [diagram, setDiagram] = useState('');
@@ -253,11 +441,13 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
   const [busy, setBusy] = useState(false);
 
   const defectFree = completed && codes.length === 0;
+  const total = Number(work || 0) + Number(diagram || 0);
 
   const submit = async () => {
     setBusy(true);
     try {
       await repo.addSkillAttempt({
+        kind: 'candidate',
         candidateNo,
         diagramMinutes: diagram === '' ? undefined : Number(diagram),
         workMinutes: Number(work),
@@ -322,6 +512,14 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
           />
           <span>時間内に完成した</span>
         </label>
+        {total > 0 && (
+          <p className={total <= TARGET_MINUTES ? 'badge badge--ok' : 'badge badge--warn'}>
+            合計 {total} 分(本番は{EXAM_MINUTES}分・練習の目標は{TARGET_MINUTES}分)
+          </p>
+        )}
+        <p className="muted">
+          判定に使うのは複線図と施工の合計。本番の{EXAM_MINUTES}分には複線図を描く時間が含まれる。
+        </p>
       </div>
 
       <div className="card">

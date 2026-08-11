@@ -92,13 +92,40 @@ describe('カリキュラムJSONの整合', () => {
     expect(json).not.toMatch(/ブレーカーを落として.*(配線|結線|接続)する/);
   });
 
-  it('候補問題13問すべてに触れる設計になっている(丸ごと間引かない)', () => {
+  it('候補問題13問が1題1タスクで並んでいる(週まとめにしない)', () => {
     const phase5 = curriculum.lessons.filter((l) => l.phaseId === 'phase-5');
-    const text = phase5.map((l) => `${l.title} ${l.practice.instruction}`).join(' ');
-    for (const range of ['No.1〜4', 'No.5〜8', 'No.9〜13']) {
-      expect(text).toContain(range);
+    // 「No.1〜4を各1回」を1レッスンにすると、1コマぶんの時間として表示・配置される。
+    // 実際は4題ぶんの作業なので、1題=1タスクへ割ってある
+    for (const no of Array.from({ length: 13 }, (_, i) => i + 1)) {
+      const own = phase5.filter((l) => l.practice.instruction.includes(`No.${no} を1題`));
+      expect(own.length, `候補No.${no} の単独タスクがない`).toBe(1);
     }
     expect(phase5.every((l) => l.required)).toBe(true);
+  });
+
+  it('時間が動かない作業には段階ごとの明示時間がある(比率配分で縮めない)', () => {
+    // 120分の模試を「18分」、40分の候補問題を「12分」と表示しないための約束。
+    // 該当レッスンは practice に実時間を持ち、見積もそれを下回らない
+    const fixedKinds = ['candidate', 'basic-skill'];
+    const targets = curriculum.lessons.filter(
+      (l) =>
+        fixedKinds.includes(l.practice.kind) ||
+        (l.practice.targetCount !== undefined && l.practice.targetCount >= 20),
+    );
+    expect(targets.length).toBeGreaterThan(10);
+    for (const l of targets) {
+      expect(l.stepMinutes?.practice, `${l.id} に practice の明示時間がない`).toBeGreaterThan(0);
+      expect(l.estimatedMinutes.standard).toBeGreaterThanOrEqual(l.stepMinutes!.practice!);
+      expect(l.estimatedMinutes.minimum).toBeGreaterThanOrEqual(l.stepMinutes!.practice!);
+    }
+  });
+
+  it('50問模試は120分ぶんの時間で出す(90分は参照あり・時間無制限の初回のみ)', () => {
+    const fifty = curriculum.lessons.filter((l) => l.practice.targetCount === 50);
+    expect(fifty.length).toBeGreaterThanOrEqual(4);
+    for (const l of fifty) {
+      expect(l.stepMinutes?.practice, l.id).toBeGreaterThanOrEqual(90);
+    }
   });
 });
 

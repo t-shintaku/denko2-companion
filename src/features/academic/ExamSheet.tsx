@@ -49,6 +49,16 @@ export function ExamSheet({
   const [bulk, setBulk] = useState<Record<string, { correct: string; total: string }>>(() =>
     Object.fromEntries(topics.map((t) => [t.id, { correct: '', total: '' }])),
   );
+  /** まとめ入力でも「どの問題を落としたか」だけは残せるようにする欄 */
+  const [wrongInput, setWrongInput] = useState('');
+  const wrongNumbers = useMemo(
+    () =>
+      wrongInput
+        .split(/[,、\s]+/)
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isInteger(n) && n >= 1 && n <= count),
+    [wrongInput, count],
+  );
   const [timed, setTimed] = useState(kind === 'mock-50');
   const [minutes, setMinutes] = useState('');
   const [note, setNote] = useState('');
@@ -113,23 +123,42 @@ export function ExamSheet({
   const submit = async () => {
     setBusy(true);
     try {
+      // 誤答番号は入力された順に、誤答レコードへ割り当てる
+      const wrongQueue = [...wrongNumbers];
       const questions: ExamInput['questions'] =
         mode === 'bulk'
           ? topics.flatMap((t) => {
               const total = Number(bulk[t.id]?.total || 0);
               const correct = Number(bulk[t.id]?.correct || 0);
-              return Array.from({ length: total }, (_, i) => ({
-                topicId: t.id,
-                correct: i < correct,
-                // まとめて入力では自信度を取れない。中立の2にする
-                confidence: 2 as const,
-              }));
+              return Array.from({ length: total }, (_, i) => {
+                const isCorrect = i < correct;
+                const no = isCorrect ? undefined : wrongQueue.shift();
+                return {
+                  topicId: t.id,
+                  correct: isCorrect,
+                  /**
+                   * まとめ入力では1問ずつの自信度を取れない。
+                   * 正解は 3(=復習キューへ入れない)、誤答は 2 にする。
+                   * ここを一律 2 にすると、40問正解でも50問全部が復習キューへ入り、
+                   * 「間違えた箇所を潰す」という復習の意味が消える。
+                   */
+                  confidence: (isCorrect ? 3 : 2) as 1 | 2 | 3,
+                  // 番号を入れてもらえたら本物の問題番号を残す。
+                  // 入れていないときに連番を振ると、解き直す問題を特定できない偽番号になる
+                  questionRef: isCorrect
+                    ? `${label.trim()} ${t.shortName}(まとめ入力・正解)`
+                    : no !== undefined
+                      ? `${label.trim()} 第${no}問`
+                      : `${label.trim()} ${t.shortName}(番号未記入の誤答)`,
+                };
+              });
             })
-          : rows.map((r) => ({
+          : rows.map((r, i) => ({
               topicId: r.topicId,
               correct: r.correct === true,
               confidence: r.confidence,
               errorReason: r.errorReason,
+              questionRef: `${label.trim()} 第${i + 1}問`,
             }));
 
       const measured = startedRef.current
@@ -243,8 +272,9 @@ export function ExamSheet({
         </button>
       </div>
       <p className="muted">
-        1問ずつなら誤答の理由と自信度が残り、復習キューが効く。まとめてなら早いが、
-        「自信の低い正解」は拾えない。
+        1問ずつなら誤答の理由と自信度が残り、復習キューが効く。まとめてなら早い。
+        まとめても<strong>誤答だけ</strong>が復習キューへ入る(正解は入らない)。
+        「自信の低い正解」だけは、まとめ入力では拾えない。
       </p>
 
       {mode === 'bulk' ? (
@@ -288,6 +318,21 @@ export function ExamSheet({
             合計 {bulkTotals.correct} / {bulkTotals.total} 問
             {kind === 'mock-50' && ` — ${bulkTotals.correct * POINTS_PER_QUESTION}点`}
           </p>
+          <div className="field">
+            <label htmlFor="wrong-numbers">落とした問題の番号(任意・例: 3,7,12)</label>
+            <input
+              id="wrong-numbers"
+              inputMode="numeric"
+              placeholder="3, 7, 12"
+              value={wrongInput}
+              onChange={(e) => setWrongInput(e.target.value)}
+            />
+            <p className="muted">
+              入れておくと復習キューに<strong>本物の問題番号</strong>が残り、あとで解き直す問題を特定できる。
+              空欄でも保存できるが、そのときは科目だけが手がかりになる。
+              いま {wrongNumbers.length} 件 / 誤答 {bulkTotals.total - bulkTotals.correct} 問。
+            </p>
+          </div>
         </div>
       ) : (
         <div>

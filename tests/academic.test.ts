@@ -145,17 +145,23 @@ describe('FR-009 復習キュー', () => {
     expect(q[0]?.attempt.id).toBe('a2');
   });
 
-  it('自信3の正解は、その科目が弱いときだけ拾う', () => {
+  it('自信3の正解は、弱い科目を放置しているときだけ拾う', () => {
     const strong = [attempt(1, 'law', true, 3)];
-    expect(reviewQueue(strong, topicStats(strong, topicIds))).toHaveLength(0);
+    expect(reviewQueue(strong, topicStats(strong, topicIds, '2026-09-01'), 30, '2026-09-01')).toHaveLength(0);
 
-    // 直近が60%未満の科目なら、確実だと思った正解も復習対象にする
     const weak = [
       ...Array.from({ length: 6 }, (_, i) => attempt(i + 10, 'law', false, 3)),
       attempt(1, 'law', true, 3),
     ];
-    const q = reviewQueue(weak, topicStats(weak, topicIds));
-    expect(q.some((i) => i.reason === 'stale-weak')).toBe(true);
+
+    // 直後は拾わない。直した記憶があるうちに正解まで並べても、何を直すのか分からなくなる
+    const fresh = reviewQueue(weak, topicStats(weak, topicIds, '2026-09-01'), 30, '2026-09-01');
+    expect(fresh.some((i) => i.reason === 'stale-weak')).toBe(false);
+
+    // 1週間触っていなければ、確実だと思った正解も掘り起こす(科目あたり3件まで)
+    const stale = reviewQueue(weak, topicStats(weak, topicIds, '2026-09-10'), 30, '2026-09-10');
+    expect(stale.some((i) => i.reason === 'stale-weak')).toBe(true);
+    expect(stale.filter((i) => i.reason === 'stale-weak').length).toBeLessThanOrEqual(3);
   });
 });
 

@@ -7,7 +7,7 @@
  * - `scored: false`(無採点5問)は一切集計に入れない。
  */
 
-import { diffDays, todayJst } from './jst';
+import { addDays, diffDays, todayJst } from './jst';
 import type {
   ErrorReason,
   ExamKind,
@@ -110,7 +110,10 @@ export function topicStats(
     const recentCorrect = recent.filter((a) => a.correct).length;
     const last = mine[mine.length - 1];
     const accuracy = total > 0 ? correct / total : undefined;
-    const hasSample = total >= TOPIC_MIN_SAMPLE;
+    const recentAccuracy = recent.length > 0 ? recentCorrect / recent.length : undefined;
+    // 判定は直近20問で行う。累計だと、最近崩れても昔の貯金で通り、
+    // 最近直しても昔の失点で閉じ続ける。直す努力が数字に出ないと続かない
+    const hasSample = recent.length >= TOPIC_MIN_SAMPLE;
     return {
       topicId,
       total,
@@ -118,7 +121,7 @@ export function topicStats(
       accuracy,
       recentTotal: recent.length,
       recentCorrect,
-      recentAccuracy: recent.length > 0 ? recentCorrect / recent.length : undefined,
+      recentAccuracy,
       lastAttemptedOn: last?.jstDate,
       daysSinceLast: last ? diffDays(last.jstDate, today) : undefined,
       averageConfidence:
@@ -126,16 +129,37 @@ export function topicStats(
       started: total > 0,
       hasSample,
       // 判定に足るサンプルが無いうちは「達成」と言わない
-      meetsMinimum: hasSample && (accuracy ?? 0) >= TOPIC_MIN_ACCURACY,
+      meetsMinimum: hasSample && (recentAccuracy ?? 0) >= TOPIC_MIN_ACCURACY,
     };
   });
+}
+
+/**
+ * 直近20問と、それ以前の正答率の差。「昨日よりできるようになった」を数字で出すため。
+ * どちらかのサンプルが足りなければ undefined(足りない差分で一喜一憂させない)。
+ */
+export function topicTrend(
+  attempts: QuestionAttempt[],
+  topicId: TopicId,
+): { recent: number; before: number; delta: number } | undefined {
+  const mine = scored(attempts)
+    .filter((a) => a.topicId === topicId)
+    .sort((a, b) => (a.attemptedAt < b.attemptedAt ? -1 : 1));
+  if (mine.length < TOPIC_MIN_SAMPLE * 2) return undefined;
+  const recent = mine.slice(-RECENT_WINDOW);
+  const before = mine.slice(0, -recent.length);
+  if (before.length < TOPIC_MIN_SAMPLE) return undefined;
+  const rate = (list: QuestionAttempt[]) => list.filter((a) => a.correct).length / list.length;
+  const r = rate(recent);
+  const b = rate(before);
+  return { recent: r, before: b, delta: r - b };
 }
 
 // ---------------------------------------------------------------------------
 // 復習キュー
 // ---------------------------------------------------------------------------
 
-export type ReviewReason = 'wrong' | 'low-confidence' | 'stale-weak';
+export type ReviewReason = 'wrong' | 'low-confidence' | 'stale-weak' | 'spaced';
 
 export type ReviewItem = {
   attempt: QuestionAttempt;
@@ -148,27 +172,87 @@ export const REVIEW_REASON_LABEL: Record<ReviewReason, string> = {
   wrong: '誤答',
   'low-confidence': '自信の低い正解',
   'stale-weak': '放置している弱点',
+  spaced: '間隔をあけた再確認',
 };
 
 /**
+ * 解き直したあと、次に戻すまでの日数。忘却に合わせて広げる。
+ * 4つの間隔をすべて解ければ卒業(それ以上は出さない)。
+ */
+export const REVIEW_INTERVALS_DAYS = [1, 3, 7, 14];
+
+/** 弱い科目を「放置している」と見なすまでの日数 */
+export const STALE_WEAK_DAYS = 7;
+/** 掘り起こしで1科目から入れる最大件数 */
+export const STALE_WEAK_PER_TOPIC = 3;
+
+/**
+ * 次回の復習日。
+ * @param successCount これで何回目の「解けた」か(1始まり)。解けなかったときは無視する
+ * 卒業(もう出さない)なら undefined
+ */
+export function nextReviewDate(
+  successCount: number,
+  correct: boolean,
+  today: IsoDate,
+): IsoDate | undefined {
+  // 解けなかったら間隔を最初へ戻す。翌日もう一度出す
+  if (!correct) return addDays(today, REVIEW_INTERVALS_DAYS[0]!);
+  const next = REVIEW_INTERVALS_DAYS[successCount - 1];
+  return next === undefined ? undefined : addDays(today, next);
+}
+
+/**
  * 復習キュー(FR-009)。
+ *
  * 誤答だけでなく「自信の低い正解」を同じ重みで拾う。まぐれ当たりは次に落ちる。
+ *
+ * **1回解き直したら永久に消える、にはしない。** 1回できたことと覚えたことは違う。
+ * 解き直した問題は翌日→3日後→7日後→14日後と戻ってくる。4回続けて解けたら卒業。
+ * 途中で解けなければ間隔は翌日へ戻る。
  */
 export function reviewQueue(
   attempts: QuestionAttempt[],
   stats: TopicStat[],
   limit = 30,
+  today: IsoDate = todayJst(),
 ): ReviewItem[] {
-  const weakTopics = new Set(
-    stats.filter((s) => s.started && (s.recentAccuracy ?? 1) < TOPIC_MIN_ACCURACY).map((s) => s.topicId),
+  /**
+   * 「放置している弱点」は**放置しているときだけ**拾う。
+   * 弱い科目というだけで正解まで全部入れると、模試を1回入れた瞬間に
+   * 50問すべてがキューへ並び、何を直せばいいのか分からなくなる。
+   */
+  const staleWeakTopics = new Set(
+    stats
+      .filter(
+        (s) =>
+          s.started &&
+          (s.recentAccuracy ?? 1) < TOPIC_MIN_ACCURACY &&
+          (s.daysSinceLast ?? 0) >= STALE_WEAK_DAYS,
+      )
+      .map((s) => s.topicId),
   );
 
   const items: ReviewItem[] = [];
+  const staleByTopic = new Map<TopicId, number>();
   for (const a of scored(attempts)) {
-    if (a.reviewedAt) continue;
+    if (a.reviewedAt) {
+      // 予定日が来たものだけ戻す。予定日が無い(卒業した)ものは出さない
+      if (a.nextReviewOn && a.nextReviewOn <= today) {
+        items.push({ attempt: a, reason: 'spaced', priority: 1 });
+      }
+      continue;
+    }
     if (!a.correct) items.push({ attempt: a, reason: 'wrong', priority: 0 });
-    else if (a.confidence <= 2) items.push({ attempt: a, reason: 'low-confidence', priority: 1 });
-    else if (weakTopics.has(a.topicId)) items.push({ attempt: a, reason: 'stale-weak', priority: 2 });
+    else if (a.confidence <= 2) items.push({ attempt: a, reason: 'low-confidence', priority: 2 });
+    else if (staleWeakTopics.has(a.topicId)) {
+      // 科目あたりの上限を設ける。掘り起こしは「思い出す入口」であって総ざらいではない
+      const n = staleByTopic.get(a.topicId) ?? 0;
+      if (n < STALE_WEAK_PER_TOPIC) {
+        staleByTopic.set(a.topicId, n + 1);
+        items.push({ attempt: a, reason: 'stale-weak', priority: 3 });
+      }
+    }
   }
 
   return items
@@ -180,12 +264,45 @@ export function reviewQueue(
     .slice(0, limit);
 }
 
+/** 解き直しの結果を1件分の更新にする(純関数。保存は repo 側) */
+export function applyReview(
+  attempt: QuestionAttempt,
+  correct: boolean,
+  at: IsoDateTime,
+  today: IsoDate,
+): QuestionAttempt {
+  const count = correct ? (attempt.reviewCount ?? 0) + 1 : 0;
+  return {
+    ...attempt,
+    reviewedAt: at,
+    reviewCount: count,
+    lastReviewCorrect: correct,
+    nextReviewOn: nextReviewDate(count, correct, today),
+    updatedAt: at,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // 模試
 // ---------------------------------------------------------------------------
 
 /**
- * 学科ゲートに算入してよい模試。**50問ちょうどのものだけ**。
+ * 集計に載せてよい行か。**問題数と正答数の両方**を見る。
+ *
+ * 50問チェックだけだと、旧データや手で書き換えた同期行の「50問・80問正解」が
+ * 160点として平均に効く。正答数は 0 以上、問題数以下でなければならない。
+ */
+export function isSaneExam(e: MockExam): boolean {
+  return (
+    Number.isFinite(e.correctCount) &&
+    Number.isFinite(e.totalQuestions) &&
+    e.correctCount >= 0 &&
+    e.correctCount <= e.totalQuestions
+  );
+}
+
+/**
+ * 学科ゲートに算入してよい模試。**50問ちょうど、かつ正答数が値域内のものだけ**。
  *
  * 入力側でも弾いているが、集計側でも弾く。片方だけにすると、
  * 検証を入れる前に保存された行や、手で書き換えた同期ファイルの行が
@@ -193,13 +310,22 @@ export function reviewQueue(
  */
 export function mocks(exams: MockExam[]): MockExam[] {
   return exams
-    .filter((e) => e.kind === 'mock-50' && e.totalQuestions === EXAM_QUESTION_COUNT['mock-50'])
+    .filter(
+      (e) =>
+        e.kind === 'mock-50' &&
+        e.totalQuestions === EXAM_QUESTION_COUNT['mock-50'] &&
+        isSaneExam(e),
+    )
     .sort((a, b) => (a.takenAt < b.takenAt ? -1 : 1));
 }
 
-/** 50問でないため集計から外した模試。画面に理由を出すために数える */
+/** 50問でない、または正答数が値域外のため集計から外した模試。画面に理由を出すために数える */
 export function excludedMocks(exams: MockExam[]): MockExam[] {
-  return exams.filter((e) => e.kind === 'mock-50' && e.totalQuestions !== EXAM_QUESTION_COUNT['mock-50']);
+  return exams.filter(
+    (e) =>
+      e.kind === 'mock-50' &&
+      (e.totalQuestions !== EXAM_QUESTION_COUNT['mock-50'] || !isSaneExam(e)),
+  );
 }
 
 /** 直近 n 回の平均点。回数が足りなければ undefined(足りない平均で通さない) */
@@ -312,14 +438,17 @@ export function academicGate(
     },
     {
       id: 'per-topic',
-      label: `各科目${Math.round(TOPIC_MIN_ACCURACY * 100)}%以上`,
+      label: `各科目 直近${RECENT_WINDOW}問で${Math.round(TOPIC_MIN_ACCURACY * 100)}%以上`,
       passed: belowMinimum.length === 0 && noSample.length === 0 && started === stats.length,
       evidence:
-        belowMinimum.length > 0
-          ? `未達 ${belowMinimum.length}科目`
-          : noSample.length > 0
-            ? `${noSample.length}科目が${TOPIC_MIN_SAMPLE}問未満で判定不能`
-            : '全科目クリア',
+        // 未着手の科目があるうちに「全科目クリア」と出さない。0/7で達成表示は嘘になる
+        started < stats.length
+          ? `未着手 ${stats.length - started}科目`
+          : belowMinimum.length > 0
+            ? `未達 ${belowMinimum.length}科目`
+            : noSample.length > 0
+              ? `${noSample.length}科目が直近${TOPIC_MIN_SAMPLE}問未満で判定不能`
+              : '全科目クリア',
       official: false,
     },
     {

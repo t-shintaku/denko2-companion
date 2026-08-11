@@ -182,6 +182,37 @@ describe('レッスン進捗の合体(段階ごと)', () => {
     expect(canonical(mergeLessonProgress(pc, phone))).toBe(canonical(mergeLessonProgress(phone, pc)));
   });
 
+  it('【回帰】同じ秒に同じ段階を両端末で保存しても、向きによって結果が変わらない', () => {
+    // 保存時刻は秒精度なので同値は現実に起こる。
+    // 「同時刻なら自分側」にすると PC→スマホ と スマホ→PC で別の回答が残り、永久にズレる
+    const sameSecond = '2026-08-01T10:00:00+09:00';
+    const pc = base({
+      recallSubmittedAt: sameSecond,
+      recallAnswers: ['PCで書いた'],
+      updatedAt: sameSecond,
+    });
+    const phone = base({
+      recallSubmittedAt: sameSecond,
+      recallAnswers: ['スマホで書いた'],
+      updatedAt: sameSecond,
+    });
+
+    const a = mergeLessonProgress(pc, phone);
+    const b = mergeLessonProgress(phone, pc);
+    expect(canonical(a)).toBe(canonical(b));
+    // 冪等: もう一度合体しても動かない
+    expect(canonical(mergeLessonProgress(a, b))).toBe(canonical(a));
+    // 結合法則: 3端末がどの順で同期しても同じ場所へ落ちる
+    const tablet = base({
+      recallSubmittedAt: sameSecond,
+      recallAnswers: ['タブレットで書いた'],
+      updatedAt: sameSecond,
+    });
+    const left = mergeLessonProgress(mergeLessonProgress(pc, phone), tablet);
+    const right = mergeLessonProgress(pc, mergeLessonProgress(phone, tablet));
+    expect(canonical(left)).toBe(canonical(right));
+  });
+
   it('同じ段階を両方でやったら、新しい回答を残す', () => {
     const older = base({
       recallSubmittedAt: '2026-08-01T10:00:00+09:00',

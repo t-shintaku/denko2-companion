@@ -126,11 +126,25 @@ const STEP_GROUPS = [
   { at: 'takeawaySavedAt', payload: ['takeaway'] },
 ] as const;
 
+type StepGroup = (typeof STEP_GROUPS)[number];
+
+/** 1つの段階(時刻+その段階の回答)だけを取り出した正規形 */
+function groupCanonical(row: LessonProgress, group: StepGroup): string {
+  const picked: Row = {};
+  for (const key of [group.at, ...group.payload]) {
+    picked[key] = (row as Record<string, unknown>)[key];
+  }
+  return canonical(picked);
+}
+
 export function mergeLessonProgress(mine: LessonProgress, theirs: LessonProgress): LessonProgress {
-  const newer = pickWinner(mine as unknown as Row, theirs as unknown as Row) as unknown as LessonProgress;
+  const ta = Date.parse(mine.updatedAt);
+  const tb = Date.parse(theirs.updatedAt);
+  // 段階に紐づかない欄(学習モード)は新しい方。同時刻なら値そのもので決める
+  const newer =
+    ta === tb ? (String(mine.mode ?? '') >= String(theirs.mode ?? '') ? mine : theirs) : ta > tb ? mine : theirs;
   const merged: LessonProgress = {
     lessonId: mine.lessonId,
-    // 段階に紐づかない欄(学習モード)は行としての新しい方に従う
     mode: newer.mode,
     xpAwarded: Math.max(mine.xpAwarded ?? 0, theirs.xpAwarded ?? 0),
     updatedAt: Date.parse(mine.updatedAt) >= Date.parse(theirs.updatedAt) ? mine.updatedAt : theirs.updatedAt,
@@ -139,8 +153,27 @@ export function mergeLessonProgress(mine: LessonProgress, theirs: LessonProgress
   for (const group of STEP_GROUPS) {
     const a = mine[group.at as keyof LessonProgress] as string | undefined;
     const b = theirs[group.at as keyof LessonProgress] as string | undefined;
-    // 片方にしか無ければ、それが唯一の事実。必ず残す(ここが消えていた)
-    const source = !a ? (b ? theirs : undefined) : !b ? mine : Date.parse(a) >= Date.parse(b) ? mine : theirs;
+    // 片方にしか無ければ、それが唯一の事実。必ず残す(ここが消えていた)。
+    // 同時刻のときに「自分側」を採ると、PC→スマホとスマホ→PCで別の答えが残り
+    // 永久に収束しない。保存時刻は秒単位なので同値は現実に起こる。
+    // 内容だけで決まる正規形で決着させる(どの端末から見ても同じ勝者になる)
+    const sameTime = a !== undefined && b !== undefined && Date.parse(a) === Date.parse(b);
+    // 同時刻は**その段階の中身だけ**で比べる。行全体で比べると、
+    // 合体済みの行(どちらとも違う第三の行)を次の端末と合体したときに答えが変わり、
+    // 3端末の同期順で結果がずれる(結合法則が壊れる)
+    const pick = (x: LessonProgress, y: LessonProgress) =>
+      groupCanonical(x, group) >= groupCanonical(y, group) ? x : y;
+    const source = !a
+      ? b
+        ? theirs
+        : undefined
+      : !b
+        ? mine
+        : sameTime
+          ? pick(mine, theirs)
+          : Date.parse(a) > Date.parse(b)
+            ? mine
+            : theirs;
     if (!source) continue;
     const stamp = source[group.at as keyof LessonProgress] as string | undefined;
     if (!stamp) continue;

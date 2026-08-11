@@ -96,6 +96,7 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
       today: '2026-08-14',
       now: new Date('2026-08-14T20:00:00+09:00'),
       sessions,
+      budget: 10,
     });
     const quest = nextTenMinutes(ctx);
     expect(quest?.reason).toBe('comeback');
@@ -105,6 +106,32 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
     expect(quest?.title).toContain(`再開の${quest?.minutes}分`);
     expect(quest?.minutes).toBeLessThanOrEqual(10);
     expect(quest?.fitsBudget).toBe(true);
+  });
+
+  it('【回帰】再開の文言と、ホームに出る分数が一致する(持ち時間30分でも)', () => {
+    const sessions: StudySession[] = [
+      {
+        id: 's1',
+        startedAt: '2026-08-11T20:00:00+09:00',
+        updatedAt: '2026-01-01T00:00:00+09:00',
+        jstDate: '2026-08-11',
+        durationMinutes: 25,
+        kind: 'theory',
+        countsAsBasics: true,
+      },
+    ];
+    // 以前は再開クエストだけ 10分固定で組み立てていたため、
+    // 説明は「再開の5分」なのにバッジは11分、という食い違いが出ていた
+    const ctx = makeContext({
+      today: '2026-08-14',
+      now: new Date('2026-08-14T20:00:00+09:00'),
+      sessions,
+      budget: 30,
+    });
+    const [main] = buildTodayQuests(ctx);
+    expect(main?.reason).toBe('comeback');
+    expect(main?.title).toContain(`再開の${main?.minutes}分`);
+    expect(main?.detail).toContain(`${main?.minutes}分`);
   });
 
   it('2日の空白では再開モードにしない', () => {

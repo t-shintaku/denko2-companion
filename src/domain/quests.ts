@@ -220,7 +220,9 @@ export function nextTenMinutes(ctx: QuestContext): Quest | undefined {
   if (gap !== undefined && gap >= COMEBACK_GAP_DAYS) {
     const lesson = lessons[0];
     if (lesson) {
-      const quest = questFromLesson(lesson, 'main', 'comeback', 10, ctx.progress[lesson.id]);
+      // 本人が選んだ持ち時間で組む。ここだけ 10 に固定すると、
+      // 「再開の5分」と書いてバッジには11分と出る(文言と数字が食い違う)
+      const quest = questFromLesson(lesson, 'main', 'comeback', ctx.budgetMinutes, ctx.progress[lesson.id]);
       // 「10分」と書いてよいのは本当に10分で終わるときだけ。
       // 収まらないのに10分と書くのは、復帰した本人に対する二度目の嘘になる
       return {
@@ -247,7 +249,7 @@ export function nextTenMinutes(ctx: QuestContext): Quest | undefined {
           : ctx.onboarding.stage === 'diagnostic'
             ? 'diagnostic'
             : 'lesson';
-  return questFromLesson(first, 'main', reason, 10);
+  return questFromLesson(first, 'main', reason, ctx.budgetMinutes, ctx.progress[first.id]);
 }
 
 /** ホーム最上部の最大3件(FR-004) */
@@ -303,7 +305,7 @@ export function buildTodayQuests(ctx: QuestContext): Quest[] {
   const bonus = availableLessons(ctx).find((l) => !used.has(l.id) && (l.skillTouch || !l.required));
   if (bonus && quests.length < 3) {
     quests.push({
-      ...questFromLesson(bonus, 'bonus', 'bonus', 10),
+      ...questFromLesson(bonus, 'bonus', 'bonus', ctx.budgetMinutes, ctx.progress[bonus.id]),
       id: `bonus:${bonus.id}`,
       title: `余力があれば — ${bonus.title}`,
     });

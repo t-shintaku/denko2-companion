@@ -169,7 +169,14 @@ export const STEP_WEIGHT: Record<LessonStep, number> = {
   takeaway: 0.1,
 };
 
-/** その段階だけにかかる目安(分)。必須でない段階を除いた比で割り直す */
+/**
+ * その段階だけにかかる目安(分)。
+ *
+ * カリキュラムが `stepMinutes` を明示している段階は、比率配分を使わずその値を出す。
+ * 120分の模試や40分の候補問題は作業時間が動かない。比率で割ると「18分」「12分」になり、
+ * 作業を短くしたのではなく表示だけを縮めることになる。
+ * 明示のない段階だけ、レッスン全体の見積を必須段階の比で割る。
+ */
 export function stepMinutes(
   lesson: CurriculumLesson,
   mode: LessonMode,
@@ -177,8 +184,30 @@ export function stepMinutes(
 ): number {
   const steps = requiredSteps(lesson);
   if (!steps.includes(step)) return 0;
-  const sum = steps.reduce((n, s) => n + STEP_WEIGHT[s], 0);
-  return Math.max(1, Math.round((minutesFor(lesson, mode) * STEP_WEIGHT[step]) / sum));
+  const fixed = lesson.stepMinutes?.[step];
+  if (fixed !== undefined) return fixed;
+  const fixedSteps = steps.filter((s) => lesson.stepMinutes?.[s] !== undefined);
+  const fixedTotal = fixedSteps.reduce((n, s) => n + (lesson.stepMinutes?.[s] ?? 0), 0);
+  const rest = steps.filter((s) => !fixedSteps.includes(s));
+  const sum = rest.reduce((n, s) => n + STEP_WEIGHT[s], 0);
+  // 固定した段階の分を差し引いた残りを、残りの段階で分ける。
+  // 引きすぎて 0 以下にならないよう、必ず1分以上は出す
+  const remainder = Math.max(rest.length, minutesFor(lesson, mode) - fixedTotal);
+  return Math.max(1, Math.round((remainder * STEP_WEIGHT[step]) / sum));
+}
+
+/** 明示時間を持つ段階の合計(分)。持たないレッスンは 0 */
+export function fixedMinutes(lesson: CurriculumLesson): number {
+  return requiredSteps(lesson).reduce((n, s) => n + (lesson.stepMinutes?.[s] ?? 0), 0);
+}
+
+/**
+ * 1日の枠に対して数える所要(分)。
+ * 見積が明示時間より小さいことは許さない。40分の施工を含むレッスンを
+ * 「30分」として1日に2本積むと、その日の計画が最初から嘘になる。
+ */
+export function scheduleCost(lesson: CurriculumLesson): number {
+  return Math.max(minutesFor(lesson, 'standard'), fixedMinutes(lesson));
 }
 
 /** 残っている段階の合計(分) */

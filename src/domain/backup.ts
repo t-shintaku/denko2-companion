@@ -163,6 +163,23 @@ export function validateRows(
         seen.add(id);
       }
 
+      // 点数の値域。50問で80問正解のような行を復元・同期で入れない。
+      // 入ってしまうと160点として平均に効き、受験判断をそのまま誤らせる
+      if (table === 'mockExams') {
+        const total = r.totalQuestions;
+        const correct = r.correctCount;
+        if (typeof total !== 'number' || !Number.isFinite(total) || total <= 0) {
+          issues.push({ path: `${path}.totalQuestions`, message: '問題数が正の数ではない' });
+        } else if (typeof correct !== 'number' || !Number.isFinite(correct)) {
+          issues.push({ path: `${path}.correctCount`, message: '正答数が数値ではない' });
+        } else if (correct < 0 || correct > total) {
+          issues.push({
+            path: `${path}.correctCount`,
+            message: `正答数(${correct})が0〜問題数(${total})の範囲にない`,
+          });
+        }
+      }
+
       const updatedAt = r.updatedAt;
       if (updatedAt !== undefined) {
         if (typeof updatedAt !== 'string') {
