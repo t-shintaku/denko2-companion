@@ -207,7 +207,8 @@
     ],
     "role": "official-check",
     "lastVerified": "2026-08-11",
-    "verification": "requirements-doc"
+    "verification": "requirements-doc",
+    "note": "2026-08-13にツールから到達を試したが、経産省サーバがブラウザ以外へ本文を返さず、内容を確認できなかった。確認できないページへ道案内は書けないので、レッスンからは外しカタログにだけ残している。ブラウザからは開けるはずなので、法令の原文にあたりたいときに使う。"
   },
   {
     "id": "meti-safety",
@@ -221,7 +222,8 @@
     ],
     "role": "official-check",
     "lastVerified": "2026-08-11",
-    "verification": "requirements-doc"
+    "verification": "requirements-doc",
+    "note": "2026-08-13にツールから到達を試したが、経産省サーバがブラウザ以外へ本文を返さず、内容を確認できなかった。確認できないページへ道案内は書けないので、レッスンからは外しカタログにだけ残している。ブラウザからは開けるはずなので、法令の原文にあたりたいときに使う。"
   },
   {
     "id": "panasonic-faq-light",
@@ -236,5 +238,674 @@
     "lastVerified": "2026-08-11",
     "verification": "requirements-doc",
     "note": "引掛シーリングへの取付けと直結式工事の境界。本人の動機に直結する。"
+  },
+  {
+    "id": "hozan-theory",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "電気の基礎理論",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1theory/",
+    "type": "article",
+    "topicIds": [
+      "basic-theory"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "オームの法則から交流まで。図と一問一答が同じページに並ぶ。"
+  },
+  {
+    "id": "hozan-symbols",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "配線図記号",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1kigou1/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "記号と写真の対応表。学科でいちばん取りやすい得点源。"
+  },
+  {
+    "id": "hozan-material",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "材料及び工具",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1material1/",
+    "type": "article",
+    "topicIds": [
+      "equipment-tools"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "電線・ケーブル・電線管・工具の写真。写真問題はここから出る。"
+  },
+  {
+    "id": "hozan-device",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "配線器具",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1haisen1/",
+    "type": "article",
+    "topicIds": [
+      "equipment-tools",
+      "distribution-design"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "スイッチ・コンセント・レセプタクルと分岐回路。"
+  },
+  {
+    "id": "hozan-method",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "工事の施工方法",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1method1/",
+    "type": "article",
+    "topicIds": [
+      "construction-method",
+      "inspection"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "工事の種類・電線接続・接地工事・絶縁抵抗・検査。"
+  },
+  {
+    "id": "hozan-law",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "法令",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1laws/",
+    "type": "article",
+    "topicIds": [
+      "law"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "電気事業法・電気工事士法・電気用品安全法の3本だけ。"
+  },
+  {
+    "id": "hozan-figure",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "複線図",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1figure/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "学科の配線図問題向け。技能の複線図はこの前に初級編を見る。"
+  },
+  {
+    "id": "hozan-figure-basic",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "複線図(初級)",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1figurebasic/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "はじめて複線図を描く人はこちら。1灯1点滅から積み上がる。"
+  },
+  {
+    "id": "hozan-point",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "出題ポイント",
+    "url": "https://denko.hozan.co.jp/point/index",
+    "type": "article",
+    "topicIds": [],
+    "role": "supplement",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "科目別の頻出ポイント。復習の入口に使う。"
+  },
+  {
+    "id": "hozan-terms",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "用語集",
+    "url": "https://denko.hozan.co.jp/terms/index",
+    "type": "article",
+    "topicIds": [],
+    "role": "supplement",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "note": "知らない言葉を引く辞書。読み物として読まない。"
+  },
+  {
+    "id": "hozan-skill-unit",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "単位作業(基本作業)",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1unit/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "examYear": 2026,
+    "note": "剥ぎ取り・輪作り・圧着など、候補問題の前に身につける単位作業。"
+  },
+  {
+    "id": "hozan-skill-process",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "施工順序",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1process/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "examYear": 2026,
+    "note": "40分に収めるための作業順。自己流で組む前にこれを見る。"
+  },
+  {
+    "id": "hozan-skill-defect",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "欠陥の解説",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1defect/",
+    "type": "article",
+    "topicIds": [],
+    "role": "supplement",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "examYear": 2026,
+    "note": "公式の欠陥判断基準を写真で解説したもの。判定の正本は公式ページ。"
+  },
+  {
+    "id": "hozan-skill-no",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "候補問題No.別の施工解説",
+    "url": "https://www.hozan.co.jp/corp/denko2/pg/1no1/",
+    "type": "article",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "examYear": 2026,
+    "note": "No.1〜13が同じ作りの別ページ(末尾 1no1/ 〜 1no13/)。単線図・支給材料・複線図5ステップ・フル解説動画・完成写真の順。2026-08-13にNo.1で構成を確認した。"
+  },
+  {
+    "id": "hozan-diagram-video",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "複線図解説 初級編(動画)",
+    "url": "https://youtu.be/23iyJk86CHk",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 21,
+    "note": "49万回再生。複線図をはじめて描く回。"
+  },
+  {
+    "id": "hozan-guide-what",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "電工2種ってどんな資格?(2026年下期 受験ガイド)",
+    "url": "https://youtu.be/vRKigha9dys",
+    "type": "video",
+    "topicIds": [
+      "law"
+    ],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 11,
+    "examYear": 2026,
+    "note": "2026-08-04公開。まさに今回の2026年度下期向け。"
+  },
+  {
+    "id": "hozan-guide-exam",
+    "provider": "HOZAN 電工試験の虎",
+    "title": "試験ってどんな内容?(2026年下期 受験ガイド)",
+    "url": "https://youtu.be/YI0t6HDl7Fk",
+    "type": "video",
+    "topicIds": [],
+    "role": "primary",
+    "creatorKind": "company",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 11,
+    "examYear": 2026,
+    "note": "2026-08-07公開。学科と技能の全体像を11分で。"
+  },
+  {
+    "id": "gami-channel",
+    "provider": "ガミデンキちゃんねる",
+    "title": "チャンネル(個人・元電気科講師)",
+    "url": "https://www.youtube.com/@gamidenki",
+    "type": "video",
+    "topicIds": [],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "creatorNote": "電気科講師歴7年・第二種合格者300名以上。学科の要点まとめから技能の全13問まで自分で作っている。",
+    "note": "このツールが主教材に採った個人チャンネル。迷ったらこの人の動画から入る。"
+  },
+  {
+    "id": "gami-start",
+    "provider": "ガミデンキちゃんねる",
+    "title": "#1 難しい公式なんていらない。学科のスタートはここ",
+    "url": "https://youtu.be/IwpAPx1q0Zo",
+    "type": "video",
+    "topicIds": [
+      "basic-theory"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 11,
+    "creatorNote": "元電気科講師",
+    "note": "33万回再生。知識ゼロの1本目に向く。"
+  },
+  {
+    "id": "gami-ohm",
+    "provider": "ガミデンキちゃんねる",
+    "title": "#5 オームの法則はこれで覚えて",
+    "url": "https://youtu.be/rQlYkgsYmrE",
+    "type": "video",
+    "topicIds": [
+      "basic-theory"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 10,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-ohm-drill",
+    "provider": "ガミデンキちゃんねる",
+    "title": "#3 オームの法則禁止!! 練習問題にチャレンジ",
+    "url": "https://youtu.be/HTT4ld3JFYM",
+    "type": "video",
+    "topicIds": [
+      "basic-theory"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 12,
+    "creatorNote": "元電気科講師",
+    "note": "公式に頼らず解く回。計算が苦手な人ほど効く。"
+  },
+  {
+    "id": "gami-symbols",
+    "provider": "ガミデンキちゃんねる",
+    "title": "30分だけ時間ください｜配線図問題対策",
+    "url": "https://youtu.be/6S4GqV-phhQ",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 35,
+    "creatorNote": "元電気科講師",
+    "note": "配線図の記号をまとめて拾う回。"
+  },
+  {
+    "id": "gami-outlets",
+    "provider": "ガミデンキちゃんねる",
+    "title": "コンセント24種類を見て聴いて覚える(過去問18課題)",
+    "url": "https://youtu.be/1UPomC-Sy7Q",
+    "type": "video",
+    "topicIds": [
+      "equipment-tools",
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 28,
+    "creatorNote": "元電気科講師",
+    "note": "2026年5月公開。コンセントは毎年出る。"
+  },
+  {
+    "id": "gami-tools",
+    "provider": "ガミデンキちゃんねる",
+    "title": "技能試験で必要な工具はどれ?",
+    "url": "https://youtu.be/d3n0tj1Cgik",
+    "type": "video",
+    "topicIds": [
+      "equipment-tools"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 45,
+    "creatorNote": "元電気科講師",
+    "note": "20万回再生。買う前に見る。全部は見ず、必要な工具の節だけでよい。"
+  },
+  {
+    "id": "gami-method-1",
+    "provider": "ガミデンキちゃんねる",
+    "title": "電気工事の工事方法まとめ Part1",
+    "url": "https://youtu.be/66CxzSHFUIs",
+    "type": "video",
+    "topicIds": [
+      "construction-method"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 40,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-method-2",
+    "provider": "ガミデンキちゃんねる",
+    "title": "電気工事の工事方法まとめ Part2",
+    "url": "https://youtu.be/AmNS6s0CN04",
+    "type": "video",
+    "topicIds": [
+      "construction-method"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 29,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-inspect-1",
+    "provider": "ガミデンキちゃんねる",
+    "title": "測定と検査まとめ Part1 計測器の問題",
+    "url": "https://youtu.be/QY0dFgLJWuo",
+    "type": "video",
+    "topicIds": [
+      "inspection"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 10,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-inspect-2",
+    "provider": "ガミデンキちゃんねる",
+    "title": "測定と検査まとめ Part2 クランプメータと接地抵抗",
+    "url": "https://youtu.be/Kw2Rxtf2ezU",
+    "type": "video",
+    "topicIds": [
+      "inspection"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 9,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-inspect-3",
+    "provider": "ガミデンキちゃんねる",
+    "title": "測定と検査まとめ Part3 絶縁抵抗計の測定方法",
+    "url": "https://youtu.be/4nkNfE55Qww",
+    "type": "video",
+    "topicIds": [
+      "inspection"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 10,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-law-1",
+    "provider": "ガミデンキちゃんねる",
+    "title": "法令要点まとめ Part1 電気工作物の概念",
+    "url": "https://youtu.be/TbPysD6DC5g",
+    "type": "video",
+    "topicIds": [
+      "law"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 16,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-law-2",
+    "provider": "ガミデンキちゃんねる",
+    "title": "法令要点まとめ Part2 免状の意義と申請のタイミング",
+    "url": "https://youtu.be/KWlOM8meeLQ",
+    "type": "video",
+    "topicIds": [
+      "law"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 9,
+    "creatorNote": "元電気科講師",
+    "note": "免状が要る/要らないの線引き。本人の動機(自宅の照明)に直結する。"
+  },
+  {
+    "id": "gami-design",
+    "provider": "ガミデンキちゃんねる",
+    "title": "配線設計の知識を1本にまとめました",
+    "url": "https://youtu.be/ph23ig2SQb4",
+    "type": "video",
+    "topicIds": [
+      "distribution-design"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 25,
+    "creatorNote": "元電気科講師"
+  },
+  {
+    "id": "gami-diagram",
+    "provider": "ガミデンキちゃんねる",
+    "title": "勝利の4STEPで複線図の基礎を完全マスター",
+    "url": "https://youtu.be/aPK04VwyvUE",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 16,
+    "creatorNote": "元電気科講師",
+    "note": "2026年5月公開の最新版。複線図はこの4手順で描く。"
+  },
+  {
+    "id": "gami-lamp",
+    "provider": "ガミデンキちゃんねる",
+    "title": "初心者必見!! ランプレセプタクルの施工方法",
+    "url": "https://youtu.be/rwhGrprYFuE",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 17,
+    "creatorNote": "元電気科講師",
+    "note": "輪作り(のの字)を含む基本作業。ここが最初の壁。"
+  },
+  {
+    "id": "gami-defects",
+    "provider": "ガミデンキちゃんねる",
+    "title": "技能試験で不合格になる欠陥項目の全て【総集編】",
+    "url": "https://youtu.be/2s2zUBghAVM",
+    "type": "video",
+    "topicIds": [],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 69,
+    "creatorNote": "元電気科講師",
+    "note": "2026年7月公開。長いので一気に見ない。判定の正本は公式の欠陥判断基準。"
+  },
+  {
+    "id": "gami-candidates",
+    "provider": "ガミデンキちゃんねる",
+    "title": "令和8年 技能試験はこの1本で解決｜公表問題1〜13完全収録",
+    "url": "https://youtu.be/n4V1B3S4qZM",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 390,
+    "examYear": 2026,
+    "creatorNote": "元電気科講師",
+    "note": "6時間29分。1本に13問が入り、各問「複線図」→「技能解説」の順にチャプターがある。レッスンからは該当チャプターの秒数付きURLで開く。説明欄に令和7年度の表記も残るので、支給材料と施工条件は公式PDFとHOZANのNo.別ページで必ず照合する。"
+  },
+  {
+    "id": "gami-plan",
+    "provider": "ガミデンキちゃんねる",
+    "title": "申込開始!! 一発合格のために“やるべきこと”",
+    "url": "https://youtu.be/jy_3II4p6JU",
+    "type": "video",
+    "topicIds": [],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 22,
+    "creatorNote": "元電気科講師",
+    "note": "申込〜合格までの段取り。日付は年度で変わるので公式で確認する。"
+  },
+  {
+    "id": "pino-insulation",
+    "provider": "ピノ電気工事",
+    "title": "【初心者向け】絶縁抵抗を理解しよう",
+    "url": "https://youtu.be/4wR0MfTRBiY",
+    "type": "video",
+    "topicIds": [
+      "inspection"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 15,
+    "creatorNote": "現役の電気工事士",
+    "note": "51万回再生。実物の測定器を映すので、数字が何を測っているか腑に落ちる。"
+  },
+  {
+    "id": "pino-earth",
+    "provider": "ピノ電気工事",
+    "title": "【初心者向け】接地抵抗を理解しよう",
+    "url": "https://youtu.be/17qm6bHlWh4",
+    "type": "video",
+    "topicIds": [
+      "inspection"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 16,
+    "creatorNote": "現役の電気工事士"
+  },
+  {
+    "id": "kemichiru-symbols",
+    "provider": "けみちるちゃんねる",
+    "title": "耳で覚える 第2講 一般図記号",
+    "url": "https://youtu.be/Kxzu6C_tucQ",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 12,
+    "creatorNote": "個人",
+    "note": "画面を見ずに聴ける作り。移動中や家事の合間の2周目に使う。1周目には使わない。"
+  },
+  {
+    "id": "kemichiru-wires",
+    "provider": "けみちるちゃんねる",
+    "title": "猿でも分かる 第1講 電線の種類",
+    "url": "https://youtu.be/ZXwfO1Wq5D4",
+    "type": "video",
+    "topicIds": [
+      "equipment-tools"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 12,
+    "creatorNote": "個人",
+    "note": "90万回再生。電線の名前が覚えられないときの聴き流し用。"
+  },
+  {
+    "id": "kandenkou-nonoji",
+    "provider": "還電工(還暦ジィージの電気工事士試験チャレンジ)",
+    "title": "のの字・輪作りを1分で",
+    "url": "https://youtu.be/e6pyH8vOXq4",
+    "type": "video",
+    "topicIds": [
+      "wiring-diagram"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 2,
+    "creatorNote": "60歳から独学で受験した個人",
+    "note": "手元だけを写した短い実演。長い解説の前に、手の動きだけ真似したいとき。"
   }
 ]

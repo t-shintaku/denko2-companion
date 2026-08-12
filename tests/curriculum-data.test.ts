@@ -17,10 +17,84 @@ describe('カリキュラムJSONの整合', () => {
     for (const l of curriculum.lessons) {
       expect(phaseIds.has(l.phaseId), `${l.id} phase`).toBe(true);
       for (const pre of l.prerequisites) expect(lessonIds.has(pre), `${l.id} pre ${pre}`).toBe(true);
-      for (const r of l.resources) expect(resourceIds.has(r), `${l.id} res ${r}`).toBe(true);
+      for (const r of l.resources)
+        expect(resourceIds.has(r.resourceId), `${l.id} res ${r.resourceId}`).toBe(true);
       for (const r of l.practice.resourceIds ?? [])
         expect(resourceIds.has(r), `${l.id} practice res ${r}`).toBe(true);
       for (const t of l.officialTopicIds) expect(topicIds.has(t), `${l.id} topic ${t}`).toBe(true);
+    }
+  });
+
+  /**
+   * 「リンクは貼ってあるが、飛んだ先の何を見ればいいか分からない」で差し戻された。
+   * 教材トップは目次ですらなく、7科目・13問・一問一答が同時に並ぶ。
+   * リンクを増やすほど迷子になるので、道案内の無いリンクを機械的に禁止する。
+   */
+  it('教材リンクには必ず「開く・見る・止める」が付いている', () => {
+    for (const l of curriculum.lessons) {
+      for (const ref of l.resources) {
+        expect(ref.where?.trim(), `${l.id} / ${ref.resourceId} の where`).toBeTruthy();
+        expect(ref.watch?.trim(), `${l.id} / ${ref.resourceId} の watch`).toBeTruthy();
+        expect(ref.stop?.trim(), `${l.id} / ${ref.resourceId} の stop`).toBeTruthy();
+        expect(['first', 'more', 'stuck', 'official'], `${l.id} / ${ref.resourceId}`).toContain(
+          ref.use,
+        );
+        if (ref.openUrl) expect(ref.openUrl.startsWith('https://'), ref.openUrl).toBe(true);
+      }
+    }
+  });
+
+  it('教材があるレッスンには、今日まず開く1本(first)がちょうど1つある', () => {
+    for (const l of curriculum.lessons) {
+      if (l.resources.length === 0) continue;
+      const first = l.resources.filter((r) => r.use === 'first');
+      expect(first.length, `${l.id} の first が ${first.length} 件`).toBe(1);
+    }
+  });
+
+  it('同じ教材を1レッスンに二重で並べていない', () => {
+    for (const l of curriculum.lessons) {
+      const ids = l.resources.map((r) => r.resourceId);
+      expect(new Set(ids).size, `${l.id} に重複した教材がある`).toBe(ids.length);
+    }
+  });
+
+  it('解く／作るで外部教材を開かせるときは、ページのどこかまで書いてある', () => {
+    for (const l of curriculum.lessons) {
+      if (!l.practice.resourceIds?.length) continue;
+      expect(l.practice.where?.trim(), `${l.id} の practice.where`).toBeTruthy();
+    }
+  });
+
+  /**
+   * 分かりやすさは個人の解説者のほうが上のことがある。企業サイトだけに寄せない。
+   * ただし数字と条件の正本は公式。個人動画を official-check にはしない。
+   */
+  it('個人の解説者を教材として採用していて、公式の代わりにはしていない', () => {
+    const individuals = resources.filter((r) => r.creatorKind === 'individual');
+    expect(individuals.length).toBeGreaterThanOrEqual(10);
+    expect(individuals.every((r) => r.role !== 'official-check')).toBe(true);
+    // 誰の話を聞いているのかを画面に出せること
+    expect(individuals.every((r) => r.provider.trim().length > 0)).toBe(true);
+
+    const used = new Set(
+      curriculum.lessons.flatMap((l) => l.resources.map((r) => r.resourceId)),
+    );
+    const usedIndividuals = individuals.filter((r) => used.has(r.id));
+    expect(usedIndividuals.length, '個人教材がカリキュラムから使われていない').toBeGreaterThanOrEqual(
+      10,
+    );
+  });
+
+  it('技能の候補13問は、動画の該当チャプターを名指しで開く', () => {
+    for (const no of Array.from({ length: 13 }, (_, i) => i + 1)) {
+      const l = curriculum.lessons.find((x) => x.id === `p5-c${String(no).padStart(2, '0')}`)!;
+      const first = l.resources.find((r) => r.use === 'first')!;
+      // チャンネルのトップや動画の先頭ではなく、その問題が始まる秒数へ直接飛ばす
+      expect(first.openUrl, `${l.id}`).toMatch(/\?t=\d+$/);
+      expect(first.where).toContain(`公表問題${no}`);
+      // 6時間半の動画なので、止める位置が無いと次の問題まで見てしまう
+      expect(first.stop, `${l.id} の stop`).toMatch(/止める|閉じる/);
     }
   });
 

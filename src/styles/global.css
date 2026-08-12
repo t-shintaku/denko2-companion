@@ -102,6 +102,43 @@ a {
   border-width: 2px;
 }
 
+/* 教材1件ぶんの枠。カードの中に入るので背景は一段落とす */
+.card--flat {
+  background: var(--surface-2);
+  margin-bottom: 0;
+}
+
+/*
+ * 教材の道案内(開く／見る／止める)。
+ * ラベルを固定幅で左に置き、本文の頭を揃える。狭い画面では縦に積む。
+ */
+.guide {
+  display: grid;
+  grid-template-columns: 3.6em 1fr;
+  gap: 2px 8px;
+  margin: 8px 0 6px;
+  font-size: 0.9rem;
+}
+
+.guide dt {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  padding-top: 2px;
+}
+
+.guide dd {
+  margin: 0;
+}
+
+@media (max-width: 360px) {
+  .guide {
+    grid-template-columns: 1fr;
+  }
+  .guide dt {
+    padding-top: 6px;
+  }
+}
+
 .muted {
   color: var(--text-dim);
   font-size: 0.85rem;

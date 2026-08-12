@@ -17,7 +17,29 @@ import {
   type LessonStep,
 } from '../../domain/lessons';
 import { useVault } from '../../state/VaultContext';
-import type { CurriculumLesson, LessonMode, SessionKind } from '../../domain/types';
+import type {
+  CreatorKind,
+  CurriculumLesson,
+  LessonMode,
+  ResourceUse,
+  SessionKind,
+} from '../../domain/types';
+
+/** 並び順。今日まず開く1本を必ず先頭に出す */
+const USE_ORDER: Record<ResourceUse, number> = { first: 0, more: 1, stuck: 2, official: 3 };
+
+const USE_LABEL: Record<ResourceUse, string> = {
+  first: 'まずこれ',
+  more: '余力があれば',
+  stuck: '詰まったときだけ',
+  official: '公式で答え合わせ',
+};
+
+const CREATOR_LABEL: Record<CreatorKind, string> = {
+  public: '公式・官公庁',
+  company: '企業',
+  individual: '個人の解説者',
+};
 
 const PRACTICE_TO_SESSION: Record<string, SessionKind> = {
   'external-questions': 'questions',
@@ -100,10 +122,19 @@ export function LessonPage({
     setActualMinutes('');
   }, [upcoming]);
 
-  const resources = useMemo(
-    () => lesson.resources.map(resolveResource).filter((r) => r !== undefined),
+  /**
+   * 教材は「リンク+道案内」で1組。リンクだけ出すと、飛んだ先の何を見ればいいか
+   * 分からずに終わる(実際に差し戻された)。use の順に並べ、まず開く1本を先頭に固定する。
+   */
+  const guides = useMemo(
+    () =>
+      [...lesson.resources]
+        .sort((a, b) => USE_ORDER[a.use] - USE_ORDER[b.use])
+        .map((ref) => ({ ref, resource: resolveResource(ref.resourceId) }))
+        .filter((x) => x.resource !== undefined),
     [lesson.resources],
   );
+  const firstGuide = guides.find((x) => x.ref.use === 'first') ?? guides[0];
 
   const commit = async (step: LessonStep) => {
     setBusy(true);
@@ -258,19 +289,47 @@ export function LessonPage({
       {/* --- 1. 見る --------------------------------------------------- */}
       <section className="card">
         <h2>1. 見る</h2>
-        {resources.length === 0 && <p className="muted">教材リンクなし。手元の材料・記録を使う。</p>}
+        {guides.length === 0 && (
+          <p className="muted">
+            教材リンクなし。直前期は新しい教材を足さない段階なので、手元の材料と自分の記録だけを使う。
+          </p>
+        )}
+        {firstGuide && guides.length > 1 && (
+          <p className="notice">
+            今日開くのは<strong>「{firstGuide.resource!.title}」の1本だけ</strong>。
+            下の「余力があれば」「詰まったときだけ」は、先に開かない。
+          </p>
+        )}
         <ul className="plain stack">
-          {resources.map((r) => (
-            <li key={r.id}>
-              <a href={r.url} target="_blank" rel="noreferrer">
-                {r.provider}｜{r.title}
-              </a>
-              <div className="muted">
-                {r.role === 'official-check' ? '公式資料' : '民間の解説'}
-                {r.expectedMinutes ? ` ・約${r.expectedMinutes}分` : ''} ・確認日 {r.lastVerified}
-                {r.verification === 'requirements-doc' ? '(要件書記載。到達性は未検証)' : ''}
+          {guides.map(({ ref, resource: r }) => (
+            <li key={`${ref.resourceId}-${ref.use}`} className="card card--flat">
+              <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
+                <span className={ref.use === 'first' ? 'badge badge--ok' : 'badge'}>
+                  {USE_LABEL[ref.use]}
+                </span>
+                <a href={ref.openUrl ?? r!.url} target="_blank" rel="noreferrer">
+                  {r!.provider}｜{r!.title}
+                </a>
               </div>
-              {r.copyrightNote && <div className="muted">{r.copyrightNote}</div>}
+              <dl className="guide">
+                <dt>開く</dt>
+                <dd>{ref.where}</dd>
+                <dt>見る</dt>
+                <dd>{ref.watch}</dd>
+                <dt>止める</dt>
+                <dd>{ref.stop}</dd>
+              </dl>
+              <div className="muted">
+                {r!.creatorKind ? CREATOR_LABEL[r!.creatorKind] : r!.role === 'official-check' ? '公式・官公庁' : '民間の解説'}
+                {r!.creatorNote ? `(${r!.creatorNote})` : ''}
+                {ref.minutes ? ` ・このレッスンでは約${ref.minutes}分` : ''}
+                {r!.runtimeMinutes ? ` ・動画全体は${r!.runtimeMinutes}分` : ''}
+                {' ・確認日 '}
+                {r!.lastVerified}
+                {r!.verification === 'requirements-doc' ? '(要件書記載。到達性は未検証)' : ''}
+              </div>
+              {r!.copyrightNote && <div className="muted">{r!.copyrightNote}</div>}
+              {r!.note && <div className="muted">{r!.note}</div>}
             </li>
           ))}
         </ul>
@@ -317,12 +376,17 @@ export function LessonPage({
       <section className="card">
         <h2>3. 解く／作る</h2>
         <p>{lesson.practice.instruction}</p>
+        {lesson.practice.where && (
+          <p className="muted">
+            <strong>どこで:</strong> {lesson.practice.where}
+          </p>
+        )}
         {lesson.practice.resourceIds?.map((id) => {
           const r = resolveResource(id);
           return r ? (
             <p key={id}>
               <a href={r.url} target="_blank" rel="noreferrer">
-                {r.title}を開く
+                {r.provider}｜{r.title}を開く
               </a>
             </p>
           ) : null;

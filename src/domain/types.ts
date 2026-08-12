@@ -118,6 +118,15 @@ export type AdminTaskTemplate = {
 export type ResourceType = 'official' | 'video' | 'article' | 'quiz' | 'pdf';
 export type ResourceRole = 'primary' | 'supplement' | 'official-check';
 
+/**
+ * 作り手の種別。**誰の話を聞いているのかを画面に出すために持つ**。
+ *
+ * 'individual' は個人の解説者。試験の正解そのものではないが、素人には
+ * いちばん噛み砕かれている。公式('public')・企業('company')と並べて出し、
+ * 「分かりやすさは個人、最終確認は公式」という使い分けを画面で示す。
+ */
+export type CreatorKind = 'public' | 'company' | 'individual';
+
 export type LearningResource = {
   id: string;
   provider: string;
@@ -126,6 +135,11 @@ export type LearningResource = {
   type: ResourceType;
   topicIds: TopicId[];
   role: ResourceRole;
+  creatorKind?: CreatorKind;
+  /** 誰が作っているか。個人の解説者を採る根拠を画面に出す(例: 元電気科講師) */
+  creatorNote?: string;
+  /** 動画の実尺(分)。expectedMinutes は「そのレッスンで見る分」なので別物 */
+  runtimeMinutes?: number;
   expectedMinutes?: number;
   examYear?: number;
   lastVerified: IsoDate;
@@ -134,6 +148,39 @@ export type LearningResource = {
   replacementResourceId?: string;
   copyrightNote?: string;
   note?: string;
+};
+
+/**
+ * 教材をどう使うか。**この順に並べて出す**。
+ * 'first' 以外を先に開かせない。素人が迷子になるのは「同格の入口が3つある」ときなので、
+ * 今日の1本を1つだけ決め打ちする。
+ */
+export type ResourceUse = 'first' | 'more' | 'stuck' | 'official';
+
+/**
+ * レッスンから教材への参照。**リンクだけを置かない**。
+ *
+ * 教材トップのURLだけ貼っていたとき、「飛んだ先の何を見ればいいか分からない」と
+ * 差し戻された。サイトのトップは目次ですらなく、7科目・13問・一問一答が同時に並ぶ。
+ * そこで参照ごとに、開く先(openUrl)・ページ内のどこ(where)・何を見る(watch)・
+ * どこで止める(stop)を必須で持つ。書けない教材はレッスンに載せない。
+ */
+export type LessonResourceRef = {
+  resourceId: string;
+  /**
+   * そのレッスンで実際に開くURL。resources.json の url より深い階層や
+   * 動画の再生位置(?t=秒)を指すときに書く。無ければ resource.url を開く。
+   */
+  openUrl?: string;
+  use: ResourceUse;
+  /** 開いた先のどこへ行くか。「ページ左のメニューの『複線図』」など */
+  where: string;
+  /** そこで何を見る・読むか */
+  watch: string;
+  /** どこで止めるか。これが無いと延々見て一日が終わる */
+  stop: string;
+  /** このレッスンで使う分の目安(分)。教材全体の尺ではない */
+  minutes?: number;
 };
 
 export type RecallPrompt = {
@@ -167,6 +214,8 @@ export type PracticeSpec = {
   instruction: string;
   /** 外部教材へ誘導する場合の参照先 */
   resourceIds?: string[];
+  /** その教材の**どこで**解く／作るのか。リンクだけ置くと開いた先で迷う */
+  where?: string;
   /** 採点対象か。無採点5問は false(FR-003 / AT-002) */
   scored: boolean;
 };
@@ -232,7 +281,8 @@ export type CurriculumLesson = {
    * ここに書いた段階は比率配分を使わず、そのままの分数を出す。
    */
   stepMinutes?: { input?: number; recall?: number; practice?: number; takeaway?: number };
-  resources: string[];
+  /** 教材への道案内。id だけの配列ではない(LessonResourceRef のコメントを参照) */
+  resources: LessonResourceRef[];
   recallPrompts: RecallPrompt[];
   practice: PracticeSpec;
   completionRule?: Partial<CompletionRule>;
