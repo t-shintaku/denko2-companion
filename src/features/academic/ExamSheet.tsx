@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { topics } from '../../data';
 import { repo } from '../../db/repo';
-import { ERROR_REASON_LABEL, EXAM_QUESTION_COUNT, POINTS_PER_QUESTION } from '../../domain/academic';
+import {
+  ACADEMIC_EXAM_MINUTES,
+  ERROR_REASON_LABEL,
+  EXAM_QUESTION_COUNT,
+  POINTS_PER_QUESTION,
+} from '../../domain/academic';
 import type { ExamInput } from '../../domain/academic';
 import { useVault } from '../../state/VaultContext';
 import type { ErrorReason, ExamKind, TopicId } from '../../domain/types';
@@ -86,6 +91,9 @@ export function ExamSheet({
     return { correct, total };
   }, [bulk]);
 
+  /** 計測ボタンで測れている分数(保存前の判定に使う) */
+  const measuredSoFar = Math.floor(elapsed / 60);
+
   const perQuestionAnswered = rows.filter((r) => r.correct !== undefined).length;
   const perQuestionCorrect = rows.filter((r) => r.correct === true).length;
 
@@ -112,11 +120,38 @@ export function ExamSheet({
         );
       }
       if (requiredCount === undefined && bulkTotals.total < 1) list.push('問題数を入れる');
+    }
+    // 「本番同様」は学科ゲートの「120分模試2回」に直接効く。
+    // タイマーも使わず時間も空欄のまま数えると、2件で条件が通ってしまう
+    if (timed) {
+      const entered = minutes === '' ? measuredSoFar : Number(minutes);
+      if (!(entered > 0)) {
+        list.push(
+          '「本番同様」にするなら、かかった時間を入れる(または計測を使う)。' +
+            '時間の無い回は120分模試として数えない',
+        );
+      } else if (entered > ACADEMIC_EXAM_MINUTES) {
+        list.push(
+          `${ACADEMIC_EXAM_MINUTES}分を超えた回は「本番同様」にしない(${entered}分)。` +
+            'チェックを外せばそのまま保存できる',
+        );
+      }
     } else if (perQuestionAnswered !== rows.length) {
       list.push(`未回答が ${rows.length - perQuestionAnswered}問ある`);
     }
     return list;
-  }, [label, mode, bulk, bulkTotals, perQuestionAnswered, rows.length, requiredCount]);
+  }, [
+    label,
+    mode,
+    bulk,
+    bulkTotals,
+    perQuestionAnswered,
+    rows.length,
+    requiredCount,
+    timed,
+    minutes,
+    measuredSoFar,
+  ]);
 
   const ready = blockers.length === 0;
 
@@ -220,7 +255,13 @@ export function ExamSheet({
                 checked={timed}
                 onChange={(e) => setTimed(e.target.checked)}
               />
-              <span>本番同様(120分を計って中断なし)</span>
+              <span>
+                本番同様({ACADEMIC_EXAM_MINUTES}分を計って中断なし)
+                <br />
+                <span className="muted">
+                  学科ゲートの「{ACADEMIC_EXAM_MINUTES}分模試2回」に効く。時間を入れた回だけ数える
+                </span>
+              </span>
             </label>
             <div className="row" style={{ marginTop: 8 }}>
               <button

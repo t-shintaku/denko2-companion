@@ -68,14 +68,24 @@ describe('Sprint 1 の通し動作', () => {
     const recallInputs = within(recallSection).getAllByRole('textbox');
     await user.type(recallInputs[0]!, '免状申請が残る');
     await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
+    // 段階ごとに保存が走る。保存中はボタンが無効なので、次の段階へ進む前に待つ
+    await waitFor(() =>
+      expect(within(recallSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),
+    );
 
     const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
     await user.type(within(practiceSection).getByLabelText('やったことのメモ'), '受験日を入れた');
     await user.click(within(practiceSection).getByRole('button', { name: /保存/ }));
+    // 段階ごとに保存(と時間の記録)が走るので、次の段階へ進む前に反映を待つ
+    await waitFor(() =>
+      expect(within(practiceSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),
+    );
     expect(screen.queryByText(/完了。XP/)).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText('次に直す1点'), '免状申請の窓口を調べる');
-    await user.click(screen.getByRole('button', { name: /保存してレッスンを閉じる/ }));
+    const finish = screen.getByRole('button', { name: /保存してレッスンを閉じる/ });
+    await waitFor(() => expect(finish).toBeEnabled());
+    await user.click(finish);
 
     expect(await screen.findByText(/完了。XP \+10/)).toBeInTheDocument();
   });
@@ -110,18 +120,35 @@ describe('Sprint 1 の通し動作', () => {
     await user.click(await screen.findByRole('button', { name: 'はじめる' }));
 
     await user.click(await screen.findByRole('button', { name: '見たので次へ' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見た' })).toBeDisabled());
     const recallSection = screen.getByRole('heading', { name: '2. 閉じて答える' }).closest('section')!;
     await user.type(within(recallSection).getAllByRole('textbox')[0]!, 'a');
     await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
+    await waitFor(() =>
+      expect(within(recallSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),
+    );
     const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
     await user.type(within(practiceSection).getByLabelText('やったことのメモ'), 'b');
     await user.click(within(practiceSection).getByRole('button', { name: /保存/ }));
 
-    // 「1点残す」へ到達した時点で、実測値が入る
-    const minutes = screen.getByLabelText('実際にかかった時間(分)') as HTMLInputElement;
-    await waitFor(() => expect(Number(minutes.value)).toBeGreaterThan(0));
+    // 時間の入力欄は段階ごとに出る。空欄なら実測値、入れればその値を記録する
+    const minutes = (await screen.findByLabelText(/この段階にかかった時間/)) as HTMLInputElement;
+    await user.clear(minutes);
+    await user.type(minutes, '7');
     // オリエンテーションは基礎180分に算入しないと明示する
     expect(screen.getByText(/基礎学習180分には算入しない/)).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('次に直す1点'), 'c');
+    const finish = screen.getByRole('button', { name: /保存してレッスンを閉じる/ });
+    await waitFor(() => expect(finish).toBeEnabled());
+    await user.click(finish);
+
+    // 見積(30分版)ではなく、入れた実績が残る
+    await waitFor(async () => {
+      const sessions = (await repo.load()).studySessions;
+      const takeaway = sessions.find((s) => s.step === 'takeaway');
+      expect(takeaway?.durationMinutes).toBe(7);
+    });
   });
 
   it('設定タブでバックアップを書き出せる', async () => {

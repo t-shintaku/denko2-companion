@@ -898,6 +898,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 1,
         "instruction": "候補No.1を1回施工し、欠陥の有無を記録",
         "resourceIds": [ "official-defect" ],
         "scored": false
@@ -1091,6 +1092,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 1,
         "instruction": "候補No.1 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1115,6 +1117,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 2,
         "instruction": "候補No.2 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1139,6 +1142,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 3,
         "instruction": "候補No.3 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1163,6 +1167,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 4,
         "instruction": "候補No.4 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1187,6 +1192,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 5,
         "instruction": "候補No.5 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1211,6 +1217,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 6,
         "instruction": "候補No.6 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1235,6 +1242,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 7,
         "instruction": "候補No.7 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1259,6 +1267,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 8,
         "instruction": "候補No.8 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1283,6 +1292,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 9,
         "instruction": "候補No.9 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1307,6 +1317,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 10,
         "instruction": "候補No.10 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1331,6 +1342,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 11,
         "instruction": "候補No.11 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1355,6 +1367,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 12,
         "instruction": "候補No.12 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false
@@ -1379,6 +1392,7 @@
       ],
       "practice": {
         "kind": "candidate",
+        "candidateNo": 13,
         "instruction": "候補No.13 を1題。複線図から完成まで通す",
         "resourceIds": [ "official-candidates" ],
         "scored": false

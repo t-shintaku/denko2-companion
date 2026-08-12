@@ -28,8 +28,14 @@ export const TOPIC_MIN_ACCURACY = 0.6;
 export const REQUIRED_TOTAL_QUESTIONS = 300;
 export const REQUIRED_TIMED_MOCKS = 2;
 export const RECENT_WINDOW = 20;
-/** 科目別正答率を判定に使うのに必要な最低問題数。3問で100%を「得意」と呼ばない */
-export const TOPIC_MIN_SAMPLE = 10;
+/**
+ * 科目別正答率を判定に使うのに必要な問題数。3問で100%を「得意」と呼ばない。
+ *
+ * **判定窓と同じ20問を要求する。** 10問で足りることにしていたとき、
+ * 画面が「各科目 直近20問で60%以上」と書いているのに10問で達成になっていた。
+ * 表示より甘い条件で通すのは、合格判断としては嘘に等しい。
+ */
+export const TOPIC_MIN_SAMPLE = RECENT_WINDOW;
 
 /**
  * 受験区分ごとの問題数。**学科は50問120分**なので、模試の50問は入力チェックではなく
@@ -341,8 +347,33 @@ export function lowestRecentScore(exams: MockExam[], n = 3): number | undefined 
   return Math.min(...list.map(scoreOf));
 }
 
+/** 学科の本番時間(分)。50問120分 */
+export const ACADEMIC_EXAM_MINUTES = 120;
+
+/**
+ * 「本番同様の120分模試」として数えてよい記録か。
+ *
+ * **時間が記録されていない回は数えない。** チェックを入れるだけで数えていたので、
+ * タイマーも使わず時間も空欄の記録2件で「120分模試2回」が通っていた。
+ * 本番より長くかかった回も「本番同様」ではない(早く終わるのは構わない)。
+ */
+export function isTimedMock(e: MockExam): boolean {
+  return (
+    e.timed === true &&
+    typeof e.minutes === 'number' &&
+    Number.isFinite(e.minutes) &&
+    e.minutes > 0 &&
+    e.minutes <= ACADEMIC_EXAM_MINUTES
+  );
+}
+
 export function timedMockCount(exams: MockExam[]): number {
-  return mocks(exams).filter((e) => e.timed).length;
+  return mocks(exams).filter(isTimedMock).length;
+}
+
+/** 「本番同様」を選んだのに時間が無い/超過していて数えられない回 */
+export function untimedMockCount(exams: MockExam[]): number {
+  return mocks(exams).filter((e) => e.timed && !isTimedMock(e)).length;
 }
 
 /** 模試のあとに出す「次までに直す上位3つ」(FR-010) */
@@ -408,8 +439,11 @@ export function academicGate(
   const started = stats.filter((s) => s.started).length;
   const avg = recentAverageScore(exams, 3);
   const timed = timedMockCount(exams);
-  const belowMinimum = stats.filter((s) => s.started && !s.meetsMinimum);
+  const untimed = untimedMockCount(exams);
+  // 判定に足る問題数がない科目は「未達」ではなく「判定不能」。
+  // 10問全問正解を「未達」と呼ぶと、何をすれば通るのかが伝わらない
   const noSample = stats.filter((s) => s.started && !s.hasSample);
+  const belowMinimum = stats.filter((s) => s.started && s.hasSample && !s.meetsMinimum);
 
   const criteria: GateCriterion[] = [
     {
@@ -444,18 +478,19 @@ export function academicGate(
         // 未着手の科目があるうちに「全科目クリア」と出さない。0/7で達成表示は嘘になる
         started < stats.length
           ? `未着手 ${stats.length - started}科目`
-          : belowMinimum.length > 0
-            ? `未達 ${belowMinimum.length}科目`
-            : noSample.length > 0
-              ? `${noSample.length}科目が直近${TOPIC_MIN_SAMPLE}問未満で判定不能`
+          : noSample.length > 0
+            ? `${noSample.length}科目が直近${TOPIC_MIN_SAMPLE}問未満で判定不能`
+            : belowMinimum.length > 0
+              ? `未達 ${belowMinimum.length}科目`
               : '全科目クリア',
       official: false,
     },
     {
       id: 'timed-mocks',
-      label: `120分の本番同様模試を${REQUIRED_TIMED_MOCKS}回以上`,
+      label: `${ACADEMIC_EXAM_MINUTES}分の本番同様模試を${REQUIRED_TIMED_MOCKS}回以上`,
       passed: timed >= REQUIRED_TIMED_MOCKS,
-      evidence: `${timed} 回`,
+      evidence:
+        untimed > 0 ? `${timed} 回(時間未記録で数えない ${untimed}回)` : `${timed} 回`,
       official: false,
     },
   ];

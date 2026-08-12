@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { resolveResource } from '../../data';
+import { resolveResource, skillDefects } from '../../data';
 import { countsAsBasics } from '../../domain/onboarding';
+import { CANDIDATE_NUMBERS, EXAM_MINUTES, TARGET_MINUTES } from '../../domain/practical';
 import { repo } from '../../db/repo';
 import { nowJstIso } from '../../domain/jst';
 import {
@@ -12,6 +13,7 @@ import {
   nextStep,
   requiredSteps,
   stepDone,
+  stepMinutes,
   type LessonStep,
 } from '../../domain/lessons';
 import { useVault } from '../../state/VaultContext';
@@ -56,9 +58,32 @@ export function LessonPage({
   const [terms, setTerms] = useState<string[]>(['', '', '']);
   const [busy, setBusy] = useState(false);
 
-  // 学習時間は実測する。見積(estimatedMinutes)をそのまま実績にしない。
-  // 見積を自動記録すると、画面をクリックするだけで基礎180分ゲートが開いてしまう。
-  const openedAtRef = useRef<number>(Date.now());
+  /**
+   * 候補問題のレッスンは、この画面の「解く／作る」がそのまま技能の記録になる。
+   *
+   * 分けていたときは、ホームの「候補No.1を作る」を完了しても技能側に何も残らず、
+   * 数週間後に「カリキュラムは完了、技能は0/13」になり得た。二重入力を求めない。
+   */
+  const isCandidate = lesson.practice.kind === 'candidate';
+  const [candidateNo, setCandidateNo] = useState<number>(lesson.practice.candidateNo ?? 1);
+  const [diagramMinutes, setDiagramMinutes] = useState('');
+  const [workMinutes, setWorkMinutes] = useState('');
+  const [completedWork, setCompletedWork] = useState(true);
+  const [defectCodes, setDefectCodes] = useState<string[]>([]);
+  const alreadyRecorded = snapshot.skillAttempts.some(
+    (a) => a.lessonId === lesson.id && (a.kind ?? 'candidate') === 'candidate',
+  );
+  const candidateTotalMinutes = Number(workMinutes || 0) + Number(diagramMinutes || 0);
+
+  /**
+   * 学習時間は**段階ごとに**実測して、段階を保存するたびに記録する。
+   *
+   * 完了時に1件だけ記録していたときは、「今日は見るだけで終えてよい」と案内しながら
+   * その日の時間がどこにも残らなかった。翌日以降に完了しても、記録されるのは
+   * 最後に開いてからの時間だけ。基礎180分が実態より進まず、20問診断へ行けなくなる。
+   * 見積(estimatedMinutes)をそのまま実績にしないという原則はそのまま。
+   */
+  const stepStartRef = useRef<number>(Date.now());
   const [actualMinutes, setActualMinutes] = useState<string>('');
 
   const steps = requiredSteps(lesson);
@@ -67,14 +92,13 @@ export function LessonPage({
   const isUngradedFive = lesson.stage === 'ungraded-five';
 
   const measuredMinutes = () =>
-    Math.max(1, Math.round((Date.now() - openedAtRef.current) / 60_000));
+    Math.max(1, Math.round((Date.now() - stepStartRef.current) / 60_000));
 
-  // 「1点残す」まで来た時点で実測値を入れておく。本人はそのまま出すか直せる。
-  const reachedTakeaway = upcoming === 'takeaway';
+  // 段階が進んだら計測を切り直し、実測値を入れておく。本人はそのまま出すか直せる
   useEffect(() => {
-    if (reachedTakeaway && actualMinutes === '') setActualMinutes(String(measuredMinutes()));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reachedTakeaway]);
+    stepStartRef.current = Date.now();
+    setActualMinutes('');
+  }, [upcoming]);
 
   const resources = useMemo(
     () => lesson.resources.map(resolveResource).filter((r) => r !== undefined),
@@ -84,7 +108,9 @@ export function LessonPage({
   const commit = async (step: LessonStep) => {
     setBusy(true);
     try {
-      const before = snapshot.lessonProgress[lesson.id];
+      // 画面のスナップショットではなく保存済みの値から積む。
+      // 続けて2段階を保存したとき、再読込が間に合わないと直前の段階が消える
+      const before = await repo.getLessonProgress(lesson.id);
       const next = applyStep(lesson, before, step, {
         mode,
         recallAnswers: recall,
@@ -95,22 +121,49 @@ export function LessonPage({
       });
       await repo.saveLessonProgress(next);
 
-      // 完了した瞬間にだけ学習セッションを1件記録する。
-      // 動画を開いただけ(input のみ)では記録もXPも増えない(AT-003)。
-      if (!before?.completedAt && next.completedAt) {
+      // その段階を**はじめて**終えたときに、その段階ぶんの時間を記録する。
+      // 上書き保存では二重に記録しない。
+      // XPと完了は4段階そろってから(AT-003)。時間の記録はそれとは別に、やった分だけ残す。
+      // 候補問題は、この保存がそのまま技能の記録になる(13問到達・欠陥・時間に効く)
+      if (isCandidate && step === 'practice' && !alreadyRecorded && Number(workMinutes) > 0) {
+        await repo.addSkillAttempt({
+          kind: 'candidate',
+          candidateNo,
+          lessonId: lesson.id,
+          diagramMinutes: diagramMinutes === '' ? undefined : Number(diagramMinutes),
+          workMinutes: Number(workMinutes),
+          completed: completedWork,
+          defectFree: completedWork && defectCodes.length === 0,
+          defectCodes,
+          photoIds: [],
+          nextFix: practiceNote || undefined,
+        });
+      }
+
+      if (!stepDone(before, step)) {
         const measured = measuredMinutes();
         const confirmed = Number(actualMinutes);
         await repo.addSession({
-          // 本人が確認・修正した実績時間。未入力なら実測値
-          durationMinutes: Number.isFinite(confirmed) && confirmed > 0 ? confirmed : measured,
+          // 本人が確認・修正した実績時間。未入力なら実測値。
+          // 候補問題の施工は、画面の滞在時間ではなく複線図+施工の合計を実績とする
+          durationMinutes:
+            isCandidate && step === 'practice' && candidateTotalMinutes > 0
+              ? candidateTotalMinutes
+              : Number.isFinite(confirmed) && confirmed > 0
+                ? confirmed
+                : measured,
           measuredMinutes: measured,
-          estimatedMinutes: lesson.estimatedMinutes[mode],
+          estimatedMinutes: stepMinutes(lesson, mode, step),
           kind: PRACTICE_TO_SESSION[lesson.practice.kind] ?? 'theory',
           lessonId: lesson.id,
+          step,
           // オリエンテーション(§6 Step 1)と無採点5問(Step 2)は基礎学習(Step 3)ではない
           countsAsBasics: countsAsBasics(lesson),
-          nextFix: takeaway,
+          nextFix: step === 'takeaway' ? takeaway : undefined,
         });
+      }
+
+      if (!before?.completedAt && next.completedAt) {
         if (isUngradedFive && settings) {
           await repo.addUnknownTerms(terms, 'ungraded-five');
           await repo.saveSettings({ ...settings, ungradedFiveCompletedAt: nowJstIso() });
@@ -165,6 +218,42 @@ export function LessonPage({
       </div>
 
       {lesson.safetyNote && <div className="notice notice--safety">{lesson.safetyNote}</div>}
+
+      <div className="card">
+        <div className="field">
+          <label htmlFor="actual-minutes">
+            この段階にかかった時間(分)
+            {upcoming ? ` — ${STEP_LABEL[upcoming]}` : ''}
+          </label>
+          <div className="row">
+            <input
+              id="actual-minutes"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={600}
+              style={{ flex: 1 }}
+              value={actualMinutes}
+              onChange={(e) => setActualMinutes(e.target.value)}
+            />
+            <button
+              type="button"
+              className="btn-sm"
+              onClick={() => setActualMinutes(String(measuredMinutes()))}
+            >
+              計測値を使う
+            </button>
+          </div>
+          <p className="muted">
+            <strong>段階を保存するたびに、その段階ぶんの時間が記録される。</strong>
+            今日は「見る」だけで閉じてよく、その時間は消えない。空欄なら実測値を使う。
+            記録するのは見積({upcoming ? stepMinutes(lesson, mode, upcoming) : 0}分)ではなく実績。
+            {countsAsBasics(lesson)
+              ? ' この時間は基礎学習180分に算入される。'
+              : ' このレッスンは入口段階なので、基礎学習180分には算入しない。'}
+          </p>
+        </div>
+      </div>
 
       {/* --- 1. 見る --------------------------------------------------- */}
       <section className="card">
@@ -271,6 +360,90 @@ export function LessonPage({
             </div>
           </div>
         )}
+        {isCandidate && (
+          <div className="stack">
+            <p className="notice">
+              ここで入れた内容が<strong>そのまま技能の記録になる</strong>。
+              技能タブで入れ直す必要はない。13問到達・欠陥なし・時間の判定はこの記録で動く。
+            </p>
+            {lesson.practice.candidateNo === undefined && (
+              <div className="field">
+                <label htmlFor="candidate-no">どの候補問題を作ったか</label>
+                <select
+                  id="candidate-no"
+                  value={candidateNo}
+                  onChange={(e) => setCandidateNo(Number(e.target.value))}
+                >
+                  {CANDIDATE_NUMBERS.map((n) => (
+                    <option key={n} value={n}>
+                      候補No.{n}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div className="row">
+              <div style={{ flex: 1 }}>
+                <label htmlFor="diagram-minutes">複線図(分)</label>
+                <input
+                  id="diagram-minutes"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={diagramMinutes}
+                  onChange={(e) => setDiagramMinutes(e.target.value)}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="work-minutes">施工(分)</label>
+                <input
+                  id="work-minutes"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  value={workMinutes}
+                  onChange={(e) => setWorkMinutes(e.target.value)}
+                />
+              </div>
+            </div>
+            {candidateTotalMinutes > 0 && (
+              <p className={candidateTotalMinutes <= TARGET_MINUTES ? 'badge badge--ok' : 'badge badge--warn'}>
+                合計 {candidateTotalMinutes} 分(本番{EXAM_MINUTES}分・練習の目標{TARGET_MINUTES}分)
+              </p>
+            )}
+            <label className="row">
+              <input
+                type="checkbox"
+                style={{ width: 'auto', minHeight: 'auto' }}
+                checked={completedWork}
+                onChange={(e) => setCompletedWork(e.target.checked)}
+              />
+              <span>時間内に完成した</span>
+            </label>
+            <div>
+              <strong>欠陥(公式の判断基準で自己点検)</strong>
+              <p className="muted">1つでも該当すれば不合格。該当が無ければチェックしない。</p>
+              {skillDefects.map((d) => (
+                <label className="row" key={d.code} style={{ marginBottom: 6 }}>
+                  <input
+                    type="checkbox"
+                    style={{ width: 'auto', minHeight: 'auto' }}
+                    checked={defectCodes.includes(d.code)}
+                    onChange={(e) =>
+                      setDefectCodes((c) =>
+                        e.target.checked ? [...c, d.code] : c.filter((x) => x !== d.code),
+                      )
+                    }
+                  />
+                  <span style={{ fontSize: '0.85rem' }}>{d.label}</span>
+                </label>
+              ))}
+            </div>
+            {alreadyRecorded && (
+              <p className="muted">この レッスンの技能記録は作成済み。追加の記録は技能タブから。</p>
+            )}
+          </div>
+        )}
         {isUngradedFive && (
           <div className="field">
             <label>知らなかった言葉(最大3つ)</label>
@@ -301,11 +474,19 @@ export function LessonPage({
         </div>
         <button
           className="btn-sm btn-block"
-          disabled={busy || (lesson.practice.scored ? total.trim() === '' : practiceNote.trim() === '')}
+          disabled={
+            busy ||
+            // 候補問題は施工時間が無いと技能の判定に使えない。空のまま完了させない
+            (isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0)) ||
+            (lesson.practice.scored ? total.trim() === '' : practiceNote.trim() === '')
+          }
           onClick={() => commit('practice')}
         >
           {stepDone(progress, 'practice') ? '✓ 保存済み(上書き)' : '結果を保存'}
         </button>
+        {isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0) && (
+          <p className="muted">施工時間を入れると保存できる(技能ゲートの判定に使う)。</p>
+        )}
       </section>
 
       {/* --- 4. 1点残す ------------------------------------------------- */}
@@ -317,35 +498,6 @@ export function LessonPage({
           value={takeaway}
           onChange={(e) => setTakeaway(e.target.value)}
         />
-        <div className="field" style={{ marginTop: 12 }}>
-          <label htmlFor="actual-minutes">実際にかかった時間(分)</label>
-          <div className="row">
-            <input
-              id="actual-minutes"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={600}
-              style={{ flex: 1 }}
-              value={actualMinutes}
-              onChange={(e) => setActualMinutes(e.target.value)}
-            />
-            <button
-              type="button"
-              className="btn-sm"
-              onClick={() => setActualMinutes(String(measuredMinutes()))}
-            >
-              計測値を使う
-            </button>
-          </div>
-          <p className="muted">
-            この画面を開いてからの実測値を入れている。動画を別の場所で見た分などは自分で直す。
-            記録するのは見積({lesson.estimatedMinutes[mode]}分)ではなく、この実績。
-            {countsAsBasics(lesson)
-              ? ' この時間は基礎学習180分に算入される。'
-              : ' このレッスンは入口段階なので、基礎学習180分には算入しない。'}
-          </p>
-        </div>
         <button
           className="btn-primary btn-block"
           disabled={busy || takeaway.trim() === ''}
@@ -359,7 +511,11 @@ export function LessonPage({
         <div className="card card--accent">
           <strong>完了。XP +{LESSON_COMPLETE_XP}</strong>
           <p className="muted">
-            4段階すべてを満たした。学習時間 {lesson.estimatedMinutes[mode]} 分を記録した。
+            4段階すべてを満たした。このレッスンで記録した学習時間は{' '}
+            {snapshot.studySessions
+              .filter((s) => s.lessonId === lesson.id)
+              .reduce((n, s) => n + s.durationMinutes, 0)}{' '}
+            分(段階ごとの合計。見積ではなく実績)。
           </p>
           <button className="btn-block" onClick={onClose}>
             ホームへ戻る

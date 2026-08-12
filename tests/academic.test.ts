@@ -49,6 +49,8 @@ function mock(id: string, correct: number, timed = false, day = '2026-10-01'): M
     totalQuestions: 50,
     correctCount: correct,
     timed,
+    // 本番同様として数えるには時間の記録が要る(時間の無い回は数えない)
+    minutes: timed ? 115 : undefined,
   };
 }
 
@@ -107,7 +109,8 @@ describe('AT-005 学科の集計', () => {
     expect(law.accuracy).toBe(1);
     expect(law.hasSample).toBe(false);
     expect(law.meetsMinimum).toBe(false); // 3問で100%を得意と呼ばない
-    expect(TOPIC_MIN_SAMPLE).toBe(10);
+    // 判定窓(直近20問)と同じ数を要求する。画面表示より甘い条件で通さない
+    expect(TOPIC_MIN_SAMPLE).toBe(20);
   });
 
   it('公式基準(60点)と運用目標(80点)を別々に持つ', () => {

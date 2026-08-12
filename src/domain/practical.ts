@@ -144,8 +144,10 @@ export function repeatDefects(attempts: SkillAttempt[]): RepeatDefect[] {
   return [...map.entries()]
     .filter(([, v]) => v.count >= REPEAT_DEFECT_THRESHOLD)
     .map(([code, v]) => {
+      // 完成させた作品だけを数える。途中で投げた作品は「その欠陥を出さなかった」ではなく
+      // 「そこまで到達しなかった」だけ。未完成3回で反復欠陥が降りては意味がない
       const cleanRuns = finished.filter(
-        (a) => a.attemptedAt > v.lastAt && !a.defectCodes.includes(code),
+        (a) => a.attemptedAt > v.lastAt && a.completed && !a.defectCodes.includes(code),
       ).length;
       const cleared = clearedAt.get(code);
       // 同時刻(同じ秒に欠陥を記録してすぐ部分練習を記録した場合)も対策として扱う。

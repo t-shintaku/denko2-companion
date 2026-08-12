@@ -135,6 +135,15 @@ export class Repo {
     emitChange();
   }
 
+  /**
+   * 保存済みの進捗を1件読む。
+   * 画面のスナップショットではなく**保存済みの値**を土台にして段階を積むために使う。
+   * 続けて2段階を保存したとき、再読込が間に合わないと直前の段階が消える。
+   */
+  async getLessonProgress(lessonId: string): Promise<LessonProgress | undefined> {
+    return this.db.lessonProgress.get(lessonId);
+  }
+
   async saveLessonProgress(progress: LessonProgress): Promise<void> {
     await this.db.lessonProgress.put(progress);
     emitChange();
@@ -173,6 +182,8 @@ export class Repo {
     measuredMinutes?: number;
     kind: SessionKind;
     lessonId?: string;
+    /** どの段階の時間か。段階ごとに記録するので途中でやめても消えない */
+    step?: StudySession['step'];
     /** 基礎180分ゲートへ算入するか。既定は false で、明示した場合だけ数える */
     countsAsBasics: boolean;
     nextFix?: string;
@@ -187,6 +198,7 @@ export class Repo {
       measuredMinutes: input.measuredMinutes,
       kind: input.kind,
       lessonId: input.lessonId,
+      step: input.step,
       nextFix: input.nextFix,
       countsAsBasics: input.countsAsBasics,
       updatedAt: nowJstIso(now),

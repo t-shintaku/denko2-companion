@@ -157,6 +157,13 @@ export type PracticeSpec = {
   kind: PracticeKind;
   /** 小問3〜10問など。件数の目安 */
   targetCount?: number;
+  /**
+   * 候補問題のレッスンが対象にする番号(kind === 'candidate' のとき)。
+   * これがあるので、レッスンを終える操作がそのまま技能の記録になる。
+   * 分かれていると「カリキュラムは完了、技能は0/13」が起こる。
+   * 番号が決まっていない回(2周目・ランダム)は undefined にして、記録時に選ばせる。
+   */
+  candidateNo?: number;
   instruction: string;
   /** 外部教材へ誘導する場合の参照先 */
   resourceIds?: string[];
@@ -346,6 +353,13 @@ export type StudySession = {
   measuredMinutes?: number;
   kind: SessionKind;
   lessonId?: string;
+  /**
+   * どの段階の時間か('input' | 'recall' | 'practice' | 'takeaway')。
+   * **段階ごとに記録する**ので、途中でやめた日の時間も残る。
+   * 完了時に1件だけ記録していたときは、「今日は見るだけでよい」と案内しながら
+   * その日の時間がどこにも残らず、基礎180分が永久に進まない経路があった。
+   */
+  step?: 'input' | 'recall' | 'practice' | 'takeaway';
   topicId?: TopicId;
   candidateNo?: number;
   result?: SessionResult;
@@ -441,6 +455,8 @@ export type SkillAttempt = {
   kind?: SkillAttemptKind;
   /** drill のときは対象外なので 0 を入れる */
   candidateNo: number;
+  /** どのレッスンの記録か。カリキュラムの候補問題タスクから作られたときに入る */
+  lessonId?: string;
   diagramMinutes?: number;
   workMinutes: number;
   completed: boolean;
