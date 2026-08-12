@@ -130,6 +130,11 @@ describe('Sprint 1 の通し動作', () => {
     const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
     await user.type(within(practiceSection).getByLabelText('やったことのメモ'), 'b');
     await user.click(within(practiceSection).getByRole('button', { name: /保存/ }));
+    // 段階が進むと入力欄は空へ戻る。戻ってから入れないと、入れた値が消える
+    await waitFor(() =>
+      expect(within(practiceSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),
+    );
+    await waitFor(() => expect(screen.getByLabelText(/この段階にかかった時間/)).toHaveValue(null));
 
     // 時間の入力欄は段階ごとに出る。空欄なら実測値、入れればその値を記録する
     const minutes = (await screen.findByLabelText(/この段階にかかった時間/)) as HTMLInputElement;
