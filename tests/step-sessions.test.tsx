@@ -64,10 +64,20 @@ describe('段階ごとに学習時間が残る', () => {
     await user.click(await screen.findByRole('button', { name: 'はじめる' }));
     await screen.findByRole('heading', { name: firstLesson.title });
 
+    /**
+     * 段階が切り替わると、画面は入力欄を空へ戻す(次の段階の実測を取り直すため)。
+     * そのリセットが届く前に打つと、直後に消されて実測値(1分)が記録される。
+     * ローカルでは間に合い CI では間に合わない、という落ち方をするので、
+     * 空に戻ったことを確認してから打つ。
+     */
     const enterMinutes = async (value: string) => {
+      await waitFor(() =>
+        expect(screen.getByLabelText(/この段階にかかった時間/)).toHaveValue(null),
+      );
       const field = screen.getByLabelText(/この段階にかかった時間/);
       await user.clear(field);
       await user.type(field, value);
+      expect(field).toHaveValue(Number(value));
     };
 
     await enterMinutes('10');
