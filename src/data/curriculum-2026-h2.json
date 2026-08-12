@@ -526,6 +526,14 @@
           "watch": "耳だけで図記号を流す。手が塞がっているとき用",
           "stop": "12分。1周したら止める",
           "minutes": 12
+        },
+        {
+          "resourceId": "denko2-outlets-short",
+          "use": "stuck",
+          "where": "動画を最初から再生する",
+          "watch": "コンセントの種類とアース線を10分で別の言い方から確認する",
+          "stop": "10分で閉じる。語呂や説明を1つだけ持ち帰る",
+          "minutes": 10
         }
       ],
       "recallPrompts": [

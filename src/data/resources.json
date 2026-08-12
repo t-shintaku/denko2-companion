@@ -825,6 +825,21 @@
     "note": "申込〜合格までの段取り。日付は年度で変わるので公式で確認する。"
   },
   {
+    "id": "denko2-outlets-short",
+    "provider": "第二種電気工事士ch デンコー2",
+    "title": "#01 コンセントの種類とアース線",
+    "url": "https://www.youtube.com/watch?v=mKvwmm6JDQc",
+    "type": "video",
+    "topicIds": ["equipment-tools", "wiring-diagram"],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 10,
+    "creatorNote": "1日3分〜10分の短編と語呂合わせが特徴。チャンネル登録者約1万人。",
+    "note": "長い動画で集中が切れたときだけ使う短時間の別説明。"
+  },
+  {
     "id": "pino-insulation",
     "provider": "ピノ電気工事",
     "title": "【初心者向け】絶縁抵抗を理解しよう",

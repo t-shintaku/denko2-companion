@@ -214,6 +214,7 @@ export function LessonPage({
       <button className="btn-sm" onClick={onClose}>
         ← 戻る
       </button>
+      <div className="lesson-hero">
       <h1>{lesson.title}</h1>
       <p className="muted">{lesson.objective}</p>
 
@@ -246,6 +247,7 @@ export function LessonPage({
             {STEP_LABEL[s]}
           </div>
         ))}
+      </div>
       </div>
 
       {lesson.safetyNote && <div className="notice notice--safety">{lesson.safetyNote}</div>}
@@ -301,16 +303,17 @@ export function LessonPage({
           </p>
         )}
         <ul className="plain stack">
-          {guides.map(({ ref, resource: r }) => (
-            <li key={`${ref.resourceId}-${ref.use}`} className="card card--flat">
+          {guides.filter(({ ref }) => ref.use === 'first').map(({ ref, resource: r }) => (
+            <li key={`${ref.resourceId}-${ref.use}`} className="resource-card resource-card--primary">
+              <div className="resource-card__body">
               <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
                 <span className={ref.use === 'first' ? 'badge badge--ok' : 'badge'}>
                   {USE_LABEL[ref.use]}
                 </span>
-                <a href={ref.openUrl ?? r!.url} target="_blank" rel="noreferrer">
-                  {r!.provider}｜{r!.title}
-                </a>
               </div>
+              <a className="resource-link" href={ref.openUrl ?? r!.url} target="_blank" rel="noreferrer">
+                {r!.provider}｜{r!.title}
+              </a>
               <dl className="guide">
                 <dt>開く</dt>
                 <dd>{ref.where}</dd>
@@ -319,7 +322,7 @@ export function LessonPage({
                 <dt>止める</dt>
                 <dd>{ref.stop}</dd>
               </dl>
-              <div className="muted">
+              <div className="muted resource-meta">
                 {r!.creatorKind ? CREATOR_LABEL[r!.creatorKind] : r!.role === 'official-check' ? '公式・官公庁' : '民間の解説'}
                 {r!.creatorNote ? `(${r!.creatorNote})` : ''}
                 {ref.minutes ? ` ・このレッスンでは約${ref.minutes}分` : ''}
@@ -330,8 +333,31 @@ export function LessonPage({
               </div>
               {r!.copyrightNote && <div className="muted">{r!.copyrightNote}</div>}
               {r!.note && <div className="muted">{r!.note}</div>}
+              </div>
             </li>
           ))}
+          {guides.some(({ ref }) => ref.use !== 'first') && (
+            <li>
+              <details className="supplemental-resources">
+                <summary>補助教材・公式確認を開く（{guides.filter(({ ref }) => ref.use !== 'first').length}件）</summary>
+                <div className="supplemental-resources__body stack">
+                  {guides.filter(({ ref }) => ref.use !== 'first').map(({ ref, resource: r }) => (
+                    <div key={`${ref.resourceId}-${ref.use}`} className="resource-card">
+                      <div className="resource-card__body">
+                        <span className="badge">{USE_LABEL[ref.use]}</span>
+                        <a className="resource-link" href={ref.openUrl ?? r!.url} target="_blank" rel="noreferrer">{r!.provider}｜{r!.title}</a>
+                        <dl className="guide"><dt>開く</dt><dd>{ref.where}</dd><dt>見る</dt><dd>{ref.watch}</dd><dt>止める</dt><dd>{ref.stop}</dd></dl>
+                        <div className="muted resource-meta">
+                          {r!.creatorKind ? CREATOR_LABEL[r!.creatorKind] : r!.role === 'official-check' ? '公式・官公庁' : '民間の解説'}
+                          {ref.minutes ? ` ・約${ref.minutes}分` : ''}{' ・確認日 '}{r!.lastVerified}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </li>
+          )}
         </ul>
         <button
           className="btn-sm btn-block"

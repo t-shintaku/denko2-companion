@@ -5,7 +5,7 @@ import { formatJstShort } from '../../domain/jst';
 import { MODE_LABEL, modeForBudget } from '../../domain/lessons';
 import { STAGE_HINT, STAGE_LABEL } from '../../domain/onboarding';
 import { REASON_LABEL, buildTodayQuests, daysSinceLastActivity } from '../../domain/quests';
-import { comebackCount, mockTrend, reviewProgress, weekSummary } from '../../domain/growth';
+import { comebackCount, reviewProgress, weekSummary } from '../../domain/growth';
 import { useVault } from '../../state/VaultContext';
 import { AdminTaskRow } from '../milestones/AdminTaskList';
 import type { LessonMode } from '../../domain/types';
@@ -30,8 +30,9 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
   const gap = daysSinceLastActivity(snapshot.studySessions, snapshot.lessonProgress, today);
   const week = weekSummary(snapshot.studySessions, today);
   const comebacks = comebackCount(snapshot.studySessions);
-  const trend = mockTrend(snapshot.mockExams);
   const review = reviewProgress(snapshot.questionAttempts);
+  const xp = Object.values(snapshot.lessonProgress).reduce((sum, p) => sum + p.xpAwarded, 0);
+  const effortLevel = Math.floor(xp / 100) + 1;
   const basicsPct = Math.min(
     100,
     Math.round((onboarding.basicsMinutes / onboarding.basicsRequiredMinutes) * 100),
@@ -39,9 +40,19 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
   return (
     <main className="app">
-      <div className="row row--between">
-        <h1>今日 {formatJstShort(today)}</h1>
-        <span className="badge">{STAGE_LABEL[onboarding.stage]}</span>
+      <div className="brandbar">
+        <div className="brandmark">
+          <span className="brandmark__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" />
+            </svg>
+          </span>
+          <div>
+            <span className="brandmark__eyebrow">DENKO QUEST</span>
+            <h1>今日 {formatJstShort(today)}</h1>
+          </div>
+        </div>
+        <span className="stage-chip">{STAGE_LABEL[onboarding.stage]}</span>
       </div>
 
       {gap !== undefined && gap >= 3 && (
@@ -54,23 +65,16 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </div>
       )}
 
-      <div className="card">
-        <div className="row row--between">
-          <strong>今週やった日</strong>
-          <span className="badge">{week.days} / 7 日</span>
-        </div>
-        <p className="muted">
-          今週 {week.minutes}分。
-          {week.daysDelta > 0
-            ? ` 先週の同じ時点より${week.daysDelta}日多い。`
-            : week.daysDelta < 0
-              ? ` 先週の同じ時点より${Math.abs(week.daysDelta)}日少ない。取り返す必要はない。今日1日でいい。`
-              : ' 先週の同じ時点と同じペース。'}
-          {trend.latest !== undefined && ` 模試の最新は${trend.latest}点`}
-          {trend.delta !== undefined &&
-            (trend.delta >= 0 ? `(前回より+${trend.delta}点)。` : `(前回より${trend.delta}点)。`)}
-          {review.solved > 0 && ` 復習で解けるようになった問題 ${review.solved}問。`}
-        </p>
+      <div className="stat-grid" aria-label="今週の成長">
+        <div className="stat-tile"><strong>{week.days} / 7 日</strong><span>今週やった日</span></div>
+        <div className="stat-tile"><strong>{week.minutes}<small>分</small></strong><span>今週の学習</span></div>
+        <div className="stat-tile"><strong>{review.solved}<small>問</small></strong><span>復習で克服</span></div>
+      </div>
+
+      <div className="xp-strip">
+        <svg className="xp-strip__bolt" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" /></svg>
+        <div className="xp-strip__label">努力レベル Lv.{effortLevel}<span className="xp-strip__sub">XPは努力の記録。合格準備度とは別。</span></div>
+        <span className="xp-strip__value">{xp} XP</span>
       </div>
 
       {urgent[0] && (
@@ -80,8 +84,8 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </>
       )}
 
-      <h2>今日のクエスト</h2>
-      <div className="row" role="group" aria-label="今日の持ち時間">
+      <div className="quest-section-title"><h2>今日のクエスト</h2><span>1件でクリア</span></div>
+      <div className="budget-switch" role="group" aria-label="今日の持ち時間">
         {([10, 30, 60] as const).map((m) => (
           <button
             key={m}
@@ -101,9 +105,9 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
       )}
 
       {quests.map((q) => (
-        <div className={q.slot === 'main' ? 'card card--accent' : 'card'} key={q.id}>
+        <div className={q.slot === 'main' ? 'card quest-card' : 'card'} key={q.id}>
           <div className="row row--between">
-            <strong>{q.title}</strong>
+            <strong className={q.slot === 'main' ? 'quest-card__title' : undefined}>{q.title}</strong>
             <span className="badge">{REASON_LABEL[q.reason]}</span>
           </div>
           <p className="muted">{q.detail}</p>
