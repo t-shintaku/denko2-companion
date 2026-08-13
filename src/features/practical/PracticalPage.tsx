@@ -469,7 +469,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
   const { reload } = useVault();
   const [diagram, setDiagram] = useState('');
   const [work, setWork] = useState('');
-  const [completed, setCompleted] = useState(true);
+  const [completed, setCompleted] = useState(false);
   const [codes, setCodes] = useState<string[]>([]);
   const [nextFix, setNextFix] = useState('');
   const [busy, setBusy] = useState(false);
@@ -483,7 +483,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
       await repo.addSkillAttempt({
         kind: 'candidate',
         candidateNo,
-        diagramMinutes: diagram === '' ? undefined : Number(diagram),
+        diagramMinutes: Number(diagram),
         workMinutes: Number(work),
         completed,
         defectFree,
@@ -521,7 +521,8 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
             id="diagram"
             type="number"
             inputMode="numeric"
-            min={0}
+            min={1}
+            required
             value={diagram}
             onChange={(e) => setDiagram(e.target.value)}
           />
@@ -533,6 +534,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
             type="number"
             inputMode="numeric"
             min={1}
+            required
             value={work}
             onChange={(e) => setWork(e.target.value)}
           />
@@ -586,11 +588,14 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
         </div>
         <button
           className="btn-primary btn-block"
-          disabled={busy || work === '' || Number(work) <= 0}
+          disabled={busy || !(Number(diagram) > 0) || !(Number(work) > 0)}
           onClick={submit}
         >
           {busy ? '保存中…' : 'この挑戦を保存'}
         </button>
+        {(!(Number(diagram) > 0) || !(Number(work) > 0)) && (
+          <p className="muted">複線図と施工、両方の時間を入れたら保存できるよ。</p>
+        )}
       </div>
     </main>
   );

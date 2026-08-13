@@ -13,6 +13,7 @@ import type { LessonMode } from '../../domain/types';
 export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: LessonMode) => void }) {
   const vault = useVault();
   const [budget, setBudget] = useState<10 | 30 | 60>(30);
+  const [keepGoing, setKeepGoing] = useState(false);
   const {
     onboarding,
     settings,
@@ -38,12 +39,15 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
   });
 
   const urgent = actionableAdminTasks(adminTasks);
-  const gap = daysSinceLastActivity(snapshot.studySessions, snapshot.lessonProgress, today);
+  const gap = daysSinceLastActivity(snapshot.studySessions, snapshot.lessonProgress, today, adminTasks);
   const week = weekSummary(snapshot.studySessions, today);
   const comebacks = comebackCount(snapshot.studySessions);
   const review = reviewProgress(snapshot.questionAttempts);
+  const learnedToday = snapshot.studySessions.some((session) => session.jstDate === today);
+  const showQuests = !learnedToday || keepGoing;
   const xp = Object.values(snapshot.lessonProgress).reduce((sum, p) => sum + p.xpAwarded, 0);
   const effortLevel = Math.floor(xp / 100) + 1;
+  const xpToNextLevel = 100 - (xp % 100);
   const basicsPct = Math.min(
     100,
     Math.round((onboarding.basicsMinutes / onboarding.basicsRequiredMinutes) * 100),
@@ -84,7 +88,13 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
       <div className="xp-strip">
         <svg className="xp-strip__bolt" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" /></svg>
-        <div className="xp-strip__label">努力レベル Lv.{effortLevel}<span className="xp-strip__sub">XPはがんばった記録。合格ラインは別でチェック。</span></div>
+        <div className="xp-strip__label">
+          努力レベル Lv.{effortLevel}
+          <span className="xp-strip__sub">
+            {xpToNextLevel === 0 ? 'レベルアップ目前！' : `次のレベルまで ${xpToNextLevel} XP`}。
+            合格ラインは別でチェック。
+          </span>
+        </div>
         <span className="xp-strip__value">{xp} XP</span>
       </div>
 
@@ -95,7 +105,10 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </>
       )}
 
-      <div className="quest-section-title"><h2>今日のクエスト</h2><span>1件でクリア</span></div>
+      <div className="quest-section-title">
+        <h2>{learnedToday && !keepGoing ? '今日のクエスト、クリア！' : '今日のクエスト'}</h2>
+        <span>{learnedToday && !keepGoing ? 'よくやった！' : '1件でクリア'}</span>
+      </div>
       <div className="budget-switch" role="group" aria-label="今日の持ち時間">
         {([10, 30, 60] as const).map((m) => (
           <button
@@ -109,13 +122,23 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         ))}
       </div>
 
-      {quests.length === 0 && (
+      {learnedToday && !keepGoing && (
+        <div className="card card--accent">
+          <strong>今日はここで終わってOK！</strong>
+          <p className="muted">1つ進めた時点で今日の勝ち。続きは明日の自分に任せよう。</p>
+          <button className="btn-sm" type="button" onClick={() => setKeepGoing(true)}>
+            まだいける。もう1つだけ！
+          </button>
+        </div>
+      )}
+
+      {showQuests && quests.length === 0 && (
         <div className="card">
           <p>今日の必須クエストはコンプリート！ あとは休むも、もう1問やるも自由。</p>
         </div>
       )}
 
-      {quests.map((q) => (
+      {showQuests && quests.map((q) => (
         <div className={q.slot === 'main' ? 'card quest-card' : 'card'} key={q.id}>
           <div className="row row--between">
             <strong className={q.slot === 'main' ? 'quest-card__title' : undefined}>{q.title}</strong>

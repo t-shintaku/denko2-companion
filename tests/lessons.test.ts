@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { curriculum } from '../src/data';
 import {
-  LESSON_COMPLETE_XP,
+  xpForLesson,
   applyStep,
   completionRatio,
   isLessonComplete,
@@ -43,7 +43,7 @@ describe('AT-003 レッスンの4段階完了', () => {
     p = applyStep(lesson, p, 'takeaway', { takeaway: '接地の意味を毎回忘れる' }, now);
     expect(isLessonComplete(lesson, p)).toBe(true);
     expect(p.completedAt).toBe('2026-08-11T20:00:00+09:00');
-    expect(p.xpAwarded).toBe(LESSON_COMPLETE_XP);
+    expect(p.xpAwarded).toBe(xpForLesson(lesson));
     expect(p.takeaway).toBe('接地の意味を毎回忘れる');
   });
 
@@ -55,7 +55,14 @@ describe('AT-003 レッスンの4段階完了', () => {
     const later = new Date('2026-08-12T20:00:00+09:00');
     const again = applyStep(lesson, p, 'takeaway', { takeaway: 'c2' }, later);
     expect(again.completedAt).toBe(p.completedAt);
-    expect(again.xpAwarded).toBe(LESSON_COMPLETE_XP);
+    expect(again.xpAwarded).toBe(xpForLesson(lesson));
+  });
+
+  it('かかった時間に応じて、長い模試ほどXPが増える', () => {
+    const short = curriculum.lessons.find((l) => l.estimatedMinutes.standard < 20)!;
+    const long = curriculum.lessons.find((l) => l.estimatedMinutes.standard >= 90)!;
+    expect(xpForLesson(short)).toBe(10);
+    expect(xpForLesson(long)).toBe(30);
   });
 
   it('10/30/60分の持ち時間からモードが決まる', () => {

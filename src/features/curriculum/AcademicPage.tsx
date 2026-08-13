@@ -9,6 +9,7 @@ import {
   TARGET_AVERAGE_SCORE,
   TOPIC_MIN_SAMPLE,
   excludedMocks,
+  meetsOfficialStandard,
   mocks,
   recentAverageScore,
   scoreOf,
@@ -30,6 +31,7 @@ export function AcademicPage({
 }) {
   const {
     snapshot,
+    settings,
     schedule,
     onboarding,
     topicStats,
@@ -77,6 +79,7 @@ export function AcademicPage({
   const trend = mockTrend(snapshot.mockExams);
   const moves = topicMoves(snapshot.questionAttempts, topicIds);
   const review = reviewProgress(snapshot.questionAttempts);
+  const officialPassed = meetsOfficialStandard(snapshot.mockExams);
 
   return (
     <main className="app">
@@ -106,6 +109,23 @@ export function AcademicPage({
             {onboarding.basicsRequiredMinutes}分でアンロック（いま{' '}
             {onboarding.basicsMinutes}分）。
           </p>
+          {onboarding.diagnosticManualUnlockOffered && settings && (
+            <button
+              className="btn-sm btn-block"
+              onClick={async () => {
+                await repo.saveSettings({ ...settings, diagnosticUnlockedManually: true });
+                await reload();
+              }}
+            >
+              もう分かるので20問診断へ進む
+            </button>
+          )}
+          {onboarding.stage === 'basics' && onboarding.basicsMinutes > 0 && (
+            <p className="muted">
+              基礎レッスンを全部終えて次が出ないときは、上のボタンで診断へ進めるよ。
+              分数は努力の証拠で、足止めのための数字ではない。
+            </p>
+          )}
         </div>
       )}
 
@@ -392,6 +412,15 @@ export function AcademicPage({
         <p className="muted">
           公式基準は{OFFICIAL_PASS_SCORE}点(50問中30問)。本ツールの運用目標は直近3回平均
           {TARGET_AVERAGE_SCORE}点。60点は公式、80点は自分向け。
+        </p>
+        <p>
+          <span className={officialPassed ? 'badge badge--ok' : 'badge badge--warn'}>
+            {mockList.length === 0
+              ? '公式形式の50問模試はまだ0回'
+              : officialPassed
+                ? '最新模試：公式合格基準クリア！'
+                : '最新模試：公式合格基準まであと一歩'}
+          </span>
         </p>
       </div>
 

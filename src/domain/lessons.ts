@@ -28,8 +28,20 @@ export const STEP_LABEL: Record<LessonStep, string> = {
   takeaway: '次へひとこと',
 };
 
-/** 完了時に付与するXP。動画視聴のみ(input だけ)は 0 */
+/** 最短レッスンの完了XP。動画視聴のみ(input だけ)は 0 */
 export const LESSON_COMPLETE_XP = 10;
+
+/**
+ * 努力の重さをXPへ反映する。11分の導入と120分の模試を同価値にしない。
+ * 合否判定とは混ぜず、あくまで継続のための達成感として使う。
+ */
+export function xpForLesson(lesson: CurriculumLesson): number {
+  const minutes = lesson.estimatedMinutes.standard;
+  if (minutes >= 90) return 30;
+  if (minutes >= 45) return 20;
+  if (minutes >= 20) return 15;
+  return LESSON_COMPLETE_XP;
+}
 
 export function ruleFor(lesson: CurriculumLesson): CompletionRule {
   return { ...DEFAULT_COMPLETION_RULE, ...(lesson.completionRule ?? {}) };
@@ -143,7 +155,7 @@ export function applyStep(
   if (isLessonComplete(lesson, base)) {
     if (!base.completedAt) {
       base.completedAt = stamp;
-      base.xpAwarded = LESSON_COMPLETE_XP;
+      base.xpAwarded = xpForLesson(lesson);
     }
   } else {
     // 未完了へ戻した場合(将来の取り消し操作)に XP を残さない

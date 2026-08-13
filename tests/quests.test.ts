@@ -63,11 +63,16 @@ describe('FR-004 / §10 今日のクエストと次の10分', () => {
     expect(quest?.lessonId).toBe('p0-l1');
   });
 
-  it('2026-08-17 10:00 を過ぎると、学習より申込みが先に来る', () => {
+  it('申込受付中でも、事務は学習クエストを置き換えない', () => {
     const ctx = makeContext({ today: '2026-08-17', now: new Date('2026-08-17T10:30:00+09:00') });
     const quest = nextTenMinutes(ctx);
-    expect(quest?.reason).toBe('admin');
-    expect(quest?.taskId).toBe('mypage');
+    expect(quest?.reason).toBe('orientation');
+    expect(quest?.lessonId).toBe('p0-l1');
+  });
+
+  it('完了した事務も活動日として数え、開いた人へ「サボった」と言わない', () => {
+    const ctx = makeContext({ today: '2026-08-17', now: new Date('2026-08-17T10:30:00+09:00'), adminDone: ['mypage'] });
+    expect(daysSinceLastActivity([], {}, '2026-08-17', ctx.adminTasks)).toBe(0);
   });
 
   it('事務を片付ければ学習へ戻る', () => {

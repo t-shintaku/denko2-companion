@@ -142,6 +142,7 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
     await user.type(within(practiceSection).getByLabelText('複線図(分)'), '10');
     await user.type(within(practiceSection).getByLabelText('施工(分)'), '38');
     await user.type(within(practiceSection).getByLabelText('今日やったこと'), '輪作りで手間取った');
+    await user.click(within(practiceSection).getByRole('checkbox', { name: '時間内に完成！' }));
     await user.click(within(practiceSection).getByRole('button', { name: /結果を残す/ }));
 
     await waitFor(async () => {
@@ -173,7 +174,7 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
     await screen.findByRole('heading', { name: lesson.title });
     const practiceSection = screen.getByRole('heading', { name: '3. 手を動かす' }).closest('section')!;
     expect(within(practiceSection).getByRole('button', { name: /結果を残す/ })).toBeDisabled();
-    expect(screen.getByText(/施工時間を入れたら保存できる/)).toBeInTheDocument();
+    expect(screen.getByText(/複線図と施工、両方の時間を入れたら保存できる/)).toBeInTheDocument();
   });
 });
 

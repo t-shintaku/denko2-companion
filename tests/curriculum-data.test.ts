@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { adminTaskTemplates, curriculum, questions, resources, topics } from '../src/data';
+import { adminTaskTemplates, curriculum, questions, resources, skillDefects, topics } from '../src/data';
 
 const lessonIds = new Set(curriculum.lessons.map((l) => l.id));
 const resourceIds = new Set(resources.map((r) => r.id));
@@ -86,16 +86,27 @@ describe('カリキュラムJSONの整合', () => {
     );
   });
 
-  it('技能の候補13問は、動画の該当チャプターを名指しで開く', () => {
+  it('技能の候補13問は、R8対応プレイリストの候補No.別動画を直接開く', () => {
     for (const no of Array.from({ length: 13 }, (_, i) => i + 1)) {
       const l = curriculum.lessons.find((x) => x.id === `p5-c${String(no).padStart(2, '0')}`)!;
       const first = l.resources.find((r) => r.use === 'first')!;
-      // チャンネルのトップや動画の先頭ではなく、その問題が始まる秒数へ直接飛ばす
-      expect(first.openUrl, `${l.id}`).toMatch(/\?t=\d+$/);
-      expect(first.where).toContain(`公表問題${no}`);
-      // 6時間半の動画なので、止める位置が無いと次の問題まで見てしまう
+      expect(first.resourceId).toBe('gami-candidates');
+      expect(first.openUrl, `${l.id}`).toMatch(/^https:\/\/youtu\.be\/[\w-]+$/);
+      expect(first.openUrl, `${l.id} が旧R7動画を向いている`).not.toContain('n4V1B3S4qZM');
+      expect(first.where).toContain(`No.${no}`);
       expect(first.stop, `${l.id} の stop`).toMatch(/止める|閉じる/);
     }
+    const playlist = resources.find((r) => r.id === 'gami-candidates')!;
+    expect(playlist.url).toContain('PLcSb3IfZ6sU3j2U-6T5-h2nb1mq93zflG');
+    expect(playlist.examYear).toBe(2026);
+  });
+
+  it('公式欠陥表で繰り返しやすい6項目を技能記録へ残せる', () => {
+    const codes = new Set(skillDefects.map((d) => d.code));
+    for (const code of ['bond-wire', 'rubber-bushing', 'mounting-frame', 'conduit-connection', 'base-sheath', 'arrangement']) {
+      expect(codes.has(code), code).toBe(true);
+    }
+    expect(skillDefects.find((d) => d.code === 'length')?.label).toContain('50%以下');
   });
 
   it('前提レッスンが自分より後ろに来ていない(循環・前後逆転がない)', () => {

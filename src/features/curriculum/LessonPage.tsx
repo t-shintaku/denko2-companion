@@ -5,7 +5,6 @@ import { CANDIDATE_NUMBERS, EXAM_MINUTES, TARGET_MINUTES } from '../../domain/pr
 import { repo } from '../../db/repo';
 import { nowJstIso } from '../../domain/jst';
 import {
-  LESSON_COMPLETE_XP,
   MODE_LABEL,
   STEP_LABEL,
   applyStep,
@@ -14,6 +13,7 @@ import {
   requiredSteps,
   stepDone,
   stepMinutes,
+  xpForLesson,
   type LessonStep,
 } from '../../domain/lessons';
 import {
@@ -23,12 +23,14 @@ import {
   present,
   toAttemptInput,
   type QuizAnswer,
+  type PresentedQuestion,
 } from '../../domain/quiz';
 import { useVault } from '../../state/VaultContext';
 import type {
   CreatorKind,
   CurriculumLesson,
   LessonMode,
+  LessonProgress,
   RecallMark,
   ResourceUse,
   SessionKind,
@@ -58,6 +60,23 @@ const PRACTICE_TO_SESSION: Record<string, SessionKind> = {
   candidate: 'candidate',
   checklist: 'theory',
 };
+
+type QuizPick = { choiceIndex: number; sure?: boolean };
+
+function restoreQuizDraft(
+  presented: PresentedQuestion[],
+  draft: LessonProgress['quizDraft'],
+): Record<string, QuizPick> {
+  const restored: Record<string, QuizPick> = {};
+  for (const item of draft ?? []) {
+    const shown = presented.find(({ question }) => question.id === item.questionId);
+    const choiceIndex = shown?.choices.indexOf(item.choice) ?? -1;
+    if (choiceIndex >= 0) {
+      restored[item.questionId] = { choiceIndex, sure: item.sure };
+    }
+  }
+  return restored;
+}
 
 export function LessonPage({
   lesson,
@@ -130,7 +149,20 @@ export function LessonPage({
   // 誤答が0件なら、そのこと自体がこの復習レッスンの達成。必須レッスンを進行不能にしない。
   const emptyQuestionPool = Boolean(lesson.practice.questionPool && !hasQuiz);
   /** 2段階。選択肢を選ぶ → 解説を読む → 「バッチリ / あやふや」で確定 */
-  const [picks, setPicks] = useState<Record<string, { choiceIndex: number; sure?: boolean }>>({});
+  const [picks, setPicks] = useState<Record<string, QuizPick>>(() =>
+    restoreQuizDraft(quizQuestions, progress?.quizDraft),
+  );
+  const restoredQuizDraftRef = useRef(Boolean(progress?.quizDraft?.length));
+
+  // Vault の IndexedDB 読み込みは初回描画より後になることがある。
+  // その場合も、保存済みの途中回答を一度だけ画面へ戻す。
+  useEffect(() => {
+    if (restoredQuizDraftRef.current || !progress?.quizDraft?.length) return;
+    const restored = restoreQuizDraft(quizQuestions, progress.quizDraft);
+    setPicks((current) => (Object.keys(current).length > 0 ? current : restored));
+    restoredQuizDraftRef.current = true;
+  }, [progress?.quizDraft, quizQuestions]);
+
   const settled: QuizAnswer[] = quizQuestions.flatMap(({ question }) => {
     const p = picks[question.id];
     if (p?.sure === undefined) return [];
@@ -150,7 +182,7 @@ export function LessonPage({
   const [candidateNo, setCandidateNo] = useState<number>(lesson.practice.candidateNo ?? 1);
   const [diagramMinutes, setDiagramMinutes] = useState('');
   const [workMinutes, setWorkMinutes] = useState('');
-  const [completedWork, setCompletedWork] = useState(true);
+  const [completedWork, setCompletedWork] = useState(false);
   const [defectCodes, setDefectCodes] = useState<string[]>([]);
   const alreadyRecorded = snapshot.skillAttempts.some(
     (a) => a.lessonId === lesson.id && (a.kind ?? 'candidate') === 'candidate',
@@ -166,6 +198,7 @@ export function LessonPage({
    * 見積(estimatedMinutes)をそのまま実績にしないという原則はそのまま。
    */
   const stepStartRef = useRef<number>(Date.now());
+  const quizSaveRef = useRef<Promise<void>>(Promise.resolve());
   const [actualMinutes, setActualMinutes] = useState<string>('');
 
   const steps = requiredSteps(lesson);
@@ -181,6 +214,64 @@ export function LessonPage({
     stepStartRef.current = Date.now();
     setActualMinutes('');
   }, [upcoming]);
+
+  const quizDraftFrom = (nextPicks: Record<string, QuizPick>) =>
+    quizQuestions.flatMap(({ question, choices }) => {
+      const pick = nextPicks[question.id];
+      const choice = pick ? choices[pick.choiceIndex] : undefined;
+      return choice === undefined ? [] : [{ questionId: question.id, choice, sure: pick?.sure }];
+    });
+
+  const persistQuizDraft = async (nextPicks: Record<string, QuizPick>) => {
+    const before = await repo.getLessonProgress(lesson.id);
+    await repo.saveLessonProgress({
+      ...(before ?? { lessonId: lesson.id, xpAwarded: 0, updatedAt: nowJstIso() }),
+      mode,
+      quizDraft: quizDraftFrom(nextPicks),
+      updatedAt: nowJstIso(),
+    });
+  };
+
+  const queueQuizDraft = (nextPicks: Record<string, QuizPick>) => {
+    const pending = quizSaveRef.current.then(() => persistQuizDraft(nextPicks));
+    // 1回失敗しても次の回答を保存できるよう、待ち行列自体は解決状態へ戻す。
+    quizSaveRef.current = pending.catch(() => undefined);
+    return pending;
+  };
+
+  const updateQuizPick = (questionId: string, pick: QuizPick) => {
+    setPicks((prev) => {
+      const next = { ...prev, [questionId]: pick };
+      void queueQuizDraft(next);
+      return next;
+    });
+  };
+
+  const savePartialQuiz = async () => {
+    setBusy(true);
+    try {
+      await quizSaveRef.current;
+      await persistQuizDraft(picks);
+      const measured = measuredMinutes();
+      const confirmed = Number(actualMinutes);
+      await repo.addSession({
+        durationMinutes:
+          Number.isFinite(confirmed) && confirmed > 0 ? confirmed : measured,
+        measuredMinutes: measured,
+        estimatedMinutes: stepMinutes(lesson, mode, 'practice'),
+        kind: PRACTICE_TO_SESSION[lesson.practice.kind] ?? 'questions',
+        lessonId: lesson.id,
+        step: 'practice',
+        countsAsBasics: countsAsBasics(lesson),
+        nextFix: `クイズ ${settled.length}/${quizQuestions.length}問まで`,
+      });
+      stepStartRef.current = Date.now();
+      setActualMinutes('');
+      await reload();
+    } finally {
+      setBusy(false);
+    }
+  };
 
   /**
    * 教材は「リンク+道案内」で1組。リンクだけ出すと、飛んだ先の何を見ればいいか
@@ -199,6 +290,9 @@ export function LessonPage({
   const commit = async (step: LessonStep) => {
     setBusy(true);
     try {
+      if (hasQuiz && step === 'practice') {
+        await quizSaveRef.current;
+      }
       // 画面のスナップショットではなく保存済みの値から積む。
       // 続けて2段階を保存したとき、再読込が間に合わないと直前の段階が消える
       const before = await repo.getLessonProgress(lesson.id);
@@ -225,6 +319,9 @@ export function LessonPage({
             : Number(total),
         takeaway,
       });
+      if (hasQuiz && step === 'practice') {
+        next.quizDraft = undefined;
+      }
       await repo.saveLessonProgress(next);
 
       // 1問ごとの記録は科目別成績と復習キューへ直結する。二重に積まないよう初回だけ
@@ -236,12 +333,12 @@ export function LessonPage({
       // 上書き保存では二重に記録しない。
       // XPと完了は4段階そろってから(AT-003)。時間の記録はそれとは別に、やった分だけ残す。
       // 候補問題は、この保存がそのまま技能の記録になる(13問到達・欠陥・時間に効く)
-      if (isCandidate && step === 'practice' && !alreadyRecorded && Number(workMinutes) > 0) {
+      if (isCandidate && step === 'practice' && !alreadyRecorded && Number(diagramMinutes) > 0 && Number(workMinutes) > 0) {
         await repo.addSkillAttempt({
           kind: 'candidate',
           candidateNo,
           lessonId: lesson.id,
-          diagramMinutes: diagramMinutes === '' ? undefined : Number(diagramMinutes),
+          diagramMinutes: Number(diagramMinutes),
           workMinutes: Number(workMinutes),
           completed: completedWork,
           defectFree: completedWork && defectCodes.length === 0,
@@ -378,8 +475,8 @@ export function LessonPage({
         )}
         {firstGuide && guides.length > 1 && (
           <p className="notice">
-            今日開くのは<strong>「{firstGuide.resource!.title}」の1本だけ！</strong>
-            補助教材は、もっと見たいときや詰まったときに開けばOK。
+            まず開くのは<strong>「{firstGuide.resource!.title}」の1本。</strong>
+            問いの出どころが別なら、その問題の下にリンクを出すよ。
           </p>
         )}
         <ul className="plain stack">
@@ -453,8 +550,8 @@ export function LessonPage({
       <section className="card">
         <h2>2. 見ないで思い出す</h2>
         <p className="muted">
-          いま見たところから出るよ。教材を閉じて、思い出せたぶんだけ書こう。
-          書いたら<strong>答え合わせ</strong>で模範解答が出る。うろ覚えでもOK！
+          問いの下に<strong>出どころ</strong>を出しているよ。必要なら先にそこだけ見て、
+          教材を閉じてから思い出せたぶんを書こう。書いたら答え合わせ！
         </p>
         {lesson.recallPrompts.map((p, i) => {
           const guide = guides.find((g) => g.ref.resourceId === p.sourceResourceId);
@@ -463,7 +560,11 @@ export function LessonPage({
               <label htmlFor={p.id}>{p.prompt}</label>
               {guide && (
                 <p className="muted recall-source">
-                  出どころ: {guide.resource!.provider}｜{p.sourceWatch}
+                  出どころ:{' '}
+                  <a href={guide.ref.openUrl ?? guide.resource!.url} target="_blank" rel="noreferrer">
+                    {guide.resource!.provider}
+                  </a>
+                  ｜{p.sourceWatch}
                 </p>
               )}
               <textarea
@@ -551,7 +652,9 @@ export function LessonPage({
       {/* --- 3. 解く／作る ---------------------------------------------- */}
       <section className="card">
         <h2>3. 手を動かす</h2>
-        <p>{lesson.practice.instruction}</p>
+        <p>
+          {lesson.practice.instruction.replace('今日見た内容だけから出るよ', '出どころは各問題の下に表示するよ')}
+        </p>
         {lesson.practice.where && (
           <p className="muted">
             <strong>今日やる場所:</strong> {lesson.practice.where}
@@ -575,13 +678,13 @@ export function LessonPage({
           </p>
         )}
 
-        {/* アプリ内出題。今日見た内容だけから出す */}
+        {/* アプリ内出題。別教材由来の問題には、その場で出どころを表示する */}
         {hasQuiz && (
           <div className="quiz stack">
             <p className="notice">
               {lesson.practice.questionPool
                 ? '前に落とした問題から出るよ。1問ずつ答えて、解説まで読もう。'
-                : '今日「まず見る」で見た内容だけから出るよ。1問ずつ答えて、解説まで読もう。'}
+                : '1問ずつ答えて、解説とその問題の出どころまで確認しよう。'}
               {' '}結果は<strong>科目別の成績と復習リストに自動で入る</strong>。
             </p>
             <p className="badge">
@@ -613,9 +716,7 @@ export function LessonPage({
                             .join(' ')}
                           disabled={answered}
                           aria-pressed={ci === chosen}
-                          onClick={() =>
-                            setPicks((prev) => ({ ...prev, [qq.id]: { choiceIndex: ci } }))
-                          }
+                          onClick={() => updateQuizPick(qq.id, { choiceIndex: ci })}
                         >
                           {/* 色だけで正解を示さない。答えたあとは記号でも分かるようにする */}
                           {answered && ci === presented.answerIndex ? '✓ ' : ''}
@@ -639,24 +740,14 @@ export function LessonPage({
                             <button
                               type="button"
                               className="btn-sm"
-                              onClick={() =>
-                                setPicks((prev) => ({
-                                  ...prev,
-                                  [qq.id]: { choiceIndex: chosen, sure: true },
-                                }))
-                              }
+                              onClick={() => updateQuizPick(qq.id, { choiceIndex: chosen, sure: true })}
                             >
                               バッチリだった
                             </button>
                             <button
                               type="button"
                               className="btn-sm"
-                              onClick={() =>
-                                setPicks((prev) => ({
-                                  ...prev,
-                                  [qq.id]: { choiceIndex: chosen, sure: false },
-                                }))
-                              }
+                              onClick={() => updateQuizPick(qq.id, { choiceIndex: chosen, sure: false })}
                             >
                               あやふやだった
                             </button>
@@ -665,12 +756,7 @@ export function LessonPage({
                           <button
                             type="button"
                             className="btn-sm"
-                            onClick={() =>
-                              setPicks((prev) => ({
-                                ...prev,
-                                [qq.id]: { choiceIndex: chosen, sure: false },
-                              }))
-                            }
+                            onClick={() => updateQuizPick(qq.id, { choiceIndex: chosen, sure: false })}
                           >
                             リベンジ登録して次へ
                           </button>
@@ -693,6 +779,17 @@ export function LessonPage({
                 <strong>あやふやを正直に押すほど、復習が効く。</strong>
               </p>
             )}
+            {settled.length > 0 && !quizDone && (
+              <button
+                type="button"
+                className="btn-sm btn-block"
+                disabled={busy}
+                onClick={savePartialQuiz}
+              >
+                ここまで保存（{settled.length}/{quizQuestions.length}問）
+              </button>
+            )}
+            <p className="muted">回答は1問ごとに自動保存。閉じても続きから戻れるよ。</p>
           </div>
         )}
 
@@ -763,7 +860,8 @@ export function LessonPage({
                   id="diagram-minutes"
                   type="number"
                   inputMode="numeric"
-                  min={0}
+                  min={1}
+                  required
                   value={diagramMinutes}
                   onChange={(e) => setDiagramMinutes(e.target.value)}
                 />
@@ -775,6 +873,7 @@ export function LessonPage({
                   type="number"
                   inputMode="numeric"
                   min={1}
+                  required
                   value={workMinutes}
                   onChange={(e) => setWorkMinutes(e.target.value)}
                 />
@@ -850,8 +949,8 @@ export function LessonPage({
           className="btn-sm btn-block"
           disabled={
             busy ||
-            // 候補問題は施工時間が無いと技能の判定に使えない。空のまま完了させない
-            (isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0)) ||
+            // 本番40分には複線図も含む。両方の時間がない記録を合格判定へ入れない
+            (isCandidate && !alreadyRecorded && (!(Number(diagramMinutes) > 0) || !(Number(workMinutes) > 0))) ||
             // アプリ内出題は解ききってから保存する。途中の点を成績へ入れない
             (hasQuiz && !quizDone) ||
             (hasQuiz
@@ -872,8 +971,8 @@ export function LessonPage({
                 ? 'リベンジなしでクリア！'
               : '結果を残す'}
         </button>
-        {isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0) && (
-          <p className="muted">施工時間を入れたら保存できるよ。技能ミッションのチェックにも使う。</p>
+        {isCandidate && !alreadyRecorded && (!(Number(diagramMinutes) > 0) || !(Number(workMinutes) > 0)) && (
+          <p className="muted">複線図と施工、両方の時間を入れたら保存できるよ。</p>
         )}
       </section>
 
@@ -897,7 +996,7 @@ export function LessonPage({
 
       {complete ? (
         <div className="card card--accent">
-          <strong>クエストクリア！ XP +{LESSON_COMPLETE_XP}</strong>
+          <strong>クエストクリア！ XP +{xpForLesson(lesson)}</strong>
           <p className="muted">
             4ステップ達成！ 今日の積み上げは{' '}
             {snapshot.studySessions

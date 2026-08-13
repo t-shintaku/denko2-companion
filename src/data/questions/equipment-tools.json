@@ -384,7 +384,7 @@
     "lessonId": "p1-w2-l2",
     "topicId": "equipment-tools",
     "sourceResourceId": "hozan-material",
-    "sourceWatch": "ページ後半の「工具」の写真一覧と正式名称",
+    "sourceWatch": "材料・工具の一問一答で該当工具が出る問題",
     "stem": "架空電線のたるみを調整するときに使う工具はどれか。",
     "choices": [
       "張線器(シメラ)",
@@ -404,7 +404,7 @@
     "lessonId": "p1-w2-l2",
     "topicId": "equipment-tools",
     "sourceResourceId": "hozan-material",
-    "sourceWatch": "ページ後半の「工具」の写真一覧と正式名称",
+    "sourceWatch": "材料・工具の一問一答で該当工具が出る問題",
     "stem": "硬質塩化ビニル電線管(VE管)を切断したあとに切り口を整える工具はどれか。",
     "choices": [
       "面取り器",
@@ -423,8 +423,8 @@
     "id": "q-et-022",
     "lessonId": "p1-w2-l2",
     "topicId": "equipment-tools",
-    "sourceResourceId": "official-overview",
-    "sourceWatch": "「技能試験」の指定工具の記載",
+    "sourceResourceId": "gami-tools",
+    "sourceWatch": "工具の持参条件と電動工具について説明する場面",
     "stem": "技能試験で使用する工具について、正しいのはどれか。",
     "choices": [
       "指定工具以外の工具を持ち込んで使ってもよいが、電動工具は使用できない",

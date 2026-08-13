@@ -491,8 +491,8 @@
       "phaseId": "phase-0",
       "order": 6,
       "stage": "basics",
-      "title": "申込みの下調べと入口の復習",
-      "objective": "8月17日10時の申込開始に備え、必要なものを先に揃える。入口4本を1回だけ振り返る。",
+      "title": "申込日と受験料をメモ",
+      "objective": "公式ページで申込期間と受験料を確認し、入口4本を1回だけ振り返る。",
       "prerequisites": [
         "p0-l5"
       ],
@@ -505,9 +505,9 @@
         {
           "resourceId": "official-overview",
           "use": "first",
-          "where": "ページ内の「受験申込」と「受験手数料」の節",
-          "watch": "インターネット申込の手数料と、顔写真データの条件",
-          "stop": "指定工具の話が出たら止める。工具は Phase 1 の棚卸しで扱う"
+          "where": "ページ上部の令和8年度下期の案内",
+          "watch": "申込開始・締切と受験手数料11,100円",
+          "stop": "3つの数字をメモしたら閉じる。顔写真や持ち物は受験案内の公開後に事務タブで確認する"
         },
         {
           "resourceId": "official-second",
@@ -529,14 +529,14 @@
         {
           "id": "p0-l6-r1",
           "kind": "free-line",
-          "prompt": "インターネット申込に必要なものは?",
+          "prompt": "令和8年度下期の申込開始・締切と受験手数料は?",
           "sourceResourceId": "official-overview",
-          "sourceWatch": "「受験申込」と「受験手数料」の節",
-          "modelAnswer": "顔写真データ(ページに書かれた条件に合うもの)、支払方法(クレジットカード等)、受け取れるメールアドレス。インターネット申込のほうが手数料が安い。",
+          "sourceWatch": "ページ上部の令和8年度下期の案内",
+          "modelAnswer": "申込は2026年8月17日10:00から9月3日17:00まで。受験手数料は11,100円。",
           "acceptKeywords": [
-            "顔写真",
-            "支払",
-            "メール"
+            "8月17日",
+            "9月3日",
+            "11100"
           ]
         },
         {
@@ -555,7 +555,7 @@
       ],
       "practice": {
         "kind": "checklist",
-        "instruction": "顔写真データ・支払方法・メールアドレスを用意し、事務タブの「マイページ」を確認する",
+        "instruction": "公式ページを開き、申込開始・締切・受験料の3つをメモする",
         "scored": false
       },
       "officialTopicIds": [],
@@ -1035,24 +1035,18 @@
         {
           "resourceId": "gami-tools",
           "use": "first",
-          "where": "動画をそのまま再生する",
-          "watch": "指定工具それぞれを、何をする道具かとセットで",
-          "stop": "商品比較・おすすめ紹介に入ったら止める",
-          "minutes": 25
+          "openUrl": "https://youtu.be/d3n0tj1Cgik?t=2190",
+          "where": "36分30秒の圧着工具の説明から再生する",
+          "watch": "黄色い柄とJIS C 9711、リングスリーブ用であること",
+          "stop": "圧着工具の規格と用途をメモしたら閉じる",
+          "minutes": 8
         },
         {
           "resourceId": "hozan-material",
           "use": "more",
-          "where": "ページ後半の「工具」の写真一覧",
-          "watch": "工具の写真と正式名称",
+          "where": "一問一答を送り、工具が出る問題を確認する",
+          "watch": "写真に出た工具の正式名称と用途",
           "stop": "写真を一巡したら閉じる"
-        },
-        {
-          "resourceId": "official-overview",
-          "use": "official",
-          "where": "ページ内「技能試験」の指定工具の記載",
-          "watch": "持ち込みが認められる工具の条件",
-          "stop": "工具の一覧を控えたら閉じる"
         }
       ],
       "recallPrompts": [
@@ -1073,7 +1067,7 @@
           "kind": "free-line",
           "prompt": "金属管を切ったあとに使う工具は? 何のため?",
           "sourceResourceId": "hozan-material",
-          "sourceWatch": "ページ後半の「工具」の写真一覧",
+          "sourceWatch": "一問一答でリーマが出る問題",
           "modelAnswer": "リーマ。管の内側にできたバリを取るため。取らないと通線のときに電線の被覆が傷つく。",
           "acceptKeywords": [
             "リーマ",
@@ -1303,18 +1297,18 @@
       },
       "resources": [
         {
-          "resourceId": "official-overview",
+          "resourceId": "gami-tools",
           "use": "first",
-          "where": "ページ内「技能試験」の指定工具の記載",
-          "watch": "買わなければいけない工具の条件",
-          "stop": "一覧を書き出したら閉じる"
+          "where": "冒頭から2分9秒までの工具セット全体",
+          "watch": "基本工具の名前と、手元にあるかどうか",
+          "stop": "商品比較が始まる2分9秒で閉じる"
         },
         {
-          "resourceId": "gami-tools",
+          "resourceId": "hozan-material",
           "use": "more",
-          "where": "動画の「これがあれば足りる」の節まで送る",
-          "watch": "最低限そろえる工具の組み合わせ",
-          "stop": "その節が終わったら止める。買う判断は自分の棚卸し表でする",
+          "where": "材料・工具の一問一答を送る",
+          "watch": "手元にない工具が出たら名前を控える",
+          "stop": "工具を一巡したら閉じる。買う判断は自分の棚卸し表でする",
           "minutes": 10
         }
       ],
@@ -1323,9 +1317,9 @@
           "id": "p1-w2-l5-r1",
           "kind": "free-line",
           "prompt": "技能試験に持ち込める工具の条件は?",
-          "sourceResourceId": "official-overview",
-          "sourceWatch": "「技能試験」の指定工具の記載",
-          "modelAnswer": "電動工具は使えない。それ以外なら指定工具に加えて持ち込んで使ってよい。工具は自分で持参する(会場では貸してもらえない)。",
+          "sourceResourceId": "gami-tools",
+          "sourceWatch": "冒頭から2分9秒までの工具セット全体",
+          "modelAnswer": "技能試験で使う基本工具は自分で持参し、電動工具は使用できない。特にリングスリーブ用圧着工具は黄色い柄のJIS C 9711適合品を選ぶ。最終条件は受験票と受験案内で確認する。",
           "acceptKeywords": [
             "電動",
             "持参"
@@ -2854,11 +2848,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "1:12 のチャプター「公表問題1複線図」から",
-          "watch": "複線図の描き方だけ",
-          "stop": "10:29 から技能解説が始まる。今日はそこで止める。施工は次週",
+          "where": "候補No.1の個別動画を冒頭から",
+          "watch": "複線図を描く場面。線を引く順番だけに注目",
+          "stop": "施工の解説に入ったら止める",
           "minutes": 12,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=72"
+          "openUrl": "https://youtu.be/bsnfRInf9eU"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3044,11 +3038,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "10:29 のチャプター「公表問題1技能解説」から",
-          "watch": "材料の確認から完成まで、手の動きを通しで",
-          "stop": "50:53 で公表問題2が始まる。そこで必ず止める",
+          "where": "候補No.1の個別動画を冒頭から",
+          "watch": "複線図から完成までの流れ。手の動きと欠陥ポイント",
+          "stop": "No.1の解説が終わったら閉じる",
           "minutes": 40,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=629"
+          "openUrl": "https://youtu.be/bsnfRInf9eU"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3239,11 +3233,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "作る問題のチャプター(No.2は50:53、No.3は1:23:05)",
-          "watch": "複線図から技能解説まで、その1問だけ",
-          "stop": "次の問題のチャプターが始まったら止める",
+          "where": "R8対応プレイリストから、今日作る候補No.の個別動画",
+          "watch": "複線図から施工、欠陥ポイントまでその1問だけ",
+          "stop": "今日作るNo.の解説が終わったら閉じる",
           "minutes": 40,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=3053"
+          "openUrl": "https://www.youtube.com/playlist?list=PLcSb3IfZ6sU3j2U-6T5-h2nb1mq93zflG"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3513,9 +3507,9 @@
         {
           "resourceId": "hozan-skill-process",
           "use": "more",
-          "where": "施工順序のページ",
-          "watch": "40分に収めるための作業の順番",
-          "stop": "順番を紙に書いたら閉じる"
+          "where": "施工寸法一覧の『使用するケーブルの寸法』から",
+          "watch": "器具ごとの必要電線長さと、外装・被覆を剥く寸法",
+          "stop": "今日練習する器具の寸法だけ確認したら閉じる"
         },
         {
           "resourceId": "official-defect",
@@ -3523,6 +3517,13 @@
           "where": "ページ内の欠陥の一覧",
           "watch": "基本作業に関わる項目だけ",
           "stop": "自己点検が済んだら閉じる"
+        },
+        {
+          "resourceId": "hozan-skill-defect",
+          "use": "more",
+          "where": "写真つき欠陥事例から、今日練習した器具の項目",
+          "watch": "外装・被覆・接続のNG例を自分の作品と見比べる",
+          "stop": "今日の器具を照合できたら閉じる"
         }
       ],
       "recallPrompts": [
@@ -3591,11 +3592,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "1:12 のチャプター「公表問題1複線図」から",
-          "watch": "複線図の描き方(1:12 から)→そのまま「技能解説」(10:29 から)へ。この1問ぶんだけ",
-          "stop": "50:53 で公表問題2 が始まる。そこで必ず止める",
+          "where": "候補No.1の個別動画を冒頭から",
+          "watch": "複線図から施工、欠陥ポイントまで",
+          "stop": "No.1の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=72"
+          "openUrl": "https://youtu.be/bsnfRInf9eU"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3684,11 +3685,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "50:53 のチャプター「公表問題2複線図」から",
-          "watch": "複線図の描き方(50:53 から)→そのまま「技能解説」(57:08 から)へ。この1問ぶんだけ",
-          "stop": "1:23:05 で公表問題3 が始まる。そこで必ず止める",
+          "where": "候補No.2の個別動画を冒頭から",
+          "watch": "パイロットランプを含む複線図と施工、欠陥ポイント",
+          "stop": "No.2の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=3053"
+          "openUrl": "https://youtu.be/k3miAiyfXtw"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3776,11 +3777,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "1:23:05 のチャプター「公表問題3複線図」から",
-          "watch": "複線図の描き方(1:23:05 から)→そのまま「技能解説」(1:33:07 から)へ。この1問ぶんだけ",
-          "stop": "2:01:51 で公表問題4 が始まる。そこで必ず止める",
+          "where": "候補No.3のR8対応追補動画を冒頭から",
+          "watch": "変更点と端子台・接地極付コンセントの施工条件",
+          "stop": "No.3の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=4985"
+          "openUrl": "https://youtu.be/Auk_cDMR2-k"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3869,11 +3870,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "2:01:51 のチャプター「公表問題4複線図」から",
-          "watch": "複線図の描き方(2:01:51 から)→そのまま「技能解説」(2:08:58 から)へ。この1問ぶんだけ",
-          "stop": "2:31:49 で公表問題5 が始まる。そこで必ず止める",
+          "where": "候補No.4の個別動画を冒頭から",
+          "watch": "複線図から端子台の施工、欠陥ポイントまで",
+          "stop": "No.4の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=7311"
+          "openUrl": "https://youtu.be/chgyafTd-R0"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -3962,11 +3963,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "2:31:49 のチャプター「公表問題5複線図」から",
-          "watch": "複線図の描き方(2:31:49 から)→そのまま「技能解説」(2:37:26 から)へ。この1問ぶんだけ",
-          "stop": "3:02:26 で公表問題6 が始まる。そこで必ず止める",
+          "where": "候補No.5の個別動画を冒頭から",
+          "watch": "複線図から施工、配線ミスを防ぐポイントまで",
+          "stop": "No.5の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=9109"
+          "openUrl": "https://youtu.be/YNN2IOiCeJw"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4055,11 +4056,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "3:02:26 のチャプター「公表問題6複線図」から",
-          "watch": "複線図の描き方(3:02:26 から)→そのまま「技能解説」(3:10:47 から)へ。この1問ぶんだけ",
-          "stop": "3:29:33 で公表問題7 が始まる。そこで必ず止める",
+          "where": "候補No.6の個別動画を冒頭から",
+          "watch": "複線図と露出形コンセントの施工、欠陥ポイント",
+          "stop": "No.6の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=10946"
+          "openUrl": "https://youtu.be/ExPDIfX1AaI"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4104,7 +4105,7 @@
           "prompt": "差込形コネクタで欠陥になるのはどんなとき?",
           "sourceResourceId": "official-defect",
           "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
-          "modelAnswer": "奥まで差し込めていない、心線が確認窓から露出している場合。差し込んだら必ず窓を見る。",
+          "modelAnswer": "心線が確認窓に見えず奥まで差し込めていない場合、またはコネクタ下側から心線が露出している場合。差し込んだら確認窓と下側の両方を見る。",
           "acceptKeywords": [
             "奥",
             "露出",
@@ -4148,11 +4149,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "3:29:33 のチャプター「公表問題7複線図」から",
-          "watch": "複線図の描き方(3:29:33 から)→そのまま「技能解説」(3:39:07 から)へ。この1問ぶんだけ",
-          "stop": "4:01:07 で公表問題8 が始まる。そこで必ず止める",
+          "where": "候補No.7の個別動画を冒頭から",
+          "watch": "3路・4路を含む複線図と施工、欠陥ポイント",
+          "stop": "No.7の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=12573"
+          "openUrl": "https://youtu.be/wQO8cx8OMiY"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4241,11 +4242,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "4:01:07 のチャプター「公表問題8複線図」から",
-          "watch": "複線図の描き方(4:01:07 から)→そのまま「技能解説」(4:08:11 から)へ。この1問ぶんだけ",
-          "stop": "4:29:05 で公表問題9 が始まる。そこで必ず止める",
+          "where": "候補No.8の個別動画を冒頭から",
+          "watch": "複線図と端子台の施工、欠陥ポイント",
+          "stop": "No.8の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=14467"
+          "openUrl": "https://youtu.be/IWBuRD-R_2A"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4334,11 +4335,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "4:29:05 のチャプター「公表問題9複線図」から",
-          "watch": "複線図の描き方(4:29:05 から)→そのまま「技能解説」(4:31:49 から)へ。この1問ぶんだけ",
-          "stop": "4:51:30 で公表問題10 が始まる。そこで必ず止める",
+          "where": "候補No.9の個別動画を冒頭から",
+          "watch": "複線図と太いケーブル・スリーブの施工、欠陥ポイント",
+          "stop": "No.9の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=16145"
+          "openUrl": "https://youtu.be/M2TyBpAR8xM"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4426,11 +4427,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "4:51:30 のチャプター「公表問題10複線図」から",
-          "watch": "複線図の描き方(4:51:30 から)→そのまま「技能解説」(4:57:12 から)へ。この1問ぶんだけ",
-          "stop": "5:14:09 で公表問題11 が始まる。そこで必ず止める",
+          "where": "候補No.10の個別動画を冒頭から",
+          "watch": "同時点滅の複線図と施工、欠陥ポイント",
+          "stop": "No.10の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=17490"
+          "openUrl": "https://youtu.be/TWB9T70MWE4"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4475,7 +4476,7 @@
           "prompt": "寸法で欠陥になるのはどこから?",
           "sourceResourceId": "official-defect",
           "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
-          "modelAnswer": "指定寸法の50%未満になったとき。多少長い短いは許容されるが、半分を切ると欠陥。まずスケールで測ってから切る。",
+          "modelAnswer": "指定寸法の50%以下になったとき。ちょうど半分も欠陥になる。まずスケールで測ってから切る。",
           "acceptKeywords": [
             "50",
             "半分"
@@ -4518,11 +4519,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "5:14:09 のチャプター「公表問題11複線図」から",
-          "watch": "複線図の描き方(5:14:09 から)→そのまま「技能解説」(5:17:22 から)へ。この1問ぶんだけ",
-          "stop": "5:41:45 で公表問題12 が始まる。そこで必ず止める",
+          "where": "候補No.11の個別動画を冒頭から",
+          "watch": "複線図と金属管の施工、ボンド線を含む欠陥ポイント",
+          "stop": "No.11の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=18849"
+          "openUrl": "https://youtu.be/AY0sCV5ht34"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4611,11 +4612,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "5:41:45 のチャプター「公表問題12複線図」から",
-          "watch": "複線図の描き方(5:41:45 から)→そのまま「技能解説」(5:44:30 から)へ。この1問ぶんだけ",
-          "stop": "6:04:42 で公表問題13 が始まる。そこで必ず止める",
+          "where": "候補No.12の個別動画を冒頭から",
+          "watch": "複線図とPF管の施工、欠陥ポイント",
+          "stop": "No.12の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=20505"
+          "openUrl": "https://youtu.be/rrwEhnnSlJ4"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4703,11 +4704,11 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "6:04:42 のチャプター「公表問題13複線図」から",
-          "watch": "複線図の描き方(6:04:42 から)→そのまま「技能解説」(6:12:10 から)へ。この1問ぶんだけ",
-          "stop": "6:28:44 の「まとめ」が出たら閉じる",
+          "where": "候補No.13のR8対応追補動画を冒頭から",
+          "watch": "変更点と複線図、施工条件、欠陥ポイント",
+          "stop": "No.13の解説が終わったら閉じる",
           "minutes": 45,
-          "openUrl": "https://youtu.be/n4V1B3S4qZM?t=21882"
+          "openUrl": "https://youtu.be/7yf4KFfBxpE"
         },
         {
           "resourceId": "hozan-skill-no",
@@ -4796,9 +4797,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -4876,9 +4877,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -4956,9 +4957,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -5036,9 +5037,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -5116,9 +5117,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -5196,9 +5197,9 @@
         {
           "resourceId": "gami-candidates",
           "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "where": "R8対応プレイリストから、作り直すNo.の個別動画を選ぶ",
           "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "stop": "つまずいた工程が終わったら閉じる",
           "minutes": 25
         },
         {
@@ -5271,11 +5272,12 @@
       },
       "resources": [
         {
-          "resourceId": "hozan-skill-process",
+          "resourceId": "gami-candidates",
           "use": "first",
-          "where": "施工順序のページ",
-          "watch": "40分に収めるための順番。自己流になっていないかを照らす",
+          "where": "R8対応プレイリストから、直近で一番時間がかかった候補No.の個別動画",
+          "watch": "複線図→材料確認→加工→器具結線→接続→見直しの流れ",
           "stop": "順番を確認したら閉じる。作る前に見るのは5分まで",
+          "openUrl": "https://www.youtube.com/playlist?list=PLcSb3IfZ6sU3j2U-6T5-h2nb1mq93zflG",
           "minutes": 5
         },
         {
@@ -5291,8 +5293,8 @@
           "id": "p5-w6-r1",
           "kind": "free-line",
           "prompt": "40分に収めるための作業順は?",
-          "sourceResourceId": "hozan-skill-process",
-          "sourceWatch": "施工順序のページ。40分に収めるための順番",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "直近で一番時間がかかった候補No.の個別動画。全体の作業の流れ",
           "modelAnswer": "複線図(5分ほど) → 支給材料の確認 → 寸法どおりに切断・はぎ取り → 器具の結線 → 最後にボックス内の接続 → 見直し。接続を最後にまとめると手戻りが減る。",
           "acceptKeywords": [
             "複線図",
@@ -5482,7 +5484,7 @@
           "prompt": "提出前に見る欠陥チェックの順番は?",
           "sourceResourceId": "official-defect",
           "sourceWatch": "完成後に確認する順番を3つだけ決めるところ",
-          "modelAnswer": "①寸法(指定の50%未満になっていないか) ②心線の露出・絶縁被覆の噛み込み ③圧着の刻印と器具の極性。毎回この3つを同じ順で見る。",
+          "modelAnswer": "①寸法(指定の50%以下になっていないか) ②心線の露出・絶縁被覆の噛み込み ③圧着の刻印と器具の極性。毎回この3つを同じ順で見る。",
           "acceptKeywords": [
             "寸法",
             "露出",

@@ -205,7 +205,7 @@
     "topicId": "wiring-diagram",
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「機器・盤」の行",
-    "stem": "配線図で、内部に斜線が入った四角形が表す盤はどれか。",
+    "stem": "配線図で、正方形の右上三角形を黒く塗った記号が表す盤はどれか。",
     "choices": [
       "分電盤",
       "配電盤",
@@ -213,7 +213,7 @@
       "実験盤"
     ],
     "answerIndex": 0,
-    "explanation": "分電盤は斜線入り、配電盤は塗りつぶし、制御盤は格子。盤の記号は3種類の塗り分けで見分ける。",
+    "explanation": "分電盤は正方形を対角線で分け、右上側の三角形を黒く塗る。単なる斜線では配電盤と区別できないので、黒い側まで見る。",
     "origin": "original",
     "syllabusIds": [
       "wd-symbol-device"
@@ -1087,15 +1087,15 @@
     "topicId": "wiring-diagram",
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「機器・盤」の行",
-    "stem": "配線図で、内部を塗りつぶした四角形が表す盤はどれか。",
+    "stem": "配線図で、内部を全面黒く塗った正方形が表すものはどれか。",
     "choices": [
-      "配電盤",
+      "警報盤",
       "分電盤",
-      "制御盤",
-      "実験盤"
+      "配電盤",
+      "制御盤"
     ],
     "answerIndex": 0,
-    "explanation": "配電盤は塗りつぶし、分電盤は斜線入り、制御盤は格子。塗り分けで見分ける。",
+    "explanation": "全面を黒く塗った正方形は警報盤。配電盤は正方形を対角線で分けた上下の三角形が黒い市松状、分電盤は右上三角形が黒い。",
     "origin": "original",
     "syllabusIds": [
       "wd-symbol-device"

@@ -151,6 +151,28 @@ describe('手を動かす(アプリ内出題)', () => {
     expect(screen.getByRole('button', { name: /結果を残す/ })).toBeDisabled();
   });
 
+  it('途中の1問を閉じても、次回は同じ回答から再開できる', async () => {
+    const user = userEvent.setup();
+    const firstView = renderLesson();
+
+    await answerRight(user, 0, bank[0]!);
+    await settle(user, 0);
+    await waitFor(async () => {
+      const saved = (await repo.load()).lessonProgress[lesson.id];
+      expect(saved?.quizDraft).toHaveLength(1);
+      expect(saved?.quizDraft?.[0]?.sure).toBe(true);
+    });
+
+    firstView.unmount();
+    renderLesson();
+    await waitFor(() => {
+      expect(
+        within(quizItem(0)).getByText('✓ 記録した。この問題はしばらく出てこないよ'),
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByRole('button', { name: /結果を残す/ })).toBeDisabled();
+  });
+
   it('解き終えると1問ずつ記録され、科目別成績と復習リストへ流れる', async () => {
     const user = userEvent.setup();
     renderLesson();

@@ -440,6 +440,11 @@ export type LessonProgress = {
    * 化けさせると、本人が付けていない評価が記録に残ってしまう。
    */
   recallSelfMarks?: (RecallMark | undefined)[];
+  /**
+   * アプリ内クイズの途中回答。選択肢は表示順ではなく本文で持つため、
+   * 再表示時に選択肢をシャッフルしても同じ回答へ戻せる。
+   */
+  quizDraft?: { questionId: string; choice: string; sure?: boolean }[];
   practiceSubmittedAt?: IsoDateTime;
   practiceNote?: string;
   practiceCorrect?: number;

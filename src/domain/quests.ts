@@ -10,7 +10,6 @@ import { addDays, diffDays, todayJst } from './jst';
 import { STEP_LABEL, isLessonComplete, modeForBudget, planForBudget } from './lessons';
 import type { LessonStep } from './lessons';
 import type { ResolvedAdminTask } from './adminTasks';
-import { actionableAdminTasks } from './adminTasks';
 import type { OnboardingState } from './onboarding';
 import type {
   Curriculum,
@@ -76,11 +75,15 @@ export function daysSinceLastActivity(
   sessions: StudySession[],
   progress: Record<string, LessonProgress>,
   today: IsoDate = todayJst(),
+  adminTasks: ResolvedAdminTask[] = [],
 ): number | undefined {
   const dates: IsoDate[] = [];
   for (const s of sessions) dates.push(s.jstDate);
   for (const p of Object.values(progress)) {
-    if (p.completedAt) dates.push(p.completedAt.slice(0, 10));
+    if (p.updatedAt) dates.push(p.updatedAt.slice(0, 10));
+  }
+  for (const task of adminTasks) {
+    if (task.doneAt) dates.push(task.doneAt.slice(0, 10));
   }
   if (dates.length === 0) return undefined;
   const last = dates.reduce((a, b) => (a > b ? a : b));
@@ -184,37 +187,13 @@ export function clearConditionFor(lesson: CurriculumLesson): string {
   return `見る → 閉じて${lesson.recallPrompts.length || 1}個思い出す → ${practice} → 次に直す1点を保存`;
 }
 
-function questFromAdmin(task: ResolvedAdminTask, budgetMinutes: number): Quest {
-  return {
-    id: `admin:${task.template.id}`,
-    reason: 'admin',
-    slot: 'main',
-    title: task.template.title,
-    detail: task.template.description,
-    clearCondition: '完了にチェックを入れる(公式サイトで手続きを済ませてから)',
-    taskId: task.template.id,
-    minutes: Math.min(budgetMinutes, 20),
-    mode: modeForBudget(budgetMinutes),
-    fitsBudget: true,
-  };
-}
-
 /**
- * §10「次の10分」。単一の行動を返す。
+ * §10「次の10分」。学習の単一行動を返す。
+ * 事務タスクはホームでこのクエストの直前に別枠表示する。学習を置き換えない。
  * 同順位なら最終実施日が古いものを優先(availableLessons が予定日順なので実質満たす)。
  */
 export function nextTenMinutes(ctx: QuestContext): Quest | undefined {
-  const urgent = actionableAdminTasks(ctx.adminTasks);
-  const top = urgent[0];
-  if (top && (top.urgency === 'overdue' || top.urgency === 'due-1' || top.urgency === 'due-3')) {
-    return questFromAdmin(top, 10);
-  }
-  // 7日以内 / 受付中の事務も学習より先。ただし1件だけ。
-  if (top && (top.urgency === 'due-7' || top.urgency === 'open-now')) {
-    return questFromAdmin(top, 10);
-  }
-
-  const gap = daysSinceLastActivity(ctx.sessions, ctx.progress, ctx.today);
+  const gap = daysSinceLastActivity(ctx.sessions, ctx.progress, ctx.today, ctx.adminTasks);
   const lessons = availableLessons(ctx);
 
   if (gap !== undefined && gap >= COMEBACK_GAP_DAYS) {

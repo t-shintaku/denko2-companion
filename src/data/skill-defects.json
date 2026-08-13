@@ -8,7 +8,13 @@
   { "code": "terminal", "label": "器具端子の締付け不良・心線の露出・被覆の噛み込み" },
   { "code": "loop", "label": "輪づくりの不良(巻き方向・サイズ・重なり)" },
   { "code": "ground", "label": "接地線の誤り(色・接続先)" },
-  { "code": "length", "label": "寸法違反(指定寸法の50%未満)" },
+  { "code": "length", "label": "寸法違反(指定寸法の50%以下)" },
+  { "code": "bond-wire", "label": "ボンド線の取付け忘れ・接続不良" },
+  { "code": "rubber-bushing", "label": "ゴムブッシングの取付け忘れ・切込み不良" },
+  { "code": "mounting-frame", "label": "埋込連用取付枠の位置・固定不良" },
+  { "code": "conduit-connection", "label": "金属管・PF管とボックスなどの接続不良" },
+  { "code": "base-sheath", "label": "台座・露出形器具まわりの外装／被覆の収まり不良" },
+  { "code": "arrangement", "label": "指定と異なる器具・電線・配置・接続" },
   { "code": "incomplete", "label": "未完成・時間切れ" },
   { "code": "other", "label": "その他" }
 ]

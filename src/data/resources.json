@@ -108,8 +108,8 @@
   {
     "id": "official-overview",
     "provider": "電気技術者試験センター",
-    "title": "試験概要(受験料・指定工具・受験資格)",
-    "url": "https://www.shiken.or.jp/construction/second/overview/",
+    "title": "試験トップ(申込期間・受験料)",
+    "url": "https://www.shiken.or.jp/construction/second/",
     "type": "official",
     "topicIds": [],
     "role": "official-check",
@@ -267,7 +267,7 @@
     "creatorKind": "company",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "note": "記号と写真の対応表。学科でいちばん取りやすい得点源。"
+    "note": "記号と写真を使った一問一答。問題を送りながら形で覚える。"
   },
   {
     "id": "hozan-material",
@@ -282,7 +282,7 @@
     "creatorKind": "company",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "note": "電線・ケーブル・電線管・工具の写真。写真問題はここから出る。"
+    "note": "材料・工具の写真を使った一問一答。開くと最初は電線管の問題が出る。"
   },
   {
     "id": "hozan-device",
@@ -298,7 +298,7 @@
     "creatorKind": "company",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "note": "スイッチ・コンセント・レセプタクルと分岐回路。"
+    "note": "配線器具の写真・図を使った一問一答。問題を送りながら確認する。"
   },
   {
     "id": "hozan-method",
@@ -314,7 +314,7 @@
     "creatorKind": "company",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "note": "工事の種類・電線接続・接地工事・絶縁抵抗・検査。"
+    "note": "施工方法と検査を図で問う一問一答。見出し一覧ではなく問題形式。"
   },
   {
     "id": "hozan-law",
@@ -329,7 +329,7 @@
     "creatorKind": "company",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "note": "電気事業法・電気工事士法・電気用品安全法の3本だけ。"
+    "note": "法令を問う一問一答。問題を送り、解説で根拠を確かめる。"
   },
   {
     "id": "hozan-figure",
@@ -406,7 +406,7 @@
   {
     "id": "hozan-skill-process",
     "provider": "HOZAN 電工試験の虎",
-    "title": "施工順序",
+    "title": "施工寸法一覧",
     "url": "https://www.hozan.co.jp/corp/denko2/pg/1process/",
     "type": "article",
     "topicIds": [
@@ -417,7 +417,7 @@
     "lastVerified": "2026-08-13",
     "verification": "fetched",
     "examYear": 2026,
-    "note": "40分に収めるための作業順。自己流で組む前にこれを見る。"
+    "note": "器具ごとの必要電線長さと施工寸法の参考値。施工順序の教材ではない。"
   },
   {
     "id": "hozan-skill-defect",
@@ -794,8 +794,8 @@
   {
     "id": "gami-candidates",
     "provider": "ガミデンキちゃんねる",
-    "title": "令和8年 技能試験はこの1本で解決｜公表問題1〜13完全収録",
-    "url": "https://youtu.be/n4V1B3S4qZM",
+    "title": "技能試験講座 ★R8年度対応★ リニューアル版",
+    "url": "https://www.youtube.com/playlist?list=PLcSb3IfZ6sU3j2U-6T5-h2nb1mq93zflG",
     "type": "video",
     "topicIds": [
       "wiring-diagram"
@@ -804,10 +804,9 @@
     "creatorKind": "individual",
     "lastVerified": "2026-08-13",
     "verification": "fetched",
-    "runtimeMinutes": 390,
     "examYear": 2026,
     "creatorNote": "元電気科講師",
-    "note": "6時間29分。1本に13問が入り、各問「複線図」→「技能解説」の順にチャプターがある。レッスンからは該当チャプターの秒数付きURLで開く。説明欄に令和7年度の表記も残るので、支給材料と施工条件は公式PDFとHOZANのNo.別ページで必ず照合する。"
+    "note": "24本のR8対応プレイリスト。レッスンから候補No.別動画へ直接開く。支給材料と施工条件の正本は公式PDF。"
   },
   {
     "id": "gami-plan",

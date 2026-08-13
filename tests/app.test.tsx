@@ -87,7 +87,7 @@ describe('Sprint 1 の通し動作', () => {
     await waitFor(() => expect(finish).toBeEnabled());
     await user.click(finish);
 
-    expect(await screen.findByText(/クエストクリア！ XP \+10/)).toBeInTheDocument();
+    expect(await screen.findByText(/クエストクリア！ XP \+\d+/)).toBeInTheDocument();
   });
 
   it('【回帰】筆記方式を選ぶと学科日が公式日へ固定され、変更できない', async () => {
