@@ -1,0 +1,330 @@
+[
+  {
+    "id": "q-law-001",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-1",
+    "sourceWatch": "電気工作物の分類を図で整理する場面",
+    "stem": "一般用電気工作物に該当するものはどれか。",
+    "choices": [
+      "低圧(600V以下)で受電し、構内に大規模な発電設備を持たない一般住宅",
+      "高圧(6600V)で受電する工場",
+      "最大電力500kWの需要設備",
+      "特別高圧で受電するビル"
+    ],
+    "answerIndex": 0,
+    "explanation": "低圧受電で、小規模発電設備しか持たないものが一般用電気工作物。高圧受電になった時点で自家用電気工作物になる。",
+    "origin": "original",
+    "syllabusIds": ["law-facility"]
+  },
+  {
+    "id": "q-law-002",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-1",
+    "sourceWatch": "電気工作物の分類を図で整理する場面。受電電圧による区分",
+    "stem": "電圧の区分について、交流の「低圧」の範囲はどれか。",
+    "choices": ["600V以下", "750V以下", "7000V以下", "100V以下"],
+    "answerIndex": 0,
+    "explanation": "交流は600V以下が低圧、直流は750V以下が低圧。600Vを超え7000V以下が高圧、7000V超が特別高圧。",
+    "origin": "original",
+    "syllabusIds": ["law-facility"]
+  },
+  {
+    "id": "q-law-003",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-1",
+    "sourceWatch": "電気工作物の分類を図で整理する場面。直流の低圧",
+    "stem": "電圧の区分について、直流の「低圧」の範囲はどれか。",
+    "choices": ["750V以下", "600V以下", "7000V以下", "1500V以下"],
+    "answerIndex": 0,
+    "explanation": "直流750V以下・交流600V以下が低圧。直流のほうが数字が大きい点で取り違えやすい。",
+    "origin": "original",
+    "syllabusIds": ["law-facility"]
+  },
+  {
+    "id": "q-law-004",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-1",
+    "sourceWatch": "自家用電気工作物と資格の対応を説明する場面",
+    "stem": "第一種電気工事士が従事できる自家用電気工作物の範囲はどれか。",
+    "choices": [
+      "最大電力500kW未満の需要設備",
+      "すべての自家用電気工作物",
+      "最大電力2000kW未満の需要設備",
+      "自家用電気工作物には従事できない"
+    ],
+    "answerIndex": 0,
+    "explanation": "第一種は最大電力500kW未満の自家用と一般用。第二種は一般用電気工作物等のみ。",
+    "origin": "original",
+    "syllabusIds": ["law-facility", "law-worker"]
+  },
+  {
+    "id": "q-law-005",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気工事士法」の節。資格がないとできない作業の一覧",
+    "stem": "電気工事士でなければ従事できない作業はどれか。",
+    "choices": [
+      "配線器具を造営材に取り付け、これに電線を接続する作業",
+      "差込みプラグにコードを接続する作業",
+      "電線を支持する柱を設置する作業",
+      "地中電線用の管を設置する作業"
+    ],
+    "answerIndex": 0,
+    "explanation": "電線相互の接続、造営材への配線の取付け、配線器具への電線の接続などは電気工事士の作業。柱や管の設置は「軽微な工事」で資格が要らない。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-006",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気工事士法」の節。軽微な工事の一覧",
+    "stem": "電気工事士の資格がなくても行える「軽微な工事」はどれか。",
+    "choices": [
+      "電圧36V以下の小型変圧器の二次側の配線工事(インターホンなど)",
+      "電線管に電線を収める作業",
+      "接地線を接地極に接続する作業",
+      "電線相互を接続する作業"
+    ],
+    "answerIndex": 0,
+    "explanation": "電鈴・インターホン・火災感知器など36V以下のものの配線は軽微な工事。危険が小さいものだけが外れている。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-007",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-2",
+    "sourceWatch": "免状の意義と申請のタイミングを説明する場面",
+    "stem": "第二種電気工事士免状を交付するのは誰か。",
+    "choices": ["都道府県知事", "経済産業大臣", "電気技術者試験センター", "市町村長"],
+    "answerIndex": 0,
+    "explanation": "免状は都道府県知事が交付する。試験を実施するのは電気技術者試験センターで、交付元とは別。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-008",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-2",
+    "sourceWatch": "免状の意義と申請のタイミングを説明する場面",
+    "stem": "電気工事士が電気工事の作業に従事するときの義務として正しいのはどれか。",
+    "choices": [
+      "免状を携帯していなければならない",
+      "免状を営業所に掲示しておけばよい",
+      "免状の写しを持っていればよい",
+      "携帯の義務はない"
+    ],
+    "answerIndex": 0,
+    "explanation": "作業に従事するときは免状を携帯する。写しや掲示では足りない。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-009",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "gami-law-2",
+    "sourceWatch": "免状の書換え・再交付の説明",
+    "stem": "電気工事士免状の書換えを申請しなければならないのはどれか。",
+    "choices": ["氏名を変更したとき", "住所を変更したとき", "勤務先を変更したとき", "電話番号を変更したとき"],
+    "answerIndex": 0,
+    "explanation": "書換えが必要なのは氏名の変更。住所の変更では書換えの必要はない。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-010",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気用品安全法」の節。PSEマークの区別",
+    "stem": "特定電気用品に表示される記号はどれか。",
+    "choices": ["ひし形の中のPSと E", "丸の中のPSと E", "三角の中のPSと E", "四角の中のPSと E"],
+    "answerIndex": 0,
+    "explanation": "特定電気用品はひし形の〈PS〉E、それ以外の電気用品は丸の(PS)E。危険度の高いほうがひし形。",
+    "origin": "original",
+    "syllabusIds": ["law-appliance"]
+  },
+  {
+    "id": "q-law-011",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気用品安全法」の節。特定電気用品の例",
+    "stem": "特定電気用品に該当するものはどれか。",
+    "choices": ["定格電圧125Vの配線用遮断器", "蛍光灯器具", "電線管", "換気扇"],
+    "answerIndex": 0,
+    "explanation": "配線器具・電線・ヒューズ・小型単相変圧器などは特定電気用品。照明器具・電線管・換気扇は特定電気用品以外。",
+    "origin": "original",
+    "syllabusIds": ["law-appliance"]
+  },
+  {
+    "id": "q-law-012",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気用品安全法」の節。特定電気用品以外の例",
+    "stem": "特定電気用品以外の電気用品に該当するものはどれか。",
+    "choices": ["蛍光灯器具", "定格電圧100Vのタンブラースイッチ", "600Vビニル絶縁電線", "配線用のヒューズ"],
+    "answerIndex": 0,
+    "explanation": "照明器具は特定電気用品以外。スイッチ・電線・ヒューズは特定電気用品にあたる。",
+    "origin": "original",
+    "syllabusIds": ["law-appliance"]
+  },
+  {
+    "id": "q-law-013",
+    "lessonId": "p2-w5-l1",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気用品安全法」の節。電気工事士の義務",
+    "stem": "電気工事士が電気工事に使用できる電気用品について、正しいのはどれか。",
+    "choices": [
+      "法令に定める表示が付されている電気用品でなければ使用してはならない",
+      "表示がなくても性能が良ければ使用してよい",
+      "表示は輸入品にだけ必要である",
+      "表示の確認は販売店の義務であり工事士には関係ない"
+    ],
+    "answerIndex": 0,
+    "explanation": "電気工事士法により、表示のない電気用品を工事に使ってはならない。現場で表示を確認するのは工事士の義務。",
+    "origin": "original",
+    "syllabusIds": ["law-appliance"]
+  },
+  {
+    "id": "q-law-014",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気設備技術基準」の節。数字で決まっている項目",
+    "stem": "住宅の屋内電路の対地電圧は原則として何V以下にしなければならないか。",
+    "choices": ["150V", "100V", "200V", "300V"],
+    "answerIndex": 0,
+    "explanation": "住宅の屋内電路の対地電圧は原則150V以下。単相3線式100/200Vが使えるのは、対地電圧が100Vに収まるため。",
+    "origin": "original",
+    "syllabusIds": ["law-standard"]
+  },
+  {
+    "id": "q-law-015",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気設備技術基準」の節。対地電圧の例外",
+    "stem": "住宅で対地電圧150Vを超える屋内配線が認められる例として、正しいのはどれか。",
+    "choices": [
+      "定格消費電力2kW以上の電気機械器具に、専用の回路で電気を供給する場合",
+      "居室のコンセント回路を200Vにする場合",
+      "照明回路を200Vにする場合",
+      "延長コードで200Vを使う場合"
+    ],
+    "answerIndex": 0,
+    "explanation": "2kW以上の機器へ専用回路で供給する場合などに限って例外が認められる。エアコンやIHが専用回路になっているのはこのため。",
+    "origin": "original",
+    "syllabusIds": ["law-standard"]
+  },
+  {
+    "id": "q-law-016",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気設備技術基準」の節。電路の絶縁",
+    "stem": "電路を大地から絶縁しなくてもよい場合として、正しいのはどれか。",
+    "choices": [
+      "B種接地工事を施した変圧器の低圧側の中性点",
+      "住宅の照明回路",
+      "コンセント回路",
+      "電動機の電源回路"
+    ],
+    "answerIndex": 0,
+    "explanation": "接地工事を施す部分など、法令で定める場合は絶縁しなくてよい。原則はすべて絶縁する。",
+    "origin": "original",
+    "syllabusIds": ["law-standard"]
+  },
+  {
+    "id": "q-law-017",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-point",
+    "sourceWatch": "「法令」の頻出ポイント。電気工事業法の節",
+    "stem": "一般用電気工事の業務を行う営業所に置かなければならない者はどれか。",
+    "choices": ["主任電気工事士", "電気主任技術者", "電気工事施工管理技士", "安全管理者"],
+    "answerIndex": 0,
+    "explanation": "営業所ごとに主任電気工事士を置く。第一種電気工事士か、第二種で3年以上の実務経験がある者が就ける。",
+    "origin": "original",
+    "syllabusIds": ["law-business"]
+  },
+  {
+    "id": "q-law-018",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-point",
+    "sourceWatch": "「法令」の頻出ポイント。電気工事業法の節",
+    "stem": "一般用電気工事の業務を行う営業所に備え付けなければならない器具の組み合わせはどれか。",
+    "choices": [
+      "絶縁抵抗計・接地抵抗計・回路計",
+      "絶縁抵抗計・検相器・電力量計",
+      "接地抵抗計・照度計・回転計",
+      "回路計・クランプメータ・検電器"
+    ],
+    "answerIndex": 0,
+    "explanation": "絶縁抵抗計、接地抵抗計、抵抗及び交流電圧を測定できる回路計の3つ。竣工検査に必要な3点セット。",
+    "origin": "original",
+    "syllabusIds": ["law-business"]
+  },
+  {
+    "id": "q-law-019",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-point",
+    "sourceWatch": "「法令」の頻出ポイント。電気工事業法の節",
+    "stem": "電気工事業者の登録の有効期間はどれか。",
+    "choices": ["5年", "3年", "10年", "無期限"],
+    "answerIndex": 0,
+    "explanation": "登録電気工事業者の登録は5年ごとに更新する。帳簿の保存も5年間で、数字が同じなのでまとめて覚える。",
+    "origin": "original",
+    "syllabusIds": ["law-business"]
+  },
+  {
+    "id": "q-law-020",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気工事士法」の節。免状の取扱い",
+    "stem": "電気工事士免状について、正しいのはどれか。",
+    "choices": [
+      "汚したり失ったりしたときは再交付を申請できる",
+      "一度交付されると再交付は認められない",
+      "免状は他人に貸すことができる",
+      "免状には有効期限があり3年ごとに更新する"
+    ],
+    "answerIndex": 0,
+    "explanation": "汚損・紛失時は再交付を申請できる。免状に有効期限はなく、他人への貸与は認められない。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  },
+  {
+    "id": "q-law-021",
+    "lessonId": "p2-w5-l2",
+    "topicId": "law",
+    "sourceResourceId": "hozan-law",
+    "sourceWatch": "「電気工事士法」の節。第二種の作業範囲",
+    "stem": "第二種電気工事士が従事できる工事はどれか。",
+    "choices": [
+      "一般用電気工作物等の電気工事",
+      "最大電力500kW未満の自家用電気工作物の電気工事",
+      "高圧受電設備の電気工事",
+      "すべての電気工作物の電気工事"
+    ],
+    "answerIndex": 0,
+    "explanation": "第二種は一般用電気工作物等まで。自家用に手を出すには第一種か認定電気工事従事者が必要になる。",
+    "origin": "original",
+    "syllabusIds": ["law-worker"]
+  }
+]

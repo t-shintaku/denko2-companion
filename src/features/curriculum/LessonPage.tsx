@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { resolveResource, skillDefects } from '../../data';
+import { questions as questionBank, questionsFor, resolveResource, skillDefects, topicIds } from '../../data';
 import { countsAsBasics } from '../../domain/onboarding';
 import { CANDIDATE_NUMBERS, EXAM_MINUTES, TARGET_MINUTES } from '../../domain/practical';
 import { repo } from '../../db/repo';
@@ -16,11 +16,13 @@ import {
   stepMinutes,
   type LessonStep,
 } from '../../domain/lessons';
+import { grade, pickMistakes, pickWeakTopic, toAttemptInput, type QuizAnswer } from '../../domain/quiz';
 import { useVault } from '../../state/VaultContext';
 import type {
   CreatorKind,
   CurriculumLesson,
   LessonMode,
+  RecallMark,
   ResourceUse,
   SessionKind,
 } from '../../domain/types';
@@ -79,6 +81,53 @@ export function LessonPage({
   const [takeaway, setTakeaway] = useState(progress?.takeaway ?? '');
   const [terms, setTerms] = useState<string[]>(['', '', '']);
   const [busy, setBusy] = useState(false);
+
+  /**
+   * 「見ないで思い出す」の答え合わせ。
+   *
+   * 以前は書いて保存するだけで、合っているかどうかがどこにも出なかった。
+   * 書いた本人は、思い出せたのか作文しただけなのかを判別できない。
+   * 模範解答を出し、○△×を自分で付けて、△×だけを次に戻す。
+   * 自己申告なので**合格準備度には入れない**(科目別正答率を汚さない)。
+   */
+  const [revealed, setRevealed] = useState<boolean[]>(() => lesson.recallPrompts.map(() => false));
+  const [marks, setMarks] = useState<(RecallMark | undefined)[]>(
+    () => progress?.recallSelfMarks ?? lesson.recallPrompts.map(() => undefined),
+  );
+
+  /**
+   * アプリ内出題。**今日「まず見る」で見た内容だけから出す**。
+   * 固定の問題番号を持たないレッスン(直前期の誤答潰し)は、その場の記録から選ぶ。
+   */
+  const quizQuestions = useMemo(() => {
+    const pool = lesson.practice.questionPool;
+    if (pool === 'mistakes') {
+      return pickMistakes(questionBank, snapshot.questionAttempts, lesson.practice.targetCount ?? 10);
+    }
+    if (pool === 'weak-topic') {
+      return pickWeakTopic(
+        questionBank,
+        snapshot.questionAttempts,
+        topicIds,
+        lesson.practice.targetCount ?? 10,
+      );
+    }
+    return questionsFor(lesson.practice.questionIds);
+    // 出題は画面を開いた時点で固定する。解いている途中で並びが変わらないようにする
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson.id]);
+
+  const hasQuiz = quizQuestions.length > 0;
+  /** 2段階。選択肢を選ぶ → 解説を読む → 「バッチリ / あやふや」で確定 */
+  const [picks, setPicks] = useState<Record<string, { choiceIndex: number; sure?: boolean }>>({});
+  const settled: QuizAnswer[] = quizQuestions.flatMap((qq) => {
+    const p = picks[qq.id];
+    if (p?.sure === undefined) return [];
+    return [{ questionId: qq.id, choiceIndex: p.choiceIndex, sure: p.sure }];
+  });
+  const quizResults = grade(quizQuestions, settled);
+  const quizCorrect = quizResults.filter((r) => r.correct).length;
+  const quizDone = hasQuiz && settled.length === quizQuestions.length;
 
   /**
    * 候補問題のレッスンは、この画面の「解く／作る」がそのまま技能の記録になる。
@@ -145,12 +194,23 @@ export function LessonPage({
       const next = applyStep(lesson, before, step, {
         mode,
         recallAnswers: recall,
+        recallSelfMarks: marks,
         practiceNote,
-        practiceCorrect: correct === '' ? undefined : Number(correct),
-        practiceTotal: total === '' ? undefined : Number(total),
+        // アプリ内出題は自己申告ではなく採点結果をそのまま入れる
+        practiceCorrect: hasQuiz ? quizCorrect : correct === '' ? undefined : Number(correct),
+        practiceTotal: hasQuiz
+          ? quizQuestions.length
+          : total === ''
+            ? undefined
+            : Number(total),
         takeaway,
       });
       await repo.saveLessonProgress(next);
+
+      // 1問ごとの記録は科目別成績と復習キューへ直結する。二重に積まないよう初回だけ
+      if (hasQuiz && step === 'practice' && !stepDone(before, 'practice')) {
+        await repo.recordQuiz(lesson.id, quizResults.map(toAttemptInput));
+      }
 
       // その段階を**はじめて**終えたときに、その段階ぶんの時間を記録する。
       // 上書き保存では二重に記録しない。
@@ -372,23 +432,79 @@ export function LessonPage({
       {/* --- 2. 閉じて答える -------------------------------------------- */}
       <section className="card">
         <h2>2. 見ないで思い出す</h2>
-        <p className="muted">教材を閉じて、覚えていることを書こう。うろ覚えでもOK！</p>
-        {lesson.recallPrompts.map((p, i) => (
-          <div className="field" key={p.id}>
-            <label htmlFor={p.id}>{p.prompt}</label>
-            <textarea
-              id={p.id}
-              value={recall[i] ?? ''}
-              onChange={(e) =>
-                setRecall((prev) => {
-                  const next = [...prev];
-                  next[i] = e.target.value;
-                  return next;
-                })
-              }
-            />
-          </div>
-        ))}
+        <p className="muted">
+          いま見たところから出るよ。教材を閉じて、思い出せたぶんだけ書こう。
+          書いたら<strong>答え合わせ</strong>で模範解答が出る。うろ覚えでもOK！
+        </p>
+        {lesson.recallPrompts.map((p, i) => {
+          const guide = guides.find((g) => g.ref.resourceId === p.sourceResourceId);
+          return (
+            <div className="field recall-item" key={p.id}>
+              <label htmlFor={p.id}>{p.prompt}</label>
+              {guide && (
+                <p className="muted recall-source">
+                  出どころ: {guide.resource!.provider}｜{p.sourceWatch}
+                </p>
+              )}
+              <textarea
+                id={p.id}
+                value={recall[i] ?? ''}
+                onChange={(e) =>
+                  setRecall((prev) => {
+                    const next = [...prev];
+                    next[i] = e.target.value;
+                    return next;
+                  })
+                }
+              />
+              {!revealed[i] ? (
+                <button
+                  type="button"
+                  className="btn-sm"
+                  disabled={(recall[i] ?? '').trim() === ''}
+                  onClick={() =>
+                    setRevealed((prev) => prev.map((v, j) => (j === i ? true : v)))
+                  }
+                >
+                  答え合わせ
+                </button>
+              ) : (
+                <div className="model-answer">
+                  <strong>模範解答</strong>
+                  <p>{p.modelAnswer}</p>
+                  {p.acceptKeywords.length > 0 && (
+                    <p className="muted">
+                      この言葉が入っていればOK: {p.acceptKeywords.join(' / ')}
+                    </p>
+                  )}
+                  <div className="row" role="group" aria-label="自己採点">
+                    {(
+                      [
+                        ['ok', '言えた！'],
+                        ['partial', 'ちょっと惜しい'],
+                        ['miss', '出てこなかった'],
+                      ] as [RecallMark, string][]
+                    ).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className={marks[i] === value ? 'btn-primary btn-sm' : 'btn-sm'}
+                        aria-pressed={marks[i] === value}
+                        onClick={() => setMarks((prev) => prev.map((m, j) => (j === i ? value : m)))}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="muted">
+                    自己採点は<strong>合格準備度には入らない</strong>。
+                    「ちょっと惜しい」「出てこなかった」を選んだ項目は、次の自分へのひとことに残しておこう。
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
         <button
           className="btn-sm btn-block"
           disabled={busy || recall.every((r) => r.trim() === '')}
@@ -417,14 +533,133 @@ export function LessonPage({
             </p>
           ) : null;
         })}
-        {!lesson.practice.scored && (
+        {!lesson.practice.scored && !hasQuiz && (
           <p className="notice">
             {isUngradedFive
               ? 'ここはウォーミングアップ。点数は気にせず、知らない言葉を拾えたらクリア！'
               : 'ここは練習タイム。点数は気にしなくてOK。'}
           </p>
         )}
-        {lesson.practice.scored && (
+
+        {/* アプリ内出題。今日見た内容だけから出す */}
+        {hasQuiz && (
+          <div className="quiz stack">
+            <p className="notice">
+              {lesson.practice.questionPool
+                ? '前に落とした問題から出るよ。1問ずつ答えて、解説まで読もう。'
+                : '今日「まず見る」で見た内容だけから出るよ。1問ずつ答えて、解説まで読もう。'}
+              {' '}結果は<strong>科目別の成績と復習リストに自動で入る</strong>。
+            </p>
+            <p className="badge">
+              {settled.length} / {quizQuestions.length} 問 ・ 正解 {quizCorrect}
+            </p>
+            {quizQuestions.map((qq, qi) => {
+              const pick = picks[qq.id];
+              const chosen = pick?.choiceIndex;
+              const answered = chosen !== undefined;
+              const right = chosen === qq.answerIndex;
+              const source = resolveResource(qq.sourceResourceId);
+              return (
+                <div className="quiz-item" key={qq.id}>
+                  <p className="quiz-stem">
+                    <strong>Q{qi + 1}.</strong> {qq.stem}
+                  </p>
+                  <ul className="plain stack quiz-choices">
+                    {qq.choices.map((choice, ci) => (
+                      <li key={ci}>
+                        <button
+                          type="button"
+                          className={[
+                            'btn-sm btn-block quiz-choice',
+                            answered && ci === qq.answerIndex ? 'quiz-choice--right' : '',
+                            answered && ci === chosen && !right ? 'quiz-choice--wrong' : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
+                          disabled={answered}
+                          aria-pressed={ci === chosen}
+                          onClick={() =>
+                            setPicks((prev) => ({ ...prev, [qq.id]: { choiceIndex: ci } }))
+                          }
+                        >
+                          {['ア', 'イ', 'ウ', 'エ'][ci] ?? ci + 1}. {choice}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  {answered && (
+                    <div className={right ? 'quiz-feedback quiz-feedback--ok' : 'quiz-feedback'}>
+                      <strong>{right ? '正解！' : 'おしい！ 正解は下'}</strong>
+                      <p>{qq.explanation}</p>
+                      {source && (
+                        <p className="muted">
+                          出どころ: {source.provider}｜{qq.sourceWatch}
+                        </p>
+                      )}
+                      {pick?.sure === undefined ? (
+                        right ? (
+                          <div className="row">
+                            <button
+                              type="button"
+                              className="btn-sm"
+                              onClick={() =>
+                                setPicks((prev) => ({
+                                  ...prev,
+                                  [qq.id]: { choiceIndex: chosen, sure: true },
+                                }))
+                              }
+                            >
+                              バッチリだった
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-sm"
+                              onClick={() =>
+                                setPicks((prev) => ({
+                                  ...prev,
+                                  [qq.id]: { choiceIndex: chosen, sure: false },
+                                }))
+                              }
+                            >
+                              あやふやだった
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn-sm"
+                            onClick={() =>
+                              setPicks((prev) => ({
+                                ...prev,
+                                [qq.id]: { choiceIndex: chosen, sure: false },
+                              }))
+                            }
+                          >
+                            リベンジ登録して次へ
+                          </button>
+                        )
+                      ) : (
+                        <p className="muted">
+                          {pick.sure
+                            ? '✓ 記録した。この問題はしばらく出てこないよ'
+                            : '✓ 記録した。この問題はまた戻ってくるよ'}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {!quizDone && (
+              <p className="muted">
+                全部の問題で「バッチリ／あやふや」まで選ぶと保存できるよ。
+                <strong>あやふやを正直に押すほど、復習が効く。</strong>
+              </p>
+            )}
+          </div>
+        )}
+
+        {lesson.practice.scored && !hasQuiz && (
           <div className="row">
             <div style={{ flex: 1 }}>
               <label htmlFor="correct">正答数</label>
@@ -568,11 +803,21 @@ export function LessonPage({
             busy ||
             // 候補問題は施工時間が無いと技能の判定に使えない。空のまま完了させない
             (isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0)) ||
-            (lesson.practice.scored ? total.trim() === '' : practiceNote.trim() === '')
+            // アプリ内出題は解ききってから保存する。途中の点を成績へ入れない
+            (hasQuiz && !quizDone) ||
+            (hasQuiz
+              ? false
+              : lesson.practice.scored
+                ? total.trim() === ''
+                : practiceNote.trim() === '')
           }
           onClick={() => commit('practice')}
         >
-          {stepDone(progress, 'practice') ? '✓ 結果は保存済み' : '結果を残す'}
+          {stepDone(progress, 'practice')
+            ? '✓ 結果は保存済み'
+            : hasQuiz
+              ? `結果を残す（${quizCorrect}/${quizQuestions.length}）`
+              : '結果を残す'}
         </button>
         {isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0) && (
           <p className="muted">施工時間を入れたら保存できるよ。技能ミッションのチェックにも使う。</p>

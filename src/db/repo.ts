@@ -7,6 +7,7 @@ import { db as defaultDb } from './db';
 import { nowJstIso, todayJst } from '../domain/jst';
 import { buildBackup } from '../domain/backup';
 import { applyReview, buildExamRecords, type ExamInput } from '../domain/academic';
+import { IN_APP_SOURCE } from '../domain/quiz';
 import { SCHEMA_VERSION, SEED_UPDATED_AT } from '../domain/types';
 import type {
   AdminTaskState,
@@ -241,6 +242,49 @@ export class Repo {
     });
     emitChange();
     return exam;
+  }
+
+  /**
+   * アプリ内出題の記録(FR-010 P1)。**MockExam は作らない。**
+   *
+   * レッスンの小テストを模試として積むと、直近3回平均や「120分模試2回」に
+   * 6問の小テストが混ざる。学科ゲートの意味が壊れるので、
+   * ここで作るのは1問ごとの QuestionAttempt だけにする。
+   * 科目別正答率・累計問題数・復習キューには、この記録がそのまま効く。
+   */
+  async recordQuiz(
+    lessonId: string,
+    items: {
+      topicId: QuestionAttempt['topicId'];
+      correct: boolean;
+      confidence: QuestionAttempt['confidence'];
+      questionRef: string;
+      seconds?: number;
+    }[],
+    now: Date = new Date(),
+  ): Promise<QuestionAttempt[]> {
+    const at = nowJstIso(now);
+    const jstDate = todayJst(now);
+    // どのレッスンの出題かを ID に残す。あとから記録だけ見て出どころを辿れるようにする
+    const batch = newId(`quiz_${lessonId}`);
+    const attempts: QuestionAttempt[] = items.map((item, i) => ({
+      id: `${batch}_q${i + 1}`,
+      attemptedAt: at,
+      jstDate,
+      source: IN_APP_SOURCE,
+      questionRef: item.questionRef,
+      topicId: item.topicId,
+      correct: item.correct,
+      confidence: item.confidence,
+      seconds: item.seconds,
+      // アプリ内出題は採点対象。無採点5問(体験)とは別物
+      scored: true,
+      updatedAt: at,
+    }));
+    await this.db.questionAttempts.bulkPut(attempts);
+    emitChange();
+    void lessonId;
+    return attempts;
   }
 
   /**

@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { onRepoChange, repo, type VaultSnapshot } from '../db/repo';
 import { syncEngine } from '../sync/engine';
-import { adminTaskTemplates, curriculum, examCycle } from '../data';
+import { adminTaskTemplates, curriculum, examCycle, questions, syllabus } from '../data';
 import { resolveAdminTasks, type ResolvedAdminTask } from '../domain/adminTasks';
 import { buildSchedule, type ScheduleResult } from '../domain/schedule';
 import { evaluateOnboarding, type OnboardingState } from '../domain/onboarding';
@@ -22,6 +22,14 @@ import {
   type TopicStat,
 } from '../domain/academic';
 import { skillGate as computeSkillGate } from '../domain/practical';
+import {
+  coverageGaps as computeCoverageGaps,
+  overallCoverage as computeOverallCoverage,
+  syllabusStatus as computeSyllabusStatus,
+  topicCoverage as computeTopicCoverage,
+  type SyllabusStatus,
+  type TopicCoverage,
+} from '../domain/coverage';
 import { todayJst } from '../domain/jst';
 import { topicIds } from '../data';
 import type { IsoDate, SyncStatus, UserSettings } from '../domain/types';
@@ -38,6 +46,13 @@ export type VaultValue = {
   academicGate: AcademicGate;
   reviewQueue: ReviewItem[];
   skillGate: ReturnType<typeof computeSkillGate>;
+  /** 出題項目ごとの「教わった/正解した」。合格ラインまでの穴を出すのに使う */
+  syllabusStatus: SyllabusStatus[];
+  topicCoverage: TopicCoverage[];
+  /** 学科50問の重みで加重したカバレッジ(0〜1) */
+  overallCoverage: number;
+  /** 次に埋める穴。上から順に潰せば範囲が閉じる */
+  coverageGaps: SyllabusStatus[];
   reload: () => Promise<void>;
   /** 端末間同期の状態。設定画面と各タブの表示に使う */
   syncStatus: SyncStatus;
@@ -140,6 +155,18 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const reviewQueue = computeReviewQueue(snapshot.questionAttempts, topicStats, 30, today);
     const skillGate = computeSkillGate(snapshot.skillAttempts, snapshot.budgetItems);
 
+    // 「レッスンを何本終えたか」ではなく「出題項目を何個押さえたか」で範囲を見る
+    const syllabusStatus = computeSyllabusStatus(
+      syllabus,
+      curriculum.lessons,
+      questions,
+      snapshot.lessonProgress,
+      snapshot.questionAttempts,
+    );
+    const topicCoverage = computeTopicCoverage(syllabusStatus, topicIds);
+    const overallCoverage = computeOverallCoverage(topicCoverage);
+    const coverageGaps = computeCoverageGaps(syllabusStatus);
+
     return {
       ready,
       today,
@@ -152,6 +179,10 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       academicGate,
       reviewQueue,
       skillGate,
+      syllabusStatus,
+      topicCoverage,
+      overallCoverage,
+      coverageGaps,
       reload,
       syncStatus,
       syncNow,

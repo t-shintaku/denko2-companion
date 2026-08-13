@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { adminTaskTemplates, curriculum, resources, topics } from '../src/data';
+import { adminTaskTemplates, curriculum, questions, resources, topics } from '../src/data';
 
 const lessonIds = new Set(curriculum.lessons.map((l) => l.id));
 const resourceIds = new Set(resources.map((r) => r.id));
@@ -133,12 +133,26 @@ describe('カリキュラムJSONの整合', () => {
     expect(resources.every((r) => ['requirements-doc', 'fetched', 'user-confirmed'].includes(r.verification))).toBe(true);
   });
 
+  /**
+   * アプリ内出題は**自作問題だけ**(Sprint 2 で追加)。
+   * 過去問の本文を収録しない方針は変えていない。
+   * 20問診断・50問模試は今も公式ページで解いて結果を登録する形のまま。
+   */
   it('過去問は収録せず、公式ページへ誘導する(著作権)', () => {
     const qa = resources.find((r) => r.id === 'official-qa');
     expect(qa?.copyrightNote).toContain('収録せず');
-    // 採点ありの演習はすべて外部教材で解いて結果だけ登録する形(Sprint 1時点)
-    const inApp = curriculum.lessons.filter((l) => l.practice.kind === 'in-app-questions');
-    expect(inApp).toHaveLength(0);
+    // アプリ内で出すのは自作問題のみ
+    expect(questions.every((q) => q.origin === 'original')).toBe(true);
+    // 診断と50問模試は外部(公式)のまま。アプリ内出題へ置き換えない
+    const external = curriculum.lessons.filter(
+      (l) => l.practice.kind === 'external-questions' && l.practice.resourceIds?.includes('official-qa'),
+    );
+    expect(external.length).toBeGreaterThanOrEqual(5);
+    for (const l of curriculum.lessons) {
+      if (l.practice.targetCount === 50 || l.stage === 'diagnostic') {
+        expect(l.practice.kind, `${l.id} は公式過去問のまま出す`).toBe('external-questions');
+      }
+    }
   });
 
   it('学科前にも技能に触れるレッスンがある(FR-005)', () => {

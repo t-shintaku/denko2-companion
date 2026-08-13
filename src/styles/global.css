@@ -456,3 +456,33 @@ button, .btn { border-radius: 12px; }
   .btn-primary:active { transform: scale(.975); box-shadow: none; }
   @keyframes quest-in { from { opacity: 0; transform: translateY(8px); } }
 }
+
+/* --- 見ないで思い出す(答え合わせ)と、アプリ内出題 -------------------------- */
+/* 正誤は色だけで示さない。必ずテキストラベル(正解！/おしい！)を添える(§13) */
+.recall-item + .recall-item { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+.recall-source { margin: -2px 0 6px; font-size: .74rem; }
+.model-answer { margin-top: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border)); background: var(--accent-soft); }
+.model-answer p { margin: 6px 0; }
+.model-answer .row { margin-top: 10px; flex-wrap: wrap; }
+
+.quiz { margin: 12px 0; }
+.quiz-item { padding: 14px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-2); }
+.quiz-item + .quiz-item { margin-top: 12px; }
+.quiz-stem { margin: 0 0 10px; font-weight: 650; }
+.quiz-choices { margin: 0; }
+.quiz-choice { text-align: left; white-space: normal; line-height: 1.5; }
+.quiz-choice--right { border-color: var(--ok); color: var(--ok); font-weight: 750; }
+.quiz-choice--wrong { border-color: var(--danger); color: var(--danger); }
+.quiz-choice:disabled { opacity: 1; }
+.quiz-feedback { margin-top: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.quiz-feedback--ok { border-color: color-mix(in srgb, var(--ok) 45%, var(--border)); }
+.quiz-feedback p { margin: 6px 0; }
+.quiz-feedback .row { flex-wrap: wrap; }
+
+/* --- 出題範囲カバレッジ ---------------------------------------------------- */
+.coverage-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.coverage-row + .coverage-row { border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
+.coverage-row__name { flex: 1 1 auto; min-width: 0; }
+.coverage-bar { flex: 0 0 92px; height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.coverage-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--spark)); }
+.coverage-row__value { flex: 0 0 3.2em; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }

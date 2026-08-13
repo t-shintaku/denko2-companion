@@ -1,0 +1,503 @@
+[
+  {
+    "id": "q-cm-001",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-1",
+    "sourceWatch": "工事の種類を並べて整理する場面",
+    "stem": "使用電圧や施設場所にかかわらず、原則としてどこにでも施工できる工事の組み合わせはどれか。",
+    "choices": [
+      "ケーブル工事・金属管工事・合成樹脂管工事",
+      "がいし引き工事・金属線ぴ工事・ライティングダクト工事",
+      "金属ダクト工事・バスダクト工事・平形保護層工事",
+      "フロアダクト工事・セルラダクト工事・金属線ぴ工事"
+    ],
+    "answerIndex": 0,
+    "explanation": "ケーブル・金属管・合成樹脂管の3つは場所を選ばない万能工事。まずこの3つを覚え、残りを「使えない場所がある工事」として覚える。",
+    "origin": "original",
+    "syllabusIds": ["cm-place"]
+  },
+  {
+    "id": "q-cm-002",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「工事の種類」の節。どの工事がどの場所で使えるかの表",
+    "stem": "点検できない隠ぺい場所に施工できない工事はどれか。",
+    "choices": ["金属線ぴ工事", "ケーブル工事", "金属管工事", "合成樹脂管工事"],
+    "answerIndex": 0,
+    "explanation": "金属線ぴ工事は乾燥した展開場所か、乾燥した点検できる隠ぺい場所に限られる。点検できない場所には使えない。",
+    "origin": "original",
+    "syllabusIds": ["cm-place"]
+  },
+  {
+    "id": "q-cm-003",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「工事の種類」の節。どの工事がどの場所で使えるかの表",
+    "stem": "水気のある場所に施工できない工事はどれか。",
+    "choices": ["ライティングダクト工事", "ケーブル工事", "金属管工事", "合成樹脂管工事"],
+    "answerIndex": 0,
+    "explanation": "ライティングダクトは湿気の多い場所・水気のある場所には施設できない。開口部を下向きにする、造営材を貫通しないという条件も併せて出る。",
+    "origin": "original",
+    "syllabusIds": ["cm-place", "cm-raceway"]
+  },
+  {
+    "id": "q-cm-004",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「工事の種類」の節。使用電圧による制限",
+    "stem": "金属線ぴ工事を施工できる使用電圧の上限はどれか。",
+    "choices": ["300V以下", "150V以下", "600V以下", "電圧の制限はない"],
+    "answerIndex": 0,
+    "explanation": "金属線ぴ・ライティングダクト・金属ダクトなどは使用電圧300V以下に限られる。「万能3工事」以外は電圧か場所に制限が付く。",
+    "origin": "original",
+    "syllabusIds": ["cm-place", "cm-raceway"]
+  },
+  {
+    "id": "q-cm-005",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-1",
+    "sourceWatch": "施設場所の分類(展開・隠ぺい／乾燥・湿気)を整理する場面",
+    "stem": "「展開した場所」の説明として正しいのはどれか。",
+    "choices": [
+      "点検できて、電線や器具が露出して見える場所",
+      "天井裏など、点検口から点検できる場所",
+      "コンクリートに埋め込まれた場所",
+      "屋外で雨がかかる場所"
+    ],
+    "answerIndex": 0,
+    "explanation": "展開した場所=露出して見える場所。隠ぺい場所は「点検できる隠ぺい場所(天井裏など)」と「点検できない隠ぺい場所(壁内・コンクリート内)」に分かれる。",
+    "origin": "original",
+    "syllabusIds": ["cm-place"]
+  },
+  {
+    "id": "q-cm-006",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「電線の接続」の節。接続の4原則",
+    "stem": "電線を接続するときの条件として、誤っているのはどれか。",
+    "choices": [
+      "接続部分の電気抵抗は多少増加してもよい",
+      "電線の引張強さを20%以上減少させない",
+      "接続部分は接続器を使うかろう付けする",
+      "接続部分は絶縁電線の絶縁物と同等以上の絶縁効力のもので被覆する"
+    ],
+    "answerIndex": 0,
+    "explanation": "電気抵抗を増加させないことが原則。抵抗が増えるとそこが発熱して火災の原因になる。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-007",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「電線の接続」の節。接続の4原則",
+    "stem": "電線の接続で、引張強さを何%以上減少させてはならないか。",
+    "choices": ["20%", "10%", "30%", "50%"],
+    "answerIndex": 0,
+    "explanation": "引張強さを20%以上減少させないこと。数字を問う出題が多いので「抵抗を増やさない・強さを20%以上減らさない」でセット暗記する。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-008",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「電線の接続」の節。管内での接続の可否",
+    "stem": "金属管工事や合成樹脂管工事で禁止されているのはどれか。",
+    "choices": [
+      "管の中で電線に接続点を設けること",
+      "ボックス内で電線を接続すること",
+      "管を造営材に固定すること",
+      "管端にブッシングを設けること"
+    ],
+    "answerIndex": 0,
+    "explanation": "管内に接続点を作ってはならない。接続はボックスの中で行う。点検も交換もできなくなるため。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-009",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「電線の接続」の節。より線・単線の扱い",
+    "stem": "電線接続部を絶縁テープで巻く場合の考え方として正しいのはどれか。",
+    "choices": [
+      "元の絶縁被覆と同等以上の絶縁効力になるまで巻く",
+      "1回巻けば十分である",
+      "接続器を使った場合でも必ずテープを巻く",
+      "テープの色は必ず黒にする"
+    ],
+    "answerIndex": 0,
+    "explanation": "求められるのは「同等以上の絶縁効力」。差込形コネクタなど所定の接続器を使った場合はテープ巻きは不要。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-010",
+    "lessonId": "p1-w3-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-1",
+    "sourceWatch": "工事の種類を並べて整理する場面。がいし引き工事",
+    "stem": "がいし引き工事で使用できない電線はどれか。",
+    "choices": ["屋外用ビニル絶縁電線(OW)", "600Vビニル絶縁電線(IV)", "600V二種ビニル絶縁電線(HIV)", "600Vゴム絶縁電線"],
+    "answerIndex": 0,
+    "explanation": "屋内配線には絶縁電線を使うが、OW(屋外用)とDV(引込用)は屋内配線に使えない。がいし引きでも同じ。",
+    "origin": "original",
+    "syllabusIds": ["cm-place"]
+  },
+  {
+    "id": "q-cm-011",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "ケーブル工事の節。支持点間隔の数字",
+    "stem": "ケーブルを造営材の側面または下面に沿って取り付ける場合、支持点間の距離は何m以下にするか。",
+    "choices": ["2m", "1.5m", "3m", "6m"],
+    "answerIndex": 0,
+    "explanation": "原則2m以下。接触防護措置を施した場所で垂直に取り付ける場合だけ6m以下まで緩む。",
+    "origin": "original",
+    "syllabusIds": ["cm-cable"]
+  },
+  {
+    "id": "q-cm-012",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "ケーブル工事の節。支持点間隔の数字",
+    "stem": "接触防護措置を施した場所で、ケーブルを垂直に取り付ける場合の支持点間距離の上限はどれか。",
+    "choices": ["6m", "2m", "1.5m", "3m"],
+    "answerIndex": 0,
+    "explanation": "垂直かつ接触防護措置ありなら6m以下。条件が2つそろって初めて緩む点が引っかけになる。",
+    "origin": "original",
+    "syllabusIds": ["cm-cable"]
+  },
+  {
+    "id": "q-cm-013",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-2",
+    "sourceWatch": "ケーブル工事の細かい決まり。曲げ半径の話",
+    "stem": "低圧屋内配線でケーブルを曲げるとき、曲げ半径の目安はどれか。",
+    "choices": [
+      "ケーブル仕上り外径の6倍以上",
+      "ケーブル仕上り外径と同じ",
+      "ケーブル仕上り外径の2倍以上",
+      "曲げ半径に決まりはない"
+    ],
+    "answerIndex": 0,
+    "explanation": "外径の6倍以上が目安(単心のものは8倍以上)。きつく曲げると絶縁体が痛む。",
+    "origin": "original",
+    "syllabusIds": ["cm-cable"]
+  },
+  {
+    "id": "q-cm-014",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-2",
+    "sourceWatch": "ケーブル工事の細かい決まり。造営材の貫通",
+    "stem": "ケーブルが造営材を貫通する部分の施工として正しいのはどれか。",
+    "choices": [
+      "防護管を使うなどしてケーブルを保護する",
+      "そのまま通してよい",
+      "貫通部分でケーブルを接続する",
+      "貫通部分では被覆をはぎ取る"
+    ],
+    "answerIndex": 0,
+    "explanation": "貫通部は擦れて損傷しやすいので保護する。貫通部で接続することは認められない。",
+    "origin": "original",
+    "syllabusIds": ["cm-cable"]
+  },
+  {
+    "id": "q-cm-015",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「金属管工事」の節。支持間隔と管の厚さ",
+    "stem": "金属管工事で、管を造営材に固定する支持点間の距離は何m以下が目安か。",
+    "choices": ["2m", "1.5m", "3m", "1m"],
+    "answerIndex": 0,
+    "explanation": "金属管は2m以下。合成樹脂管は1.5m以下。「金属2・樹脂1.5」で対にして覚える。",
+    "origin": "original",
+    "syllabusIds": ["cm-metal-conduit"]
+  },
+  {
+    "id": "q-cm-016",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「金属管工事」の節。管の厚さ",
+    "stem": "コンクリートに埋め込む金属管の厚さは何mm以上必要か。",
+    "choices": ["1.2mm", "1.0mm", "0.8mm", "2.0mm"],
+    "answerIndex": 0,
+    "explanation": "コンクリート埋設は1.2mm以上、それ以外は1mm以上。埋めるほうが厳しい、と覚える。",
+    "origin": "original",
+    "syllabusIds": ["cm-metal-conduit"]
+  },
+  {
+    "id": "q-cm-017",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-2",
+    "sourceWatch": "金属管工事の節。管内に収める電線の条件",
+    "stem": "金属管工事で管内に収める電線について、正しいのはどれか。",
+    "choices": [
+      "原則としてより線または直径3.2mm以下の単線を使う",
+      "太さの制限はない",
+      "裸電線を使ってよい",
+      "屋外用ビニル絶縁電線(OW)を使う"
+    ],
+    "answerIndex": 0,
+    "explanation": "短小な管を除き、単線なら直径3.2mm以下。太い単線は管内で曲げられない。裸電線・OWは屋内配線に使えない。",
+    "origin": "original",
+    "syllabusIds": ["cm-metal-conduit"]
+  },
+  {
+    "id": "q-cm-018",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-2",
+    "sourceWatch": "金属管工事の節。ボンディングと管端処理",
+    "stem": "ねじなし電線管をボックスに接続するとき、ねじなしボックスコネクタの止めネジはどうするか。",
+    "choices": [
+      "ネジの頭がねじ切れるまで締め付ける",
+      "手で軽く止まるところまで締める",
+      "締め付けたあと必ず緩めておく",
+      "止めネジは使わない"
+    ],
+    "answerIndex": 0,
+    "explanation": "ねじなしボックスコネクタは、ネジの頭がねじ切れるまで締めるのが正しい施工。半端だと電気的接続と固定が不十分になる。",
+    "origin": "original",
+    "syllabusIds": ["cm-metal-conduit"]
+  },
+  {
+    "id": "q-cm-019",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「合成樹脂管工事」の節。支持間隔と差込み深さ",
+    "stem": "合成樹脂管(VE管)を造営材に固定する支持点間の距離は何m以下が目安か。",
+    "choices": ["1.5m", "2m", "3m", "1m"],
+    "answerIndex": 0,
+    "explanation": "合成樹脂管は1.5m以下。金属管の2m以下より短い。管が柔らかいぶん支持を増やす。",
+    "origin": "original",
+    "syllabusIds": ["cm-synthetic-conduit"]
+  },
+  {
+    "id": "q-cm-020",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「合成樹脂管工事」の節。支持間隔と差込み深さ",
+    "stem": "硬質塩化ビニル電線管(VE管)どうしをカップリングで接続するとき、接着剤を使わない場合の差込み深さはどれか。",
+    "choices": ["管外径の1.2倍以上", "管外径の0.8倍以上", "管外径と同じ", "管外径の0.5倍以上"],
+    "answerIndex": 0,
+    "explanation": "接着剤なしは1.2倍以上、接着剤ありは0.8倍以上。接着剤を使うと浅くてよい。",
+    "origin": "original",
+    "syllabusIds": ["cm-synthetic-conduit"]
+  },
+  {
+    "id": "q-cm-021",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "gami-method-2",
+    "sourceWatch": "合成樹脂管工事の節。CD管の扱い",
+    "stem": "CD管の施工方法として正しいのはどれか。",
+    "choices": [
+      "直接コンクリートに埋め込んで使用する",
+      "屋内の露出配管に使用する",
+      "点検できる隠ぺい場所に露出して使用する",
+      "屋外の架空配線に使用する"
+    ],
+    "answerIndex": 0,
+    "explanation": "CD管は自己消火性がないので、コンクリート埋設が原則。露出や隠ぺいで使えるのはPF管。",
+    "origin": "original",
+    "syllabusIds": ["cm-synthetic-conduit"]
+  },
+  {
+    "id": "q-cm-022",
+    "lessonId": "p2-w4-l1",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「金属線ぴ・ダクト」の節",
+    "stem": "ライティングダクト工事の施工方法として正しいのはどれか。",
+    "choices": [
+      "ダクトの開口部を下に向けて施設する",
+      "ダクトの開口部を上に向けて施設する",
+      "造営材を貫通して施設する",
+      "水気のある場所に施設する"
+    ],
+    "answerIndex": 0,
+    "explanation": "開口部は下向き。造営材の貫通は禁止、水気・湿気の多い場所も不可。支持点間隔は2m以下。",
+    "origin": "original",
+    "syllabusIds": ["cm-raceway"]
+  },
+  {
+    "id": "q-cm-023",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。A〜D種の表",
+    "stem": "使用電圧300V以下の低圧機器の金属製外箱に施す接地工事はどれか。",
+    "choices": ["D種接地工事", "C種接地工事", "B種接地工事", "A種接地工事"],
+    "answerIndex": 0,
+    "explanation": "300V以下はD種、300V超はC種。第二種の範囲ではD種が主役になる。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-024",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。A〜D種の表",
+    "stem": "D種接地工事の接地抵抗値は原則として何Ω以下か。",
+    "choices": ["100Ω", "10Ω", "500Ω", "50Ω"],
+    "answerIndex": 0,
+    "explanation": "D種は原則100Ω以下。ただし0.5秒以内に動作する漏電遮断器を施設すれば500Ω以下まで緩和される。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-025",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。緩和条件",
+    "stem": "D種接地工事で、接地抵抗値を500Ω以下まで緩和できる条件はどれか。",
+    "choices": [
+      "0.5秒以内に自動的に電路を遮断する漏電遮断器を施設したとき",
+      "接地線を太くしたとき",
+      "使用電圧が150V以下のとき",
+      "乾燥した場所であるとき"
+    ],
+    "answerIndex": 0,
+    "explanation": "0.5秒以内に動作する漏電遮断器があれば500Ω以下でよい。C種(10Ω→500Ω)も同じ条件で緩和される。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-026",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。C種の抵抗値",
+    "stem": "C種接地工事の接地抵抗値は原則として何Ω以下か。",
+    "choices": ["10Ω", "100Ω", "500Ω", "50Ω"],
+    "answerIndex": 0,
+    "explanation": "C種は原則10Ω以下(300V超の低圧機器)。D種の100Ωより厳しい。電圧が高いほど厳しくなる。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-027",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。接地線の太さ",
+    "stem": "D種接地工事に使用する軟銅線の太さは、直径何mm以上か。",
+    "choices": ["1.6mm", "2.0mm", "2.6mm", "1.2mm"],
+    "answerIndex": 0,
+    "explanation": "D種・C種の接地線は直径1.6mm以上の軟銅線。細すぎると地絡電流を流しきれない。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-028",
+    "lessonId": "p2-w4-l2",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「接地工事」の節。省略できる場合",
+    "stem": "D種接地工事を省略できる場合として、正しいのはどれか。",
+    "choices": [
+      "電気機械器具が二重絶縁構造のものである場合",
+      "使用電圧が300Vである場合",
+      "機器が屋外に施設されている場合",
+      "接地線が長くなる場合"
+    ],
+    "answerIndex": 0,
+    "explanation": "二重絶縁構造の機器はもともと外箱に電圧が出ない前提なので省略できる。「距離が遠い」「屋外」は省略の理由にならない。",
+    "origin": "original",
+    "syllabusIds": ["cm-earth"]
+  },
+  {
+    "id": "q-cm-029",
+    "lessonId": "p2-w5-l4",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-skill-unit",
+    "sourceWatch": "「リングスリーブによる圧着接続」の節。心線の処理",
+    "stem": "リングスリーブで接続したあと、スリーブから出た心線の処理として正しいのはどれか。",
+    "choices": [
+      "スリーブの先から少し出た状態で、余分を切断して整える",
+      "スリーブの手前で切りそろえ、スリーブから心線が出ないようにする",
+      "長く出したまま折り曲げておく",
+      "スリーブごと切断する"
+    ],
+    "answerIndex": 0,
+    "explanation": "心線がスリーブから出ていないと圧着が効いていない疑いになり欠陥。出しすぎも欠陥なので、少し出して切りそろえる。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-030",
+    "lessonId": "p2-w5-l4",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-skill-unit",
+    "sourceWatch": "「差込形コネクタ」の節。差し込む前の心線の長さ",
+    "stem": "差込形コネクタで接続するとき、正しいのはどれか。",
+    "choices": [
+      "コネクタの奥まで心線を差し込み、心線が見える窓から確認する",
+      "心線を短く切って浅く差し込む",
+      "心線に絶縁被覆を残したまま差し込む",
+      "差し込んだあと絶縁テープを必ず巻く"
+    ],
+    "answerIndex": 0,
+    "explanation": "奥まで差し込み、確認窓で心線が見えることを確かめる。差込形コネクタは所定の接続器なのでテープ巻きは不要。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-031",
+    "lessonId": "p2-w5-l4",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-skill-unit",
+    "sourceWatch": "「リングスリーブによる圧着接続」の節。圧着の向きと位置",
+    "stem": "リングスリーブの圧着で欠陥になるのはどれか。",
+    "choices": [
+      "1つのスリーブに2回圧着してしまった",
+      "刻印がスリーブの中央付近にある",
+      "心線がスリーブから2mm程度出ている",
+      "圧着後に絶縁テープを巻いた"
+    ],
+    "answerIndex": 0,
+    "explanation": "1つのスリーブへの二度圧着は欠陥。刻印が正しく1つ入っていることを確認する。判定の正本は公式の欠陥判断基準。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection"]
+  },
+  {
+    "id": "q-cm-032",
+    "lessonId": "p2-w5-l4",
+    "topicId": "construction-method",
+    "sourceResourceId": "hozan-skill-unit",
+    "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの選び方",
+    "stem": "リングスリーブを選ぶときの基準として正しいのはどれか。",
+    "choices": [
+      "接続する心線の断面積の合計で決める",
+      "接続する電線の本数だけで決める",
+      "ケーブルの外装の色で決める",
+      "使用する圧着工具の色で決める"
+    ],
+    "answerIndex": 0,
+    "explanation": "太さと本数から求まる断面積の合計で小・中・大を選ぶ。同じ本数でも1.6mmと2.0mmが混ざれば選ぶスリーブが変わる。",
+    "origin": "original",
+    "syllabusIds": ["cm-connection", "wd-ring-sleeve"]
+  }
+]

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 4,
   "id": "curriculum-2026-h2",
   "title": "2026年度下期 第二種電気工事士 学習カリキュラム",
   "examCycleId": "2026-h2",
@@ -125,12 +125,28 @@
         {
           "id": "p0-l1-r1",
           "kind": "free-line",
-          "prompt": "画面を閉じて。合格から免状までに、あと何の手続きが要る?"
+          "prompt": "動画に出てきた「電工2種でできること」を、仕事とDIYから1つずつ。",
+          "sourceResourceId": "hozan-guide-what",
+          "sourceWatch": "電工2種で何ができる資格なのか。仕事とDIYの両方の例が出る場面",
+          "modelAnswer": "仕事なら住宅・小規模店舗の屋内配線工事、コンセントやスイッチの増設・交換。DIYなら自宅の照明器具の直結取付けやコンセントの増設。免状がないとどちらもできない。",
+          "acceptKeywords": [
+            "配線",
+            "コンセント",
+            "照明"
+          ]
         },
         {
           "id": "p0-l1-r2",
           "kind": "free-line",
-          "prompt": "この資格で「できないこと」を1つ挙げる。"
+          "prompt": "合格から免状までに、あと何の手続きが要る?",
+          "sourceResourceId": "official-second",
+          "sourceWatch": "ページ上部の試験日程の表",
+          "modelAnswer": "学科合格 → 技能合格 → 合格発表の確認 → 都道府県知事へ免状交付申請 → 免状を受け取る。免状が手元に来るまでは工事に従事できない。",
+          "acceptKeywords": [
+            "免状",
+            "申請",
+            "知事"
+          ]
         }
       ],
       "practice": {
@@ -196,24 +212,51 @@
         {
           "id": "p0-l2-r1",
           "kind": "free-line",
-          "prompt": "電圧・電流・抵抗を、比喩で1行ずつ。"
+          "prompt": "電圧・電流・抵抗を、水のたとえで1行ずつ。",
+          "sourceResourceId": "gami-start",
+          "sourceWatch": "電圧・電流・抵抗を水の流れでたとえる場面",
+          "modelAnswer": "電圧=水を押し出す圧力。電流=1秒間に流れる水の量。抵抗=管の細さによる流れにくさ。圧力が高いほど、また流れにくさが小さいほど、多く流れる。",
+          "acceptKeywords": [
+            "圧力",
+            "量",
+            "流れにく"
+          ]
         },
         {
           "id": "p0-l2-r2",
           "kind": "free-line",
-          "prompt": "電力(W)は何と何を掛けたもの?"
+          "prompt": "電力(W)は何と何を掛けたもの?",
+          "sourceResourceId": "gami-start",
+          "sourceWatch": "電力(W)が出てくる場面",
+          "modelAnswer": "電圧(V)×電流(A)。100Vで5A流れれば500W。",
+          "acceptKeywords": [
+            "電圧",
+            "電流"
+          ]
         }
       ],
       "practice": {
-        "kind": "checklist",
-        "instruction": "自宅のブレーカーか家電の表示から、V と W の実物を1つ見つけて書く",
-        "scored": false
+        "kind": "in-app-questions",
+        "instruction": "この画面で6問。今日見た内容だけから出るよ",
+        "scored": true,
+        "questionIds": [
+          "q-bt-001",
+          "q-bt-002",
+          "q-bt-003",
+          "q-bt-004",
+          "q-bt-005",
+          "q-bt-006"
+        ],
+        "targetCount": 6
       },
       "officialTopicIds": [
         "basic-theory"
       ],
       "required": true,
-      "safetyNote": "見るだけ。分電盤のカバーを開けたり配線に触れたりしない。"
+      "safetyNote": "見るだけ。分電盤のカバーを開けたり配線に触れたりしない。",
+      "stepMinutes": {
+        "practice": 5
+      }
     },
     {
       "id": "p0-l3",
@@ -251,25 +294,48 @@
         {
           "id": "p0-l3-r1",
           "kind": "free-line",
-          "prompt": "漏電遮断器は何から人を守っている?"
+          "prompt": "接地(アース)は何のためにある?",
+          "sourceResourceId": "pino-earth",
+          "sourceWatch": "接地(アース)が何のためにあるかを実物で説明する場面",
+          "modelAnswer": "漏れた電流を大地へ逃がす道を作るため。逃げ道があるから漏電遮断器が電流の差を検出して電源を切れるし、人が金属部分に触れても感電しにくい。",
+          "acceptKeywords": [
+            "大地",
+            "逃が",
+            "感電"
+          ]
         },
         {
           "id": "p0-l3-r2",
           "kind": "free-line",
-          "prompt": "接地(アース)は何のためにある?"
+          "prompt": "接地抵抗は大きいほうがいい? 小さいほうがいい? 理由も。",
+          "sourceResourceId": "pino-earth",
+          "sourceWatch": "接地抵抗の値が小さいほうがよい理由を説明する場面",
+          "modelAnswer": "小さいほうがよい。抵抗が小さいほど地絡電流が流れやすく、機器の金属部分の電位上昇が抑えられて、触れた人が感電しにくいから。",
+          "acceptKeywords": [
+            "小さ",
+            "電流",
+            "電位"
+          ]
         }
       ],
       "practice": {
         "kind": "checklist",
-        "instruction": "自宅の分電盤を「見て」、主幹と分岐の数を数えて記録する(触らない・開けない)",
-        "scored": false
+        "instruction": "自宅の分電盤を「見て」、主幹と分岐の数を数えて記録する(触らない・開けない)。そのあと確認クイズ2問",
+        "scored": false,
+        "questionIds": [
+          "q-in-001",
+          "q-in-002"
+        ]
       },
       "officialTopicIds": [
         "inspection",
         "law"
       ],
       "required": true,
-      "safetyNote": "通電している設備を練習台にしない。異常な発熱・焦げ・水濡れがあれば自分で触らず業者へ。"
+      "safetyNote": "通電している設備を練習台にしない。異常な発熱・焦げ・水濡れがあれば自分で触らず業者へ。",
+      "stepMinutes": {
+        "practice": 3
+      }
     },
     {
       "id": "p0-l4",
@@ -306,7 +372,7 @@
           "resourceId": "hozan-symbols",
           "use": "more",
           "where": "ページの記号一覧表",
-          "watch": "記号と実物写真の対応を上から流し見する",
+          "watch": "記号一覧表を上から流し見する。線の種類(実線・破線・点線)と照明の傍記だけ拾う",
           "stop": "1周したら閉じる。書き写さない"
         }
       ],
@@ -314,18 +380,51 @@
         {
           "id": "p0-l4-r1",
           "kind": "free-line",
-          "prompt": "見た中で名前を覚えた器具・工具を3つ。"
+          "prompt": "技能試験の指定工具を、思い出せるだけ。",
+          "sourceResourceId": "gami-tools",
+          "sourceWatch": "技能試験で使う工具を一通り紹介する場面",
+          "modelAnswer": "ペンチ、ドライバ(＋・−)、電工ナイフ、スケール、ウォータポンププライヤ、リングスリーブ用圧着工具(柄が黄色)。この6種類。電動工具は使えない。",
+          "acceptKeywords": [
+            "ペンチ",
+            "ドライバ",
+            "ナイフ",
+            "圧着"
+          ]
+        },
+        {
+          "id": "p0-l4-r2",
+          "kind": "free-line",
+          "prompt": "写真で見た電線・電線管のうち、名前を覚えたものを3つ。",
+          "sourceResourceId": "hozan-material",
+          "sourceWatch": "電線・ケーブル・電線管の写真が並ぶところ",
+          "modelAnswer": "VVF(平形ケーブル)、VVR(丸形ケーブル)、IV(絶縁電線)、CV、電線管ならPF管・CD管・VE管・ねじなし電線管(E)。今日は「こういう物がある」で十分。",
+          "acceptKeywords": [
+            "VVF",
+            "IV",
+            "PF"
+          ]
         }
       ],
       "practice": {
         "kind": "checklist",
-        "instruction": "家にありそうな工具(ドライバー・ペンチ等)を実際に探して、有無を記録する",
-        "scored": false
+        "instruction": "家にありそうな工具(ドライバー・ペンチ等)を実際に探して、有無を記録する。そのあと確認クイズ6問",
+        "scored": false,
+        "questionIds": [
+          "q-et-001",
+          "q-et-002",
+          "q-et-003",
+          "q-wd-001",
+          "q-wd-002",
+          "q-wd-003"
+        ]
       },
       "officialTopicIds": [
         "equipment-tools"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 5
+      }
     },
     {
       "id": "p0-l5",
@@ -362,7 +461,14 @@
         {
           "id": "p0-l5-r1",
           "kind": "free-line",
-          "prompt": "問題は何を問うてきた? 1行で。"
+          "prompt": "見た例題は、どんな聞き方をしてきた?",
+          "sourceResourceId": "official-range",
+          "sourceWatch": "「学科試験の科目と出題数」の下にある例題",
+          "modelAnswer": "「正しいものはどれか」「使用できないものはどれか」と4択で聞いてくる。計算より、名前・数字・組み合わせを知っているかを問う問題が多い。だから覚えれば取れる。",
+          "acceptKeywords": [
+            "4択",
+            "どれか"
+          ]
         }
       ],
       "practice": {
@@ -422,7 +528,28 @@
         {
           "id": "p0-l6-r1",
           "kind": "free-line",
-          "prompt": "申込みに必要なもの(顔写真・支払方法など)を挙げる。"
+          "prompt": "インターネット申込に必要なものは?",
+          "sourceResourceId": "official-overview",
+          "sourceWatch": "「受験申込」と「受験手数料」の節",
+          "modelAnswer": "顔写真データ(ページに書かれた条件に合うもの)、支払方法(クレジットカード等)、受け取れるメールアドレス。インターネット申込のほうが手数料が安い。",
+          "acceptKeywords": [
+            "顔写真",
+            "支払",
+            "メール"
+          ]
+        },
+        {
+          "id": "p0-l6-r2",
+          "kind": "free-line",
+          "prompt": "申込から免状までの段取りを、大きく3つに分けると?",
+          "sourceResourceId": "gami-plan",
+          "sourceWatch": "申込から合格までの段取りを通しで説明する場面",
+          "modelAnswer": "①申込(マイページ作成 → 申込 → 入金 → CBTなら会場予約) ②学科試験 ③技能試験 → 合格発表 → 免状申請。事務タブがこの順に並んでいる。",
+          "acceptKeywords": [
+            "申込",
+            "学科",
+            "技能"
+          ]
         }
       ],
       "practice": {
@@ -444,7 +571,7 @@
         "p0-l5"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 16,
         "standard": 30,
         "deep": 60
       },
@@ -453,7 +580,7 @@
           "resourceId": "gami-symbols",
           "use": "first",
           "where": "動画をそのまま再生する",
-          "watch": "前半、一般配線と機器の記号",
+          "watch": "前半。一般配線・機器・計器・開閉器の記号",
           "stop": "点滅器(スイッチ)の説明に入ったら止める。そこは明日",
           "minutes": 18
         },
@@ -461,7 +588,7 @@
           "resourceId": "hozan-symbols",
           "use": "more",
           "where": "ページの記号一覧のうち「一般配線」「機器」の表",
-          "watch": "記号と名前を照らし合わせる",
+          "watch": "記号一覧のうち「一般配線」「機器」「計器」「小勢力回路」の表。傍記の意味まで読む",
           "stop": "スイッチとコンセントの表は明日にまわす"
         }
       ],
@@ -469,23 +596,58 @@
         {
           "id": "p1-w1-l1-r1",
           "kind": "free-line",
-          "prompt": "今日見た記号を3つ、名前つきで書き出す。"
+          "prompt": "天井隠ぺい・床隠ぺい・露出を、線の種類で。",
+          "sourceResourceId": "gami-symbols",
+          "sourceWatch": "前半、一般配線の記号を並べる場面",
+          "modelAnswer": "天井隠ぺい=実線、床隠ぺい=破線、露出=点線。この3つはそのまま出題される。",
+          "acceptKeywords": [
+            "実線",
+            "破線",
+            "点線"
+          ]
+        },
+        {
+          "id": "p1-w1-l1-r2",
+          "kind": "free-line",
+          "prompt": "配線に引かれた斜線は何を表す? 斜線がないときは?",
+          "sourceResourceId": "hozan-symbols",
+          "sourceWatch": "記号一覧の「一般配線」の表。斜線と傍記の読み方",
+          "modelAnswer": "斜線の数が心線の本数。斜線3本なら3本。斜線が無ければ2本。",
+          "acceptKeywords": [
+            "本数",
+            "2本"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "HOZANの一問一答で記号問題を5問",
-        "resourceIds": [
-          "hozan-symbols"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 14,
+        "instruction": "この画面で14問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から記号の問題"
+        "questionIds": [
+          "q-wd-004",
+          "q-wd-005",
+          "q-wd-006",
+          "q-wd-007",
+          "q-wd-008",
+          "q-wd-009",
+          "q-wd-010",
+          "q-wd-011",
+          "q-wd-012",
+          "q-wd-013",
+          "q-wd-014",
+          "q-wd-015",
+          "q-wd-016",
+          "q-wd-017"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 11
+      }
     },
     {
       "id": "p1-w1-l2",
@@ -498,7 +660,7 @@
         "p1-w1-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 14,
         "standard": 30,
         "deep": 60
       },
@@ -540,23 +702,59 @@
         {
           "id": "p1-w1-l2-r1",
           "kind": "free-line",
-          "prompt": "3路スイッチの記号は? 何に使う?"
+          "prompt": "スイッチの傍記 3・4・H・L は、それぞれ何?",
+          "sourceResourceId": "gami-symbols",
+          "sourceWatch": "後半、点滅器(スイッチ)の節",
+          "modelAnswer": "3=3路スイッチ、4=4路スイッチ、H=位置表示灯内蔵(消灯時に光る/ほたる)、L=確認表示灯内蔵(点灯時に光る/パイロット)。HとLは逆に覚えやすいので対で確認する。",
+          "acceptKeywords": [
+            "3路",
+            "4路",
+            "位置表示",
+            "確認表示"
+          ]
+        },
+        {
+          "id": "p1-w1-l2-r2",
+          "kind": "free-line",
+          "prompt": "コンセントの傍記 E・ET・LK・WP は、それぞれ何?",
+          "sourceResourceId": "gami-outlets",
+          "sourceWatch": "コンセント24種類のうち、傍記が付くものが並ぶところ",
+          "modelAnswer": "E=接地極付、ET=接地端子付、LK=抜け止め形、WP=防雨形。EET は接地極付接地端子付、EL は漏電遮断器付。",
+          "acceptKeywords": [
+            "接地極",
+            "接地端子",
+            "抜け止め",
+            "防雨"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "記号問題5問 + 前日の復習3問",
-        "resourceIds": [
-          "hozan-symbols"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 12,
+        "instruction": "この画面で12問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から記号の問題"
+        "questionIds": [
+          "q-wd-018",
+          "q-wd-019",
+          "q-wd-020",
+          "q-wd-021",
+          "q-wd-022",
+          "q-wd-023",
+          "q-wd-024",
+          "q-wd-025",
+          "q-wd-026",
+          "q-wd-027",
+          "q-wd-028",
+          "q-wd-029"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 9
+      }
     },
     {
       "id": "p1-w1-l3",
@@ -569,7 +767,7 @@
         "p1-w1-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 15,
+        "minimum": 16,
         "standard": 30,
         "deep": 50
       },
@@ -593,23 +791,47 @@
         {
           "id": "p1-w1-l3-r1",
           "kind": "free-line",
-          "prompt": "間違えた記号を1つ、なぜ間違えたかつきで。"
+          "prompt": "同じ文字なのに、付く場所で意味が変わる傍記を1組。",
+          "sourceResourceId": "hozan-symbols",
+          "sourceWatch": "一問一答で間違えた記号を、一覧表へ戻って確認するところ",
+          "modelAnswer": "「E」。コンセントに付けば接地極付、遮断器に付けば漏電遮断器。「H」もスイッチなら位置表示灯内蔵、機器なら電熱器。どの記号に付いているかを先に見る。",
+          "acceptKeywords": [
+            "E",
+            "H",
+            "接地極"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
+        "kind": "in-app-questions",
         "targetCount": 15,
-        "instruction": "記号15問。正答数を記録する",
-        "resourceIds": [
-          "hozan-symbols"
-        ],
+        "instruction": "この画面で15問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から記号の問題"
+        "questionIds": [
+          "q-wd-001",
+          "q-wd-002",
+          "q-wd-003",
+          "q-wd-004",
+          "q-wd-005",
+          "q-wd-006",
+          "q-wd-007",
+          "q-wd-009",
+          "q-wd-012",
+          "q-wd-014",
+          "q-wd-018",
+          "q-wd-020",
+          "q-wd-024",
+          "q-wd-026",
+          "q-wd-028"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 11
+      }
     },
     {
       "id": "p1-w1-l4",
@@ -655,7 +877,26 @@
         {
           "id": "p1-w1-l4-r1",
           "kind": "free-line",
-          "prompt": "技能試験の合格基準は? 制限時間は?"
+          "prompt": "技能試験の制限時間と、合否の決まり方は?",
+          "sourceResourceId": "hozan-guide-exam",
+          "sourceWatch": "後半の技能試験の説明。40分で何を作るのか",
+          "modelAnswer": "40分。あらかじめ公表された候補問題13問のうち1問が出る。欠陥が1つでもあれば不合格で、部分点はない。完成させることと欠陥ゼロの両方が要る。",
+          "acceptKeywords": [
+            "40",
+            "欠陥",
+            "13"
+          ]
+        },
+        {
+          "id": "p1-w1-l4-r2",
+          "kind": "free-line",
+          "prompt": "候補問題は何問公表されている?",
+          "sourceResourceId": "official-candidates",
+          "sourceWatch": "PDFの2ページ目以降、単線図が並ぶところ",
+          "modelAnswer": "13問。どれも1枚の単線図で示され、当日はこの13問の中から1問が出る。",
+          "acceptKeywords": [
+            "13"
+          ]
         }
       ],
       "practice": {
@@ -682,7 +923,7 @@
         "p1-w1-l3"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 14,
         "standard": 30,
         "deep": 60
       },
@@ -708,23 +949,56 @@
         {
           "id": "p1-w2-l1-r1",
           "kind": "free-line",
-          "prompt": "VVF 1.6-2C とは何を表す?"
+          "prompt": "VVF 1.6-2C の各部分は何を表す?",
+          "sourceResourceId": "hozan-material",
+          "sourceWatch": "「電線・ケーブル」の写真一覧。表示の読み方",
+          "modelAnswer": "VVF=600Vビニル絶縁ビニルシースケーブル平形、1.6=導体の直径1.6mm、2C=心線2本。数字は直径であって断面積ではない。",
+          "acceptKeywords": [
+            "平形",
+            "直径",
+            "2本"
+          ]
+        },
+        {
+          "id": "p1-w2-l1-r2",
+          "kind": "free-line",
+          "prompt": "VVFとVVRの違いは?",
+          "sourceResourceId": "hozan-material",
+          "sourceWatch": "「電線・ケーブル」の写真一覧。VVFとVVRの並び",
+          "modelAnswer": "Fは平形(Flat)、Rは丸形(Round)。断面の形の違いで、屋内外や電圧の違いではない。技能で主に使うのは平形のVVF。",
+          "acceptKeywords": [
+            "平形",
+            "丸形"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "写真問題5問 + 前日の復習3問",
-        "resourceIds": [
-          "hozan-material"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 12,
+        "instruction": "この画面で12問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から材料の写真問題"
+        "questionIds": [
+          "q-et-004",
+          "q-et-005",
+          "q-et-006",
+          "q-et-007",
+          "q-et-008",
+          "q-et-009",
+          "q-et-010",
+          "q-et-011",
+          "q-et-012",
+          "q-et-013",
+          "q-et-014",
+          "q-et-015"
+        ]
       },
       "officialTopicIds": [
         "equipment-tools"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 9
+      }
     },
     {
       "id": "p1-w2-l2",
@@ -737,7 +1011,7 @@
         "p1-w2-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 11,
         "standard": 30,
         "deep": 60
       },
@@ -769,29 +1043,52 @@
         {
           "id": "p1-w2-l2-r1",
           "kind": "free-line",
-          "prompt": "リングスリーブ用圧着工具に必要な適合規格は?"
+          "prompt": "リングスリーブ用圧着工具の見分け方と、適合規格は?",
+          "sourceResourceId": "gami-tools",
+          "sourceWatch": "圧着工具の説明。柄の色と適合規格",
+          "modelAnswer": "柄が黄色。JIS C 9711に適合したもの。柄が赤いものは裸圧着端子用で、リングスリーブには使えない。",
+          "acceptKeywords": [
+            "黄色",
+            "9711"
+          ]
         },
         {
           "id": "p1-w2-l2-r2",
           "kind": "free-line",
-          "prompt": "技能試験で使えない工具は?"
+          "prompt": "金属管を切ったあとに使う工具は? 何のため?",
+          "sourceResourceId": "hozan-material",
+          "sourceWatch": "ページ後半の「工具」の写真一覧",
+          "modelAnswer": "リーマ。管の内側にできたバリを取るため。取らないと通線のときに電線の被覆が傷つく。",
+          "acceptKeywords": [
+            "リーマ",
+            "バリ"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "工具の写真問題5問",
-        "resourceIds": [
-          "hozan-material"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 8,
+        "instruction": "この画面で8問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から工具の写真問題"
+        "questionIds": [
+          "q-et-016",
+          "q-et-017",
+          "q-et-018",
+          "q-et-019",
+          "q-et-020",
+          "q-et-021",
+          "q-et-022",
+          "q-et-023"
+        ]
       },
       "officialTopicIds": [
         "equipment-tools"
       ],
       "required": true,
-      "safetyNote": "技能試験で電動工具は使用不可。電動機能をOFFにしても不可。"
+      "safetyNote": "技能試験で電動工具は使用不可。電動機能をOFFにしても不可。",
+      "stepMinutes": {
+        "practice": 6
+      }
     },
     {
       "id": "p1-w2-l3",
@@ -804,7 +1101,7 @@
         "p1-w2-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 16,
         "standard": 30,
         "deep": 60
       },
@@ -813,7 +1110,7 @@
           "resourceId": "hozan-device",
           "use": "first",
           "where": "ページの配線器具の写真一覧",
-          "watch": "スイッチ・コンセント・レセプタクルの写真と名前",
+          "watch": "配線器具の写真一覧。スイッチ・コンセント・レセプタクルの写真と名前、器具への結線の向き",
           "stop": "分岐回路の計算が出たら止める。そこはPhase 2",
           "minutes": 20
         },
@@ -824,29 +1121,72 @@
           "watch": "接地極付き・抜け止め・引掛形の違い",
           "stop": "3種類の違いが言えたら止める",
           "minutes": 12
+        },
+        {
+          "resourceId": "hozan-point",
+          "use": "more",
+          "where": "科目一覧から「電気機器・配線器具・材料及び工具」を選ぶ",
+          "watch": "電動機・進相コンデンサ・遮断器の頻出ポイント。スイッチとコンセントの次に出るのがここ",
+          "stop": "自分の科目の頻出項目を読み終えたら閉じる。別の科目へ回らない",
+          "minutes": 8
         }
       ],
       "recallPrompts": [
         {
           "id": "p1-w2-l3-r1",
           "kind": "free-line",
-          "prompt": "接地側電線をつなぐのは器具のどちら側?"
+          "prompt": "位置表示灯内蔵と確認表示灯内蔵、光るのはどっちのとき?",
+          "sourceResourceId": "hozan-device",
+          "sourceWatch": "配線器具の写真一覧。表示灯付きスイッチ",
+          "modelAnswer": "位置表示灯(ほたる)は消灯時に光ってスイッチの場所を知らせる。確認表示灯(パイロット)は点灯時に光って動作中を知らせる。",
+          "acceptKeywords": [
+            "消灯",
+            "点灯"
+          ]
+        },
+        {
+          "id": "p1-w2-l3-r2",
+          "kind": "free-line",
+          "prompt": "接地側電線(白)は、器具のどちら側につなぐ?",
+          "sourceResourceId": "hozan-device",
+          "sourceWatch": "配線器具の写真一覧。器具への結線の向き",
+          "modelAnswer": "WまたはNの表示がある側。ランプレセプタクルなら受金ねじ部側。逆にすると技能試験で欠陥になるうえ、電球交換時に感電の危険がある。",
+          "acceptKeywords": [
+            "W",
+            "受金"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "器具の写真問題5問",
-        "resourceIds": [
-          "hozan-device"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 15,
+        "instruction": "この画面で15問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から器具の問題"
+        "questionIds": [
+          "q-et-024",
+          "q-et-025",
+          "q-et-026",
+          "q-et-027",
+          "q-et-028",
+          "q-et-029",
+          "q-et-030",
+          "q-et-031",
+          "q-et-032",
+          "q-et-033",
+          "q-et-034",
+          "q-et-035",
+          "q-et-036",
+          "q-et-037",
+          "q-et-038"
+        ]
       },
       "officialTopicIds": [
         "equipment-tools"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 11
+      }
     },
     {
       "id": "p1-w2-l4",
@@ -859,9 +1199,9 @@
         "p1-w2-l3"
       ],
       "estimatedMinutes": {
-        "minimum": 35,
-        "standard": 40,
-        "deep": 55
+        "minimum": 45,
+        "standard": 55,
+        "deep": 65
       },
       "resources": [
         {
@@ -883,26 +1223,51 @@
         {
           "id": "p1-w2-l4-r1",
           "kind": "free-line",
-          "prompt": "間違えた問題の共通点は?"
+          "prompt": "電線管の記号 E・G・C・VE は、それぞれ何?",
+          "sourceResourceId": "hozan-material",
+          "sourceWatch": "一問一答で落とした問題を、写真一覧へ戻って確認するところ",
+          "modelAnswer": "E=ねじなし電線管、G=厚鋼電線管、C=薄鋼電線管、VE=硬質塩化ビニル電線管。PF管とCD管は合成樹脂製可とう電線管で別枠。",
+          "acceptKeywords": [
+            "ねじなし",
+            "厚鋼",
+            "薄鋼"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
+        "kind": "in-app-questions",
         "targetCount": 20,
-        "instruction": "20問。正答数を記録する",
-        "resourceIds": [
-          "hozan-material",
-          "hozan-device"
-        ],
+        "instruction": "この画面で20問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "両ページの一問一答を合わせて20問"
+        "questionIds": [
+          "q-et-001",
+          "q-et-003",
+          "q-et-004",
+          "q-et-005",
+          "q-et-006",
+          "q-et-009",
+          "q-et-010",
+          "q-et-012",
+          "q-et-013",
+          "q-et-016",
+          "q-et-017",
+          "q-et-018",
+          "q-et-020",
+          "q-et-023",
+          "q-et-024",
+          "q-et-025",
+          "q-et-029",
+          "q-et-030",
+          "q-et-033",
+          "q-et-037"
+        ]
       },
       "officialTopicIds": [
         "equipment-tools"
       ],
       "required": true,
       "stepMinutes": {
-        "practice": 25
+        "practice": 40
       }
     },
     {
@@ -941,7 +1306,14 @@
         {
           "id": "p1-w2-l5-r1",
           "kind": "free-line",
-          "prompt": "今日の時点で「買わないと無い」ものはどれ?"
+          "prompt": "技能試験に持ち込める工具の条件は?",
+          "sourceResourceId": "official-overview",
+          "sourceWatch": "「技能試験」の指定工具の記載",
+          "modelAnswer": "電動工具は使えない。それ以外なら指定工具に加えて持ち込んで使ってよい。工具は自分で持参する(会場では貸してもらえない)。",
+          "acceptKeywords": [
+            "電動",
+            "持参"
+          ]
         }
       ],
       "practice": {
@@ -989,7 +1361,15 @@
         {
           "id": "p1-w3-l1-r1",
           "kind": "free-line",
-          "prompt": "手も足も出なかった分野はどれ?"
+          "prompt": "学科は何問で、何点取れば合格?",
+          "sourceResourceId": "official-range",
+          "sourceWatch": "ページ内の7科目と出題数の表",
+          "modelAnswer": "50問、1問2点の100点満点。60点(30問正解)以上で合格。このツールは余裕を見て直近3回平均80点を運用目標にしている。",
+          "acceptKeywords": [
+            "50",
+            "60",
+            "30"
+          ]
         }
       ],
       "practice": {
@@ -1019,7 +1399,7 @@
         "p1-w3-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 13,
         "standard": 30,
         "deep": 60
       },
@@ -1044,23 +1424,54 @@
         {
           "id": "p1-w3-l2-r1",
           "kind": "free-line",
-          "prompt": "電線を接続するときの原則を2つ。"
+          "prompt": "場所を選ばず、どこでも施工できる工事を3つ。",
+          "sourceResourceId": "gami-method-1",
+          "sourceWatch": "工事の種類を並べて整理する場面",
+          "modelAnswer": "ケーブル工事、金属管工事、合成樹脂管工事。この3つが万能。ほかの工事は場所か電圧に必ず制限が付く。",
+          "acceptKeywords": [
+            "ケーブル",
+            "金属管",
+            "合成樹脂"
+          ]
+        },
+        {
+          "id": "p1-w3-l2-r2",
+          "kind": "free-line",
+          "prompt": "電線を接続するときの原則を2つ。",
+          "sourceResourceId": "hozan-method",
+          "sourceWatch": "「電線の接続」の節",
+          "modelAnswer": "電気抵抗を増加させないこと。引張強さを20%以上減少させないこと。加えて接続器かろう付けを使い、元と同等以上の絶縁効力で被覆する。",
+          "acceptKeywords": [
+            "抵抗",
+            "20"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "施工方法5問",
-        "resourceIds": [
-          "hozan-method"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 10,
+        "instruction": "この画面で10問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から施工方法の問題"
+        "questionIds": [
+          "q-cm-001",
+          "q-cm-002",
+          "q-cm-003",
+          "q-cm-004",
+          "q-cm-005",
+          "q-cm-006",
+          "q-cm-007",
+          "q-cm-008",
+          "q-cm-009",
+          "q-cm-010"
+        ]
       },
       "officialTopicIds": [
         "construction-method"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 8
+      }
     },
     {
       "id": "p2-w4-l1",
@@ -1073,7 +1484,7 @@
         "p1-w3-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 14,
         "standard": 30,
         "deep": 60
       },
@@ -1098,23 +1509,56 @@
         {
           "id": "p2-w4-l1-r1",
           "kind": "free-line",
-          "prompt": "金属管工事で必要になる接地は?"
+          "prompt": "ケーブル・金属管・合成樹脂管の支持点間隔は、それぞれ何m以下?",
+          "sourceResourceId": "hozan-method",
+          "sourceWatch": "「金属管工事」「合成樹脂管工事」の節。支持間隔の数字",
+          "modelAnswer": "ケーブル2m以下(接触防護措置ありで垂直なら6m以下)、金属管2m以下、合成樹脂管1.5m以下。合成樹脂管だけ短い。",
+          "acceptKeywords": [
+            "2m",
+            "1.5",
+            "6m"
+          ]
+        },
+        {
+          "id": "p2-w4-l1-r2",
+          "kind": "free-line",
+          "prompt": "管の中で電線を接続してもいい?",
+          "sourceResourceId": "gami-method-2",
+          "sourceWatch": "ケーブル工事と電線管工事の細かい決まりを説明する場面",
+          "modelAnswer": "だめ。接続はボックスの中で行う。管内に接続点を作ると点検も交換もできず、発熱しても気づけない。",
+          "acceptKeywords": [
+            "だめ",
+            "ボックス"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "施工方法5問",
-        "resourceIds": [
-          "hozan-method"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 12,
+        "instruction": "この画面で12問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から施工方法の問題"
+        "questionIds": [
+          "q-cm-011",
+          "q-cm-012",
+          "q-cm-013",
+          "q-cm-014",
+          "q-cm-015",
+          "q-cm-016",
+          "q-cm-017",
+          "q-cm-018",
+          "q-cm-019",
+          "q-cm-020",
+          "q-cm-021",
+          "q-cm-022"
+        ]
       },
       "officialTopicIds": [
         "construction-method"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 9
+      }
     },
     {
       "id": "p2-w4-l2",
@@ -1127,7 +1571,7 @@
         "p2-w4-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 14,
         "standard": 30,
         "deep": 60
       },
@@ -1160,23 +1604,57 @@
         {
           "id": "p2-w4-l2-r1",
           "kind": "free-line",
-          "prompt": "100V回路の絶縁抵抗の基準値は?"
+          "prompt": "絶縁抵抗の基準値を3段階で。",
+          "sourceResourceId": "hozan-method",
+          "sourceWatch": "「絶縁抵抗値」の数値表",
+          "modelAnswer": "300V以下で対地電圧150V以下=0.1MΩ以上、150V超300V以下=0.2MΩ以上、300V超=0.4MΩ以上。0.1・0.2・0.4の並びで覚える。",
+          "acceptKeywords": [
+            "0.1",
+            "0.2",
+            "0.4"
+          ]
+        },
+        {
+          "id": "p2-w4-l2-r2",
+          "kind": "free-line",
+          "prompt": "300V以下の機器の外箱に施す接地工事の種類と抵抗値は?",
+          "sourceResourceId": "hozan-method",
+          "sourceWatch": "「接地工事」の種類と抵抗値の表",
+          "modelAnswer": "D種接地工事。原則100Ω以下。0.5秒以内に動作する漏電遮断器を施設すれば500Ω以下でよい。300V超はC種で10Ω以下。",
+          "acceptKeywords": [
+            "D種",
+            "100",
+            "500"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "検査5問",
-        "resourceIds": [
-          "hozan-method"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 12,
+        "instruction": "この画面で12問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から接地・絶縁抵抗の問題"
+        "questionIds": [
+          "q-cm-023",
+          "q-cm-024",
+          "q-cm-025",
+          "q-cm-026",
+          "q-cm-027",
+          "q-cm-028",
+          "q-in-003",
+          "q-in-004",
+          "q-in-005",
+          "q-in-006",
+          "q-in-007",
+          "q-in-008"
+        ]
       },
       "officialTopicIds": [
         "inspection"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 9
+      }
     },
     {
       "id": "p2-w4-l3",
@@ -1189,7 +1667,7 @@
         "p2-w4-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 16,
         "standard": 30,
         "deep": 60
       },
@@ -1217,29 +1695,73 @@
           "watch": "接地抵抗の測定を実物で。数字の意味が入らないときだけ",
           "stop": "実演が終わったら止める",
           "minutes": 16
+        },
+        {
+          "resourceId": "hozan-method",
+          "use": "more",
+          "where": "ページ内の「検査」の節",
+          "watch": "竣工検査の順序(目視 → 絶縁抵抗 → 接地抵抗 → 導通)と、通電後の動作試験",
+          "stop": "4つの順番を書き出せたら閉じる",
+          "minutes": 6
         }
       ],
       "recallPrompts": [
         {
           "id": "p2-w4-l3-r1",
           "kind": "free-line",
-          "prompt": "竣工検査の順序を3語で。"
+          "prompt": "竣工検査の順序を4つ、順番どおりに。",
+          "sourceResourceId": "hozan-method",
+          "sourceWatch": "「検査」の節。竣工検査の順序",
+          "modelAnswer": "目視点検 → 絶縁抵抗測定 → 接地抵抗測定 → 導通試験。通電してからの動作試験はそのあと。「見る→絶縁→接地→導通」。",
+          "acceptKeywords": [
+            "目視",
+            "絶縁",
+            "接地",
+            "導通"
+          ]
+        },
+        {
+          "id": "p2-w4-l3-r2",
+          "kind": "free-line",
+          "prompt": "クランプメータ、負荷電流と漏れ電流で挟み方はどう違う?",
+          "sourceResourceId": "gami-inspect-2",
+          "sourceWatch": "クランプメータの使い方を説明する場面",
+          "modelAnswer": "負荷電流は1本だけ挟む。漏れ電流は回路の電線を全部まとめて挟む。まとめると行きと帰りが打ち消し合い、残った差が漏れ電流になる。",
+          "acceptKeywords": [
+            "1本",
+            "まとめ"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "検査5問",
-        "resourceIds": [
-          "hozan-method"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 14,
+        "instruction": "この画面で14問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から検査・測定の問題"
+        "questionIds": [
+          "q-in-009",
+          "q-in-010",
+          "q-in-011",
+          "q-in-012",
+          "q-in-013",
+          "q-in-014",
+          "q-in-015",
+          "q-in-016",
+          "q-in-017",
+          "q-in-018",
+          "q-in-019",
+          "q-in-020",
+          "q-in-021",
+          "q-in-022"
+        ]
       },
       "officialTopicIds": [
         "inspection"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 11
+      }
     },
     {
       "id": "p2-w4-l4",
@@ -1269,7 +1791,15 @@
         {
           "id": "p2-w4-l4-r1",
           "kind": "free-line",
-          "prompt": "落とした問題の誤答理由は?"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -1303,7 +1833,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 30,
-        "standard": 35,
+        "standard": 40,
         "deep": 50
       },
       "resources": [
@@ -1328,24 +1858,36 @@
         {
           "id": "p2-w4-l5-r1",
           "kind": "free-line",
-          "prompt": "芯線に傷をつけないコツは?"
+          "prompt": "芯線に傷をつけないコツは?",
+          "sourceResourceId": "hozan-skill-unit",
+          "sourceWatch": "「ケーブルの外装・絶縁被覆のはぎ取り」の節。工具の当て方",
+          "modelAnswer": "刃を芯線と平行に浅く当て、ケーブルを回して切れ目を入れてから折って割る。深く垂直に入れると芯線に傷がつき、曲げたときに折れる。傷は欠陥。",
+          "acceptKeywords": [
+            "浅",
+            "平行",
+            "回"
+          ]
         }
       ],
       "practice": {
         "kind": "basic-skill",
-        "instruction": "練習用VVFで外装100mm・被覆20mmを3本剥く",
+        "instruction": "練習用VVFで外装100mm・被覆20mmを3本剥く。そのあと確認クイズ2問",
         "resourceIds": [
           "hozan-skill-unit"
         ],
         "scored": false,
-        "where": "はぎ取りの節の寸法どおりに、練習用VVFで"
+        "where": "はぎ取りの節の寸法どおりに、練習用VVFで",
+        "questionIds": [
+          "q-et-039",
+          "q-et-040"
+        ]
       },
       "officialTopicIds": [],
       "required": true,
       "skillTouch": true,
       "safetyNote": "必ず試験用の非通電材料で行う。自宅の壁・天井から出ている電線には触れない。",
       "stepMinutes": {
-        "practice": 20
+        "practice": 23
       }
     },
     {
@@ -1359,7 +1901,7 @@
         "p2-w4-l4"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 15,
         "standard": 30,
         "deep": 60
       },
@@ -1399,23 +1941,58 @@
         {
           "id": "p2-w5-l1-r1",
           "kind": "free-line",
-          "prompt": "第二種で従事できる工事の範囲は?"
+          "prompt": "一般用と自家用、分かれ目はどこ?",
+          "sourceResourceId": "gami-law-1",
+          "sourceWatch": "電気工作物の分類を図で整理する場面",
+          "modelAnswer": "受電電圧。低圧(交流600V以下)で受電し、大きな発電設備がなければ一般用電気工作物。高圧受電になると自家用。第二種が従事できるのは一般用電気工作物等まで。",
+          "acceptKeywords": [
+            "低圧",
+            "600",
+            "高圧"
+          ]
+        },
+        {
+          "id": "p2-w5-l1-r2",
+          "kind": "free-line",
+          "prompt": "特定電気用品とそれ以外、マークと例の違いは?",
+          "sourceResourceId": "hozan-law",
+          "sourceWatch": "「電気用品安全法」の節。PSEマークの区別",
+          "modelAnswer": "特定電気用品はひし形の〈PS〉E、それ以外は丸の(PS)E。配線器具・電線・ヒューズ・小型単相変圧器が特定、照明器具・電線管・換気扇はそれ以外。",
+          "acceptKeywords": [
+            "ひし形",
+            "丸",
+            "PS"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "法令5問",
-        "resourceIds": [
-          "hozan-law"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 13,
+        "instruction": "この画面で13問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から法令の問題"
+        "questionIds": [
+          "q-law-001",
+          "q-law-002",
+          "q-law-003",
+          "q-law-004",
+          "q-law-005",
+          "q-law-006",
+          "q-law-007",
+          "q-law-008",
+          "q-law-009",
+          "q-law-010",
+          "q-law-011",
+          "q-law-012",
+          "q-law-013"
+        ]
       },
       "officialTopicIds": [
         "law"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 10
+      }
     },
     {
       "id": "p2-w5-l2",
@@ -1428,7 +2005,7 @@
         "p2-w5-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 11,
         "standard": 30,
         "deep": 60
       },
@@ -1453,23 +2030,53 @@
         {
           "id": "p2-w5-l2-r1",
           "kind": "free-line",
-          "prompt": "今日の中で一番覚えにくかった数字は?"
+          "prompt": "住宅の屋内電路の対地電圧の原則と、例外を1つ。",
+          "sourceResourceId": "hozan-law",
+          "sourceWatch": "「電気設備技術基準」の節。数字で決まっている項目",
+          "modelAnswer": "原則150V以下。例外は定格消費電力2kW以上の電気機械器具へ専用回路で供給する場合など。エアコンやIHの200V専用回路がこれに当たる。",
+          "acceptKeywords": [
+            "150",
+            "2kW",
+            "専用"
+          ]
+        },
+        {
+          "id": "p2-w5-l2-r2",
+          "kind": "free-line",
+          "prompt": "一般用電気工事の営業所に備える3つの器具は?",
+          "sourceResourceId": "hozan-point",
+          "sourceWatch": "「法令」の頻出ポイント。電気工事業法の節",
+          "modelAnswer": "絶縁抵抗計、接地抵抗計、抵抗と交流電圧を測定できる回路計。竣工検査に必要な3点がそのまま備付け義務になっている。",
+          "acceptKeywords": [
+            "絶縁抵抗計",
+            "接地抵抗計",
+            "回路計"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "法令5問",
-        "resourceIds": [
-          "hozan-law"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 8,
+        "instruction": "この画面で8問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から法令の問題"
+        "questionIds": [
+          "q-law-014",
+          "q-law-015",
+          "q-law-016",
+          "q-law-017",
+          "q-law-018",
+          "q-law-019",
+          "q-law-020",
+          "q-law-021"
+        ]
       },
       "officialTopicIds": [
         "law"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 6
+      }
     },
     {
       "id": "p2-w5-l3",
@@ -1482,7 +2089,7 @@
         "p2-w5-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 16,
         "standard": 30,
         "deep": 60
       },
@@ -1491,7 +2098,7 @@
           "resourceId": "gami-design",
           "use": "first",
           "where": "動画をそのまま再生する",
-          "watch": "分岐回路・許容電流・過電流遮断器を1本にまとめた回",
+          "watch": "分岐回路・許容電流・過電流遮断器・幹線・電流減少係数まで通しで",
           "stop": "25分。最後まで見たら閉じる",
           "minutes": 25
         },
@@ -1507,23 +2114,58 @@
         {
           "id": "p2-w5-l3-r1",
           "kind": "free-line",
-          "prompt": "20A配線用遮断器の分岐回路で使える電線の太さは?"
+          "prompt": "20A配線用遮断器の分岐回路、電線の最小の太さとコンセントの定格は?",
+          "sourceResourceId": "hozan-device",
+          "sourceWatch": "「分岐回路」の表",
+          "modelAnswer": "直径1.6mm以上、コンセントは20A以下。同じ20Aでもヒューズで保護する場合は2.0mm以上になるのが引っかけ。",
+          "acceptKeywords": [
+            "1.6",
+            "20A"
+          ]
+        },
+        {
+          "id": "p2-w5-l3-r2",
+          "kind": "free-line",
+          "prompt": "1.6mm・2.0mm・2.6mmの許容電流は? 管に3本入れたら?",
+          "sourceResourceId": "gami-design",
+          "sourceWatch": "電線の許容電流と電流減少係数の節",
+          "modelAnswer": "27A・35A・48A。同一管内3本以下なら電流減少係数0.70を掛ける(27A→18.9A)。4本は0.63、5〜6本は0.56。",
+          "acceptKeywords": [
+            "27",
+            "35",
+            "48"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "配線設計5問",
-        "resourceIds": [
-          "hozan-device"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 14,
+        "instruction": "この画面で14問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から配線設計の問題"
+        "questionIds": [
+          "q-dd-001",
+          "q-dd-002",
+          "q-dd-003",
+          "q-dd-004",
+          "q-dd-005",
+          "q-dd-006",
+          "q-dd-007",
+          "q-dd-008",
+          "q-dd-009",
+          "q-dd-010",
+          "q-dd-011",
+          "q-dd-012",
+          "q-dd-013",
+          "q-dd-014"
+        ]
       },
       "officialTopicIds": [
         "distribution-design"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 11
+      }
     },
     {
       "id": "p2-w5-l4",
@@ -1536,9 +2178,9 @@
         "p2-w4-l5"
       ],
       "estimatedMinutes": {
-        "minimum": 30,
-        "standard": 35,
-        "deep": 50
+        "minimum": 31,
+        "standard": 41,
+        "deep": 51
       },
       "resources": [
         {
@@ -1562,17 +2204,47 @@
         {
           "id": "p2-w5-l4-r1",
           "kind": "free-line",
-          "prompt": "1.6mm×2本のときの圧着マークは?"
+          "prompt": "1.6mm×2本のとき、スリーブと刻印は?",
+          "sourceResourceId": "hozan-skill-unit",
+          "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの大きさと刻印の対応表",
+          "modelAnswer": "小スリーブ、刻印「○」。1.6mm×3〜4本と2.0mm×2本は同じ小スリーブでも刻印は「小」。1.6mm×5〜6本から中スリーブ「中」。",
+          "acceptKeywords": [
+            "小",
+            "○"
+          ]
+        },
+        {
+          "id": "p2-w5-l4-r2",
+          "kind": "free-line",
+          "prompt": "差込形コネクタで接続したあと、絶縁テープは要る?",
+          "sourceResourceId": "hozan-skill-unit",
+          "sourceWatch": "「差込形コネクタ」の節",
+          "modelAnswer": "要らない。所定の接続器なのでそのままでよい。奥まで差し込み、確認窓から心線が見えることを確かめる。露出していたら欠陥。",
+          "acceptKeywords": [
+            "要らない",
+            "不要",
+            "奥"
+          ]
         }
       ],
       "practice": {
         "kind": "basic-skill",
-        "instruction": "練習材料でリングスリーブ圧着を3箇所、差込形コネクタを3箇所",
+        "instruction": "練習材料でリングスリーブ圧着を3箇所、差込形コネクタを3箇所。そのあと確認クイズ8問",
         "resourceIds": [
           "hozan-skill-unit"
         ],
         "scored": false,
-        "where": "圧着接続と差込形コネクタの節の手順どおりに"
+        "where": "圧着接続と差込形コネクタの節の手順どおりに",
+        "questionIds": [
+          "q-cm-029",
+          "q-cm-030",
+          "q-cm-031",
+          "q-cm-032",
+          "q-wd-030",
+          "q-wd-031",
+          "q-wd-032",
+          "q-wd-033"
+        ]
       },
       "officialTopicIds": [
         "construction-method"
@@ -1581,7 +2253,7 @@
       "skillTouch": true,
       "safetyNote": "非通電の練習材料のみ。",
       "stepMinutes": {
-        "practice": 20
+        "practice": 26
       }
     },
     {
@@ -1596,7 +2268,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 25,
-        "standard": 30,
+        "standard": 35,
         "deep": 45
       },
       "resources": [
@@ -1628,17 +2300,46 @@
         {
           "id": "p2-w6-l1-r1",
           "kind": "free-line",
-          "prompt": "複線図を描く手順の1番目は?"
+          "prompt": "複線図を描く手順の1手目と2手目は?",
+          "sourceResourceId": "gami-diagram",
+          "sourceWatch": "勝利の4STEPの1手目・2手目",
+          "modelAnswer": "1手目は電源の接地側(白)を、スイッチを通さず照明器具・コンセントへ直接。2手目は非接地側(黒)をスイッチとコンセントへ。3手目でスイッチと負荷を結ぶ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "非接地",
+            "黒"
+          ]
+        },
+        {
+          "id": "p2-w6-l1-r2",
+          "kind": "free-line",
+          "prompt": "ランプレセプタクルの受金ねじ部にはどちらの線?",
+          "sourceResourceId": "hozan-figure-basic",
+          "sourceWatch": "「1灯1点滅」の作図例",
+          "modelAnswer": "接地側(白)。逆にすると電球を替えるとき指の触れる部分が充電される。技能試験でも欠陥になる。",
+          "acceptKeywords": [
+            "白",
+            "接地側"
+          ]
         }
       ],
       "practice": {
         "kind": "wiring-diagram",
-        "instruction": "1灯1点滅の複線図を1枚描く",
+        "instruction": "1灯1点滅の複線図を1枚描く。そのあと確認クイズ6問",
         "resourceIds": [
           "hozan-figure-basic"
         ],
         "scored": false,
-        "where": "1灯1点滅の作図例と同じ回路を、見ずに描く"
+        "where": "1灯1点滅の作図例と同じ回路を、見ずに描く",
+        "questionIds": [
+          "q-wd-034",
+          "q-wd-035",
+          "q-wd-036",
+          "q-wd-037",
+          "q-wd-038",
+          "q-wd-039"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
@@ -1646,7 +2347,7 @@
       "required": true,
       "skillTouch": true,
       "stepMinutes": {
-        "practice": 15
+        "practice": 20
       }
     },
     {
@@ -1661,7 +2362,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 25,
-        "standard": 30,
+        "standard": 35,
         "deep": 45
       },
       "resources": [
@@ -1685,17 +2386,43 @@
         {
           "id": "p2-w6-l2-r1",
           "kind": "free-line",
-          "prompt": "コンセントへ来る2本はそれぞれ何?"
+          "prompt": "コンセントへ来る2本は、それぞれ何?",
+          "sourceResourceId": "gami-diagram",
+          "sourceWatch": "動画の中盤、コンセントを足す例",
+          "modelAnswer": "接地側(白)と非接地側(黒)。スイッチを経由しない(常に電気が来ている必要があるため)。接地極付なら接地線(緑)が加わって3本になる。",
+          "acceptKeywords": [
+            "白",
+            "黒"
+          ]
+        },
+        {
+          "id": "p2-w6-l2-r2",
+          "kind": "free-line",
+          "prompt": "スイッチ2個ぶんのスイッチボックスへ来る電線は最少何本?",
+          "sourceResourceId": "hozan-figure-basic",
+          "sourceWatch": "「コンセントがある回路」の作図例",
+          "modelAnswer": "3本。非接地側は2つのスイッチで共用できるので1本、各スイッチから負荷へ戻る線が2本。スイッチ3個なら4本。",
+          "acceptKeywords": [
+            "3"
+          ]
         }
       ],
       "practice": {
         "kind": "wiring-diagram",
-        "instruction": "コンセント併設の複線図を1枚",
+        "instruction": "コンセント併設の複線図を1枚。そのあと確認クイズ6問",
         "resourceIds": [
           "hozan-figure-basic"
         ],
         "scored": false,
-        "where": "コンセントがある回路の作図例と同じ回路を、見ずに描く"
+        "where": "コンセントがある回路の作図例と同じ回路を、見ずに描く",
+        "questionIds": [
+          "q-wd-040",
+          "q-wd-041",
+          "q-wd-042",
+          "q-wd-043",
+          "q-wd-044",
+          "q-wd-045"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
@@ -1703,7 +2430,7 @@
       "required": true,
       "skillTouch": true,
       "stepMinutes": {
-        "practice": 15
+        "practice": 20
       }
     },
     {
@@ -1718,7 +2445,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 30,
-        "standard": 35,
+        "standard": 40,
         "deep": 50
       },
       "resources": [
@@ -1750,17 +2477,44 @@
         {
           "id": "p2-w6-l3-r1",
           "kind": "free-line",
-          "prompt": "3路スイッチの0番端子には何をつなぐ?"
+          "prompt": "3路スイッチの0番端子には何をつなぐ?",
+          "sourceResourceId": "gami-diagram",
+          "sourceWatch": "3路スイッチの節。0番端子と1・3番端子の使い分け",
+          "modelAnswer": "片方の3路の0番に電源の非接地側(黒)、もう片方の3路の0番から照明へ。1番どうし・3番どうしを結ぶのが渡り線。",
+          "acceptKeywords": [
+            "0番",
+            "黒",
+            "渡り"
+          ]
+        },
+        {
+          "id": "p2-w6-l3-r2",
+          "kind": "free-line",
+          "prompt": "3路スイッチ2個の間に必要な電線は何本?",
+          "sourceResourceId": "hozan-figure-basic",
+          "sourceWatch": "「3路スイッチ」の作図例",
+          "modelAnswer": "2本。1番どうしと3番どうしを結ぶ。0番はそれぞれ電源側・負荷側へ出るのでここには来ない。",
+          "acceptKeywords": [
+            "2"
+          ]
         }
       ],
       "practice": {
         "kind": "wiring-diagram",
-        "instruction": "3路スイッチの複線図を1枚",
+        "instruction": "3路スイッチの複線図を1枚。そのあと確認クイズ6問",
         "resourceIds": [
           "hozan-figure-basic"
         ],
         "scored": false,
-        "where": "3路スイッチの作図例と同じ回路を、見ずに描く"
+        "where": "3路スイッチの作図例と同じ回路を、見ずに描く",
+        "questionIds": [
+          "q-wd-046",
+          "q-wd-047",
+          "q-wd-048",
+          "q-wd-049",
+          "q-wd-050",
+          "q-wd-051"
+        ]
       },
       "officialTopicIds": [
         "wiring-diagram"
@@ -1768,7 +2522,7 @@
       "required": true,
       "skillTouch": true,
       "stepMinutes": {
-        "practice": 20
+        "practice": 25
       }
     },
     {
@@ -1782,7 +2536,7 @@
         "p0-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 10,
+        "minimum": 20,
         "standard": 30,
         "deep": 60
       },
@@ -1807,7 +2561,7 @@
           "resourceId": "hozan-theory",
           "use": "more",
           "where": "ページ内「直列回路と並列回路」の節",
-          "watch": "合成抵抗の出し方",
+          "watch": "「直列回路と並列回路」の節。合成抵抗の出し方と、続く電力・電線の抵抗・交流・三相の節",
           "stop": "交流・力率が出たら止める"
         },
         {
@@ -1817,29 +2571,79 @@
           "watch": "黒板で丁寧に解く説明。3回詰まったときだけ",
           "stop": "12分。1周で止める",
           "minutes": 12
+        },
+        {
+          "resourceId": "gami-design",
+          "use": "more",
+          "where": "動画の単相3線式と電圧降下の節まで送る",
+          "watch": "単相3線式の100V/200Vの取り出し方、中性線の扱い、電圧降下の式",
+          "stop": "式を3つ(単相2線式・単相3線式・三相3線式)書き出せたら止める",
+          "minutes": 10
         }
       ],
       "recallPrompts": [
         {
           "id": "p2-w6-l4-r1",
           "kind": "free-line",
-          "prompt": "並列合成抵抗の求め方を式で。"
+          "prompt": "直列と並列、合成抵抗の出し方は?",
+          "sourceResourceId": "hozan-theory",
+          "sourceWatch": "「直列回路と並列回路」の節",
+          "modelAnswer": "直列は足すだけ。並列は2本なら積÷和。同じ抵抗をn本並列にしたら1本ぶんのn分の1。並列の合成は必ず一番小さい抵抗より小さくなる。",
+          "acceptKeywords": [
+            "足",
+            "積",
+            "和"
+          ]
+        },
+        {
+          "id": "p2-w6-l4-r2",
+          "kind": "free-line",
+          "prompt": "電圧降下の式を、配電方式3つぶん。",
+          "sourceResourceId": "gami-design",
+          "sourceWatch": "電圧降下の節。配電方式ごとの式",
+          "modelAnswer": "単相2線式 e=2Ir、単相3線式(電圧線と中性線間) e=Ir、三相3線式 e=√3Ir。2・1・√3 の並びで覚える。",
+          "acceptKeywords": [
+            "2Ir",
+            "Ir",
+            "√3"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
-        "targetCount": 5,
-        "instruction": "基礎理論5問",
-        "resourceIds": [
-          "hozan-theory"
-        ],
+        "kind": "in-app-questions",
+        "targetCount": 20,
+        "instruction": "この画面で20問。今日見た内容だけから出るよ",
         "scored": true,
-        "where": "ページ下部の一問一答から基礎理論の問題"
+        "questionIds": [
+          "q-bt-007",
+          "q-bt-008",
+          "q-bt-009",
+          "q-bt-010",
+          "q-bt-011",
+          "q-bt-012",
+          "q-bt-013",
+          "q-bt-014",
+          "q-bt-015",
+          "q-bt-016",
+          "q-bt-017",
+          "q-bt-018",
+          "q-bt-019",
+          "q-bt-020",
+          "q-dd-015",
+          "q-dd-016",
+          "q-dd-017",
+          "q-dd-018",
+          "q-dd-019",
+          "q-dd-020"
+        ]
       },
       "officialTopicIds": [
         "basic-theory"
       ],
-      "required": true
+      "required": true,
+      "stepMinutes": {
+        "practice": 15
+      }
     },
     {
       "id": "p2-w6-l5",
@@ -1869,7 +2673,15 @@
         {
           "id": "p2-w6-l5-r1",
           "kind": "free-line",
-          "prompt": "調べながらでも解けなかった分野は?"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -1916,7 +2728,15 @@
         {
           "id": "p3-w7-l1-r1",
           "kind": "free-line",
-          "prompt": "自信がないまま当たった問題はどれ?"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -1947,7 +2767,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 30,
-        "standard": 35,
+        "standard": 40,
         "deep": 50
       },
       "resources": [
@@ -1971,19 +2791,28 @@
         {
           "id": "p3-w7-l2-r1",
           "kind": "free-line",
-          "prompt": "同じ理由で落とした問題の共通点は?"
+          "prompt": "誤答と「自信の低い正解」を同じ扱いにするのはなぜ?",
+          "sourceResourceId": "hozan-point",
+          "sourceWatch": "落とした科目の出題ポイント",
+          "modelAnswer": "自信が低いまま当たった問題はまぐれの可能性が高く、次は落ちる。正誤だけで消すと同じところで何度も落ちるので、自信2以下の正解も復習対象に入れる。",
+          "acceptKeywords": [
+            "まぐれ",
+            "次",
+            "落ち"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
+        "kind": "in-app-questions",
         "targetCount": 10,
-        "instruction": "誤答・低自信の10問を解き直す",
-        "scored": true
+        "instruction": "この画面で10問。前に落とした問題と、自信が低かった問題から出るよ",
+        "scored": true,
+        "questionPool": "mistakes"
       },
       "officialTopicIds": [],
       "required": true,
       "stepMinutes": {
-        "practice": 20
+        "practice": 8
       }
     },
     {
@@ -2031,7 +2860,27 @@
         {
           "id": "p3-w7-l3-r1",
           "kind": "free-line",
-          "prompt": "No.1で迷った接続はどこ?"
+          "prompt": "候補問題でも、複線図の1手目は変わる?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "公表問題1の複線図チャプター",
+          "modelAnswer": "変わらない。どの問題でも1手目は接地側(白)を負荷へ直行、2手目は非接地側(黒)をスイッチとコンセントへ。問題ごとに変わるのは3手目以降だけ。",
+          "acceptKeywords": [
+            "変わらない",
+            "白",
+            "黒"
+          ]
+        },
+        {
+          "id": "p3-w7-l3-r2",
+          "kind": "free-line",
+          "prompt": "動画の解説と公式の施工条件が食い違ったら、どちらが正しい?",
+          "sourceResourceId": "official-candidates",
+          "sourceWatch": "PDFのNo.1の単線図と施工条件",
+          "modelAnswer": "公式の候補問題PDFと施工条件が正本。動画は年度違いや別解のことがある。支給材料と施工条件は必ず公式で確認する。",
+          "acceptKeywords": [
+            "公式",
+            "施工条件"
+          ]
         }
       ],
       "practice": {
@@ -2080,7 +2929,15 @@
         {
           "id": "p3-w8-l1-r1",
           "kind": "free-line",
-          "prompt": "前回より落ちた分野は?"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -2125,7 +2982,15 @@
         {
           "id": "p3-w8-l2-r1",
           "kind": "free-line",
-          "prompt": "「後で見直す」はどう操作した?"
+          "prompt": "「後で見直す」はどう操作した? 残り時間はどこに出る?",
+          "sourceResourceId": "official-cbt",
+          "sourceWatch": "CBT体験版の画面。見直しフラグと問題一覧",
+          "modelAnswer": "問題画面で見直しのチェックを付けると問題一覧に目印が付き、一覧からその問題へ戻れる。残り時間は画面の上部に常時表示される。",
+          "acceptKeywords": [
+            "チェック",
+            "一覧",
+            "残り時間"
+          ]
         }
       ],
       "practice": {
@@ -2185,7 +3050,28 @@
         {
           "id": "p3-w8-l3-r1",
           "kind": "free-line",
-          "prompt": "欠陥基準に照らして怪しい箇所は?"
+          "prompt": "提出前に必ず確認する欠陥を3つ。",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧を、自分の作品と1項目ずつ照合するところ",
+          "modelAnswer": "①心線の露出・絶縁被覆の噛み込み ②リングスリーブの刻印違い・二度圧着 ③器具への結線の極性(受金ねじ部が白か)。この3つを毎回同じ順で見る。",
+          "acceptKeywords": [
+            "露出",
+            "刻印",
+            "極性"
+          ]
+        },
+        {
+          "id": "p3-w8-l3-r2",
+          "kind": "free-line",
+          "prompt": "動画がすすめていた作業の進め方は?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "公表問題1の技能解説チャプター。作業の進め方",
+          "modelAnswer": "複線図を描く → 支給材料を確認 → 寸法どおりにケーブルを切る → 器具の結線 → 最後にボックス内の接続。接続を最後にまとめると手戻りが減る。",
+          "acceptKeywords": [
+            "複線図",
+            "寸法",
+            "接続"
+          ]
         }
       ],
       "practice": {
@@ -2234,7 +3120,15 @@
         {
           "id": "p3-w9-l1-r1",
           "kind": "free-line",
-          "prompt": "時間が足りなくなったのはどこから?"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -2265,7 +3159,7 @@
       ],
       "estimatedMinutes": {
         "minimum": 30,
-        "standard": 35,
+        "standard": 40,
         "deep": 50
       },
       "resources": [
@@ -2282,19 +3176,28 @@
         {
           "id": "p3-w9-l2-r1",
           "kind": "free-line",
-          "prompt": "一番弱い科目と、その原因は?"
+          "prompt": "平均点ではなく科目別で見るのはなぜ?",
+          "sourceResourceId": "hozan-point",
+          "sourceWatch": "いちばん弱い科目の出題ポイント",
+          "modelAnswer": "1科目でも直近20問で60%を切っていると、本番でその科目ぶんを丸ごと落としかねない。配線図は50問中20問あるので、ここが弱いと平均では隠せない。",
+          "acceptKeywords": [
+            "科目",
+            "20",
+            "配線図"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
+        "kind": "in-app-questions",
         "targetCount": 10,
-        "instruction": "最弱カテゴリを10問",
-        "scored": true
+        "instruction": "この画面で10問。いちばん弱い科目から出るよ",
+        "scored": true,
+        "questionPool": "weak-topic"
       },
       "officialTopicIds": [],
       "required": true,
       "stepMinutes": {
-        "practice": 20
+        "practice": 8
       }
     },
     {
@@ -2342,7 +3245,15 @@
         {
           "id": "p3-w9-l3-r1",
           "kind": "free-line",
-          "prompt": "No.1と違って難しかったのは?"
+          "prompt": "欠陥判定に部分点はある?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧を、自分の作品と1項目ずつ照合するところ",
+          "modelAnswer": "ない。欠陥が1つでもあれば不合格。だから速さを上げる前に、まず欠陥ゼロで完成させられる形を作る。",
+          "acceptKeywords": [
+            "ない",
+            "1つ",
+            "不合格"
+          ]
         }
       ],
       "practice": {
@@ -2384,7 +3295,15 @@
         {
           "id": "p4-l1-r1",
           "kind": "free-line",
-          "prompt": "今日の失点は知識か時間か。"
+          "prompt": "答え合わせのとき、○×のほかに何を残すと次に効く?",
+          "sourceResourceId": "official-qa",
+          "sourceWatch": "解答PDFで答え合わせをするところ",
+          "modelAnswer": "落とした問題の「科目」と「誤答の理由(知識・計算・読解・図記号・法令・時間)」。当たった問題でも自信が低かったものは誤答と同じ扱いで残す。理由まで残すと、次に何をやり直すかが自動で決まる。",
+          "acceptKeywords": [
+            "科目",
+            "理由",
+            "自信"
+          ]
         }
       ],
       "practice": {
@@ -2413,7 +3332,7 @@
       "prerequisites": [],
       "estimatedMinutes": {
         "minimum": 40,
-        "standard": 45,
+        "standard": 50,
         "deep": 60
       },
       "resources": [
@@ -2430,19 +3349,27 @@
         {
           "id": "p4-l2-r1",
           "kind": "free-line",
-          "prompt": "まだ説明できない項目は?"
+          "prompt": "直前期に新しい教材を足さないのはなぜ?",
+          "sourceResourceId": "hozan-point",
+          "sourceWatch": "誤答が集まっている科目の出題ポイント",
+          "modelAnswer": "残り日数で新しい範囲は仕上がらないうえ、既に取れる範囲の記憶が薄れる。伸びしろが大きいのは「あと少しで取れた問題」なので、誤答の潰し込みに時間を使う。",
+          "acceptKeywords": [
+            "新し",
+            "誤答"
+          ]
         }
       ],
       "practice": {
-        "kind": "external-questions",
+        "kind": "in-app-questions",
         "targetCount": 20,
-        "instruction": "誤答上位20件を解き直す",
-        "scored": true
+        "instruction": "この画面で20問。前に落とした問題と、自信が低かった問題から出るよ",
+        "scored": true,
+        "questionPool": "mistakes"
       },
       "officialTopicIds": [],
       "required": true,
       "stepMinutes": {
-        "practice": 30
+        "practice": 15
       }
     },
     {
@@ -2471,7 +3398,15 @@
         {
           "id": "p4-l3-r1",
           "kind": "free-line",
-          "prompt": "明日の集合時刻と会場は?"
+          "prompt": "当日の持ち物を3つ。",
+          "sourceResourceId": "official-second",
+          "sourceWatch": "受験案内の持ち物・注意事項",
+          "modelAnswer": "受験票、本人確認書類、筆記具(HBの鉛筆またはシャープペンシルと消しゴム)。会場・集合時刻は受験票のとおり。時計の可否は会場の規定を確認する。",
+          "acceptKeywords": [
+            "受験票",
+            "本人確認",
+            "筆記"
+          ]
         }
       ],
       "practice": {
@@ -2500,7 +3435,13 @@
         {
           "id": "p4-l4-r1",
           "kind": "free-line",
-          "prompt": "受験票・本人確認書類・筆記具は持ったか。"
+          "prompt": "受験票・本人確認書類・筆記具は持った?",
+          "modelAnswer": "3つとも手元にあること。受験票と本人確認書類が無ければ受験できない。ここまで来たら、あとは持ち物だけ。",
+          "acceptKeywords": [
+            "受験票",
+            "本人確認",
+            "筆記"
+          ]
         }
       ],
       "practice": {
@@ -2568,7 +3509,28 @@
         {
           "id": "p5-w1-r1",
           "kind": "free-line",
-          "prompt": "自分が一番落としやすい欠陥は?"
+          "prompt": "単位作業を4つ、順に。",
+          "sourceResourceId": "hozan-skill-unit",
+          "sourceWatch": "単位作業のページを上から順に見るところ",
+          "modelAnswer": "①外装・絶縁被覆のはぎ取り ②輪づくり(のの字) ③リングスリーブの圧着 ④器具への結線。候補問題13問はこの4つの組み合わせでできている。",
+          "acceptKeywords": [
+            "はぎ取り",
+            "輪",
+            "圧着",
+            "結線"
+          ]
+        },
+        {
+          "id": "p5-w1-r2",
+          "kind": "free-line",
+          "prompt": "輪づくりの輪は、どちら回りに作る?",
+          "sourceResourceId": "gami-lamp",
+          "sourceWatch": "ランプレセプタクルの結線と輪作りの場面",
+          "modelAnswer": "時計回り。ねじを締める向きと同じにすると、締めたときに輪が閉じる。逆向きだと締めるほど輪が開いて欠陥になる。",
+          "acceptKeywords": [
+            "時計",
+            "ねじ"
+          ]
         }
       ],
       "practice": {
@@ -2642,7 +3604,28 @@
         {
           "id": "p5-c01-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c01-r2",
+          "kind": "free-line",
+          "prompt": "「配線・結線の誤り」で欠陥になるのはどんな状態?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "未接続、極性違い(接地側に黒をつないだ等)、回路が指定と違う結線。1か所でも不合格になる。",
+          "acceptKeywords": [
+            "未接続",
+            "極性",
+            "回路"
+          ]
         }
       ],
       "practice": {
@@ -2714,7 +3697,27 @@
         {
           "id": "p5-c02-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c02-r2",
+          "kind": "free-line",
+          "prompt": "心線に傷をつけてしまった。これは欠陥になる?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "なる。心線を折る・傷つける・断線させるのは欠陥。浅く刃を入れて折り割るのが基本。",
+          "acceptKeywords": [
+            "なる",
+            "傷"
+          ]
         }
       ],
       "practice": {
@@ -2786,7 +3789,28 @@
         {
           "id": "p5-c03-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c03-r2",
+          "kind": "free-line",
+          "prompt": "外装や絶縁被覆のはぎ取りで欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "長さが足りない、剥きすぎて心線が露出している、はぎ取り時に被覆や心線を傷つけた場合。",
+          "acceptKeywords": [
+            "長さ",
+            "露出",
+            "傷"
+          ]
         }
       ],
       "practice": {
@@ -2858,7 +3882,28 @@
         {
           "id": "p5-c04-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c04-r2",
+          "kind": "free-line",
+          "prompt": "圧着マーク(刻印)で欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "本数と太さに合わない刻印を打った場合。1.6mm×2本は「○」、1.6mm×3〜4本と2.0mm×2本は「小」、1.6mm×5〜6本は「中」。",
+          "acceptKeywords": [
+            "刻印",
+            "○",
+            "小"
+          ]
         }
       ],
       "practice": {
@@ -2930,7 +3975,28 @@
         {
           "id": "p5-c05-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c05-r2",
+          "kind": "free-line",
+          "prompt": "圧着そのもので欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "同じスリーブへ二度圧着した、圧着位置がずれている、心線がスリーブから出ていない/出すぎている場合。",
+          "acceptKeywords": [
+            "二度",
+            "位置",
+            "心線"
+          ]
         }
       ],
       "practice": {
@@ -3002,7 +4068,28 @@
         {
           "id": "p5-c06-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c06-r2",
+          "kind": "free-line",
+          "prompt": "差込形コネクタで欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "奥まで差し込めていない、心線が確認窓から露出している場合。差し込んだら必ず窓を見る。",
+          "acceptKeywords": [
+            "奥",
+            "露出",
+            "窓"
+          ]
         }
       ],
       "practice": {
@@ -3074,7 +4161,28 @@
         {
           "id": "p5-c07-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c07-r2",
+          "kind": "free-line",
+          "prompt": "器具の端子で欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "締付けが緩い、端子から心線が露出している、絶縁被覆を噛み込んでいる場合。",
+          "acceptKeywords": [
+            "締付",
+            "露出",
+            "噛み"
+          ]
         }
       ],
       "practice": {
@@ -3146,7 +4254,28 @@
         {
           "id": "p5-c08-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c08-r2",
+          "kind": "free-line",
+          "prompt": "輪づくり(のの字)で欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "巻き方向が逆(ねじを締めると輪が開く)、輪が大きすぎ・小さすぎ、輪が重なっている、心線がねじの頭からはみ出している場合。",
+          "acceptKeywords": [
+            "方向",
+            "大き",
+            "重な"
+          ]
         }
       ],
       "practice": {
@@ -3218,7 +4347,27 @@
         {
           "id": "p5-c09-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c09-r2",
+          "kind": "free-line",
+          "prompt": "接地線で欠陥になるのはどんなとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "緑以外の色を接地線に使った、接続先を間違えた場合。接地線は緑と決まっている。",
+          "acceptKeywords": [
+            "緑",
+            "接続先"
+          ]
         }
       ],
       "practice": {
@@ -3290,7 +4439,27 @@
         {
           "id": "p5-c10-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c10-r2",
+          "kind": "free-line",
+          "prompt": "寸法で欠陥になるのはどこから?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "指定寸法の50%未満になったとき。多少長い短いは許容されるが、半分を切ると欠陥。まずスケールで測ってから切る。",
+          "acceptKeywords": [
+            "50",
+            "半分"
+          ]
         }
       ],
       "practice": {
@@ -3362,7 +4531,28 @@
         {
           "id": "p5-c11-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c11-r2",
+          "kind": "free-line",
+          "prompt": "時間内に完成しなかった作品はどう扱われる?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "未完成として不合格。部分点はない。だから「速く」より先に「必ず完成させる段取り」を作る。",
+          "acceptKeywords": [
+            "未完成",
+            "不合格",
+            "部分点"
+          ]
         }
       ],
       "practice": {
@@ -3434,7 +4624,27 @@
         {
           "id": "p5-c12-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c12-r2",
+          "kind": "free-line",
+          "prompt": "欠陥が1つ見つかった作品はどうなる?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "不合格。欠陥は個数によらず1つでアウト。だから速さより欠陥ゼロを先に作る。",
+          "acceptKeywords": [
+            "不合格",
+            "1つ"
+          ]
         }
       ],
       "practice": {
@@ -3506,7 +4716,28 @@
         {
           "id": "p5-c13-r1",
           "kind": "free-line",
-          "prompt": "今回いちばん手が止まった工程は?"
+          "prompt": "複線図の1手目に引いた線はどれ? 問題が変わっても同じ?",
+          "sourceResourceId": "gami-candidates",
+          "sourceWatch": "この問題の「複線図」チャプター。最初に引く線",
+          "modelAnswer": "電源の接地側(白)を、スイッチを通さず照明器具・コンセント・レセプタクルへ直接。どの候補問題でも1手目は同じ。変わるのは3手目以降のスイッチと負荷の対応だけ。",
+          "acceptKeywords": [
+            "接地側",
+            "白",
+            "直接"
+          ]
+        },
+        {
+          "id": "p5-c13-r2",
+          "kind": "free-line",
+          "prompt": "「配線・結線の誤り」で欠陥になるのはどんな状態?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "欠陥の一覧のうち、今日の作品を照合した項目",
+          "modelAnswer": "未接続、極性違い(接地側に黒をつないだ等)、回路が指定と違う結線。1か所でも不合格になる。",
+          "acceptKeywords": [
+            "未接続",
+            "極性",
+            "回路"
+          ]
         }
       ],
       "practice": {
@@ -3570,7 +4801,15 @@
         {
           "id": "p5-r1-r1",
           "kind": "free-line",
-          "prompt": "前回この題で出た欠陥は? 今回どこを変えた?"
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
+          "acceptKeywords": [
+            "先に読",
+            "工程",
+            "試"
+          ]
         }
       ],
       "practice": {
@@ -3629,7 +4868,15 @@
         {
           "id": "p5-r2-r1",
           "kind": "free-line",
-          "prompt": "前回この題で出た欠陥は? 今回どこを変えた?"
+          "prompt": "2周目で優先して作り直すのは、どんな題?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "欠陥が出た題、45分を超えた題、複線図で迷った題。技能タブの「くり返し出た弱点」が上位に出したものから選ぶ。",
+          "acceptKeywords": [
+            "欠陥",
+            "45",
+            "複線図"
+          ]
         }
       ],
       "practice": {
@@ -3688,7 +4935,15 @@
         {
           "id": "p5-r3-r1",
           "kind": "free-line",
-          "prompt": "前回この題で出た欠陥は? 今回どこを変えた?"
+          "prompt": "欠陥が消えたと言えるのは、どうなったとき?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "同じ題を作り直して、その欠陥が出ずに完成したとき。1回できただけでは手癖は消えていないので、別の題でも同じ工程が出たら確認する。",
+          "acceptKeywords": [
+            "作り直",
+            "出ず",
+            "完成"
+          ]
         }
       ],
       "practice": {
@@ -3736,7 +4991,16 @@
         {
           "id": "p5-w6-r1",
           "kind": "free-line",
-          "prompt": "40分を超えた原因は段取りか作業か?"
+          "prompt": "40分に収めるための作業順は?",
+          "sourceResourceId": "hozan-skill-process",
+          "sourceWatch": "施工順序のページ。40分に収めるための順番",
+          "modelAnswer": "複線図(5分ほど) → 支給材料の確認 → 寸法どおりに切断・はぎ取り → 器具の結線 → 最後にボックス内の接続 → 見直し。接続を最後にまとめると手戻りが減る。",
+          "acceptKeywords": [
+            "複線図",
+            "切断",
+            "結線",
+            "接続"
+          ]
         }
       ],
       "practice": {
@@ -3769,7 +5033,12 @@
         {
           "id": "p6-l1-r1",
           "kind": "free-line",
-          "prompt": "今日の欠陥候補は?"
+          "prompt": "今日の欠陥候補は?",
+          "modelAnswer": "自分の記録で繰り返している欠陥。技能タブの「くり返し出た弱点」に出ている項目が、そのまま今日の見張り所になる。",
+          "acceptKeywords": [
+            "繰り返",
+            "弱点"
+          ]
         }
       ],
       "practice": {
@@ -3818,7 +5087,14 @@
         {
           "id": "p6-l2-r1",
           "kind": "free-line",
-          "prompt": "工具は全部あるか。圧着工具は JIS C 9711 適合か。"
+          "prompt": "工具は全部ある? 圧着工具の適合規格は?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "自分が繰り返している欠陥の項目",
+          "modelAnswer": "JIS C 9711適合(柄が黄色)のリングスリーブ用圧着工具。ほかにペンチ、ドライバ(＋・−)、電工ナイフ、スケール、ウォータポンププライヤ。電動工具は不可。",
+          "acceptKeywords": [
+            "9711",
+            "黄色"
+          ]
         }
       ],
       "practice": {
@@ -3859,7 +5135,15 @@
         {
           "id": "p6-l3-r1",
           "kind": "free-line",
-          "prompt": "明日の会場・集合時刻・持ち物は?"
+          "prompt": "明日の会場・集合時刻・持ち物は?",
+          "sourceResourceId": "official-second",
+          "sourceWatch": "受験案内の持ち物・注意事項",
+          "modelAnswer": "受験票に記載の会場と集合時刻。持ち物は受験票、本人確認書類、指定工具一式、筆記具。工具は前日に並べて写真を撮っておくと当日迷わない。",
+          "acceptKeywords": [
+            "受験票",
+            "工具",
+            "会場"
+          ]
         }
       ],
       "practice": {
@@ -3896,7 +5180,15 @@
         {
           "id": "p6-l4-r1",
           "kind": "free-line",
-          "prompt": "提出前に見る欠陥チェックの順番は?"
+          "prompt": "提出前に見る欠陥チェックの順番は?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "完成後に確認する順番を3つだけ決めるところ",
+          "modelAnswer": "①寸法(指定の50%未満になっていないか) ②心線の露出・絶縁被覆の噛み込み ③圧着の刻印と器具の極性。毎回この3つを同じ順で見る。",
+          "acceptKeywords": [
+            "寸法",
+            "露出",
+            "刻印"
+          ]
         }
       ],
       "practice": {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { curriculum, resources, topicName, topics } from '../../data';
+import { curriculum, getQuestion, resources, topicName, topics } from '../../data';
 import { repo } from '../../db/repo';
 import {
   ERROR_REASON_LABEL,
@@ -27,7 +27,18 @@ export function AcademicPage({
 }: {
   onOpenLesson: (id: string, mode: LessonMode) => void;
 }) {
-  const { snapshot, schedule, onboarding, topicStats, academicGate, reviewQueue, reload } = useVault();
+  const {
+    snapshot,
+    schedule,
+    onboarding,
+    topicStats,
+    academicGate,
+    reviewQueue,
+    topicCoverage,
+    overallCoverage,
+    coverageGaps,
+    reload,
+  } = useVault();
   const [sheet, setSheet] = useState<{ kind: ExamKind; count: number } | undefined>();
   const [showCurriculum, setShowCurriculum] = useState(false);
 
@@ -131,6 +142,50 @@ export function AcademicPage({
         </table>
       </div>
 
+      <h2>出題範囲マップ</h2>
+      <div className="card">
+        <p className="muted">
+          <strong>「レッスンを何本やったか」ではなく「試験に出る項目を何個押さえたか」。</strong>
+          1項目は<strong>レッスンを完了</strong>して、その項目の問題に<strong>1問でも正解</strong>したら埋まる。
+          学科50問の重みで数えているから、配線図(20問ぶん)が空だと数字は伸びないよ。
+        </p>
+        <p className="badge badge--ok">
+          範囲カバー {Math.round(overallCoverage * 100)}%
+        </p>
+        <div style={{ marginTop: 10 }}>
+          {topicCoverage.map((c) => (
+            <div className="coverage-row" key={c.topicId}>
+              <span className="coverage-row__name">
+                {topicName(c.topicId)}
+                <span className="muted">
+                  {' '}
+                  ({c.confirmedCount}/{c.items.length}項目・本番{Math.round(c.weight)}問ぶん)
+                </span>
+              </span>
+              <span className="coverage-bar" aria-hidden="true">
+                <span style={{ width: `${Math.round(c.ratio * 100)}%` }} />
+              </span>
+              <span className="coverage-row__value">{Math.round(c.ratio * 100)}%</span>
+            </div>
+          ))}
+        </div>
+        {coverageGaps.length > 0 && (
+          <div style={{ marginTop: 14 }}>
+            <strong>次に埋める穴</strong>
+            <ul className="plain stack" style={{ marginTop: 6 }}>
+              {coverageGaps.map((g) => (
+                <li key={g.item.id} className="muted">
+                  {topicName(g.item.topicId)}｜{g.item.name} —{' '}
+                  {g.taught && !g.confirmed
+                    ? 'レッスンは終わってる。あと1問正解すれば埋まる！'
+                    : 'まだレッスンが残ってる'}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
       <h2>リベンジ問題</h2>
       <div className="card">
         {reviewQueue.length === 0 ? (
@@ -148,7 +203,9 @@ export function AcademicPage({
               {reviewQueue.slice(0, 10).map((item) => (
                 <li key={item.attempt.id} className="stack" style={{ marginBottom: 12 }}>
                   <span>
-                    {topicName(item.attempt.topicId)} — {item.attempt.questionRef}
+                    {topicName(item.attempt.topicId)} —{' '}
+                    {/* アプリ内出題は questionRef が問題ID。IDのままでは何の問題か分からない */}
+                    {getQuestion(item.attempt.questionRef)?.stem ?? item.attempt.questionRef}
                     <br />
                     <span className="muted">
                       {REVIEW_REASON_LABEL[item.reason]}

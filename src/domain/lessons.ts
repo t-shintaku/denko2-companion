@@ -13,6 +13,7 @@ import type {
   CurriculumLesson,
   LessonMode,
   LessonProgress,
+  RecallMark,
 } from './types';
 
 export type LessonStep = 'input' | 'recall' | 'practice' | 'takeaway';
@@ -98,6 +99,7 @@ export function applyStep(
   payload: {
     mode?: LessonMode;
     recallAnswers?: string[];
+    recallSelfMarks?: (RecallMark | undefined)[];
     practiceNote?: string;
     practiceCorrect?: number;
     practiceTotal?: number;
@@ -119,6 +121,8 @@ export function applyStep(
     case 'recall':
       base.recallSubmittedAt = stamp;
       base.recallAnswers = payload.recallAnswers ?? [];
+      // 未採点(undefined)は 'partial' として残す。「思い出せたことにする」より安全側
+      base.recallSelfMarks = (payload.recallSelfMarks ?? []).map((m) => m ?? 'partial');
       break;
     case 'practice':
       base.practiceSubmittedAt = stamp;

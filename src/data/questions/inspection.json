@@ -1,0 +1,348 @@
+[
+  {
+    "id": "q-in-001",
+    "lessonId": "p0-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "pino-earth",
+    "sourceWatch": "接地(アース)が何のためにあるかを実物で説明する場面",
+    "stem": "機器が漏電したとき、接地(アース)がつながっていることで起きることはどれか。",
+    "choices": [
+      "漏れた電流が大地へ流れ、漏電遮断器が動作して電源が切れる",
+      "漏れた電流が機器の中に閉じ込められる",
+      "機器の消費電力が下がる",
+      "電圧が自動的に下がる"
+    ],
+    "answerIndex": 0,
+    "explanation": "接地は電流の逃げ道を作る。逃げ道があるから漏電遮断器が「行きと帰りの差」を検出でき、電源を切れる。",
+    "origin": "original",
+    "syllabusIds": ["in-earth-resistance"]
+  },
+  {
+    "id": "q-in-002",
+    "lessonId": "p0-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "pino-earth",
+    "sourceWatch": "接地抵抗の値が小さいほうがよい理由を説明する場面",
+    "stem": "接地抵抗の値は小さいほうがよいとされる理由はどれか。",
+    "choices": [
+      "地絡電流が流れやすく、機器の金属部分の電位上昇を抑えられるから",
+      "電気料金が安くなるから",
+      "電線を細くできるから",
+      "機器の効率が上がるから"
+    ],
+    "answerIndex": 0,
+    "explanation": "接地抵抗が大きいと電流が逃げにくく、外箱に触れた人に電圧がかかる。小さいほど人が感電しにくい。",
+    "origin": "original",
+    "syllabusIds": ["in-earth-resistance"]
+  },
+  {
+    "id": "q-in-003",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "pino-insulation",
+    "sourceWatch": "絶縁抵抗が何を測っているのかを実物の測定器で見せる場面",
+    "stem": "絶縁抵抗の測定で調べているのはどれか。",
+    "choices": [
+      "電路と大地の間、および電線相互間の絶縁の良し悪し",
+      "電路に流れている電流の大きさ",
+      "接地極と大地の間の抵抗",
+      "電線の長さ"
+    ],
+    "answerIndex": 0,
+    "explanation": "絶縁抵抗は「漏れていないか」を見る。接地極と大地の間を見るのは接地抵抗で、測定器も目的も別物。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-004",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「絶縁抵抗値」の数値表",
+    "stem": "使用電圧100V(対地電圧100V)の電路に必要な絶縁抵抗値は何MΩ以上か。",
+    "choices": ["0.1MΩ", "0.2MΩ", "0.4MΩ", "1.0MΩ"],
+    "answerIndex": 0,
+    "explanation": "300V以下で対地電圧150V以下なら0.1MΩ以上。150V超300V以下は0.2MΩ、300V超は0.4MΩ。3段階で覚える。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-005",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「絶縁抵抗値」の数値表",
+    "stem": "使用電圧200V(対地電圧200V)の電路に必要な絶縁抵抗値は何MΩ以上か。",
+    "choices": ["0.2MΩ", "0.1MΩ", "0.4MΩ", "0.6MΩ"],
+    "answerIndex": 0,
+    "explanation": "300V以下で対地電圧が150Vを超えるので0.2MΩ以上。単相3線式200Vの機器はここに当たる。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-006",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「絶縁抵抗値」の数値表",
+    "stem": "使用電圧400Vの電路に必要な絶縁抵抗値は何MΩ以上か。",
+    "choices": ["0.4MΩ", "0.2MΩ", "0.1MΩ", "1.0MΩ"],
+    "answerIndex": 0,
+    "explanation": "300Vを超える電路は0.4MΩ以上。0.1・0.2・0.4 と、電圧が上がるほど厳しくなる並びで覚える。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-007",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-3",
+    "sourceWatch": "絶縁抵抗計の測り方を試験問題として整理する場面",
+    "stem": "絶縁抵抗を測定するときの準備として正しいのはどれか。",
+    "choices": [
+      "測定する電路を停電させ、負荷側の機器を外すか開閉器を切る",
+      "通電したまま測定する",
+      "接地線を外してから測定する",
+      "測定前に電路を短絡する"
+    ],
+    "answerIndex": 0,
+    "explanation": "絶縁抵抗計は自ら直流電圧をかけて測る。通電したままでは正しく測れず危険。必ず停電させる。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-008",
+    "lessonId": "p2-w4-l2",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-3",
+    "sourceWatch": "絶縁抵抗の測定が困難なときの扱いを説明する場面",
+    "stem": "電路を停電させて絶縁抵抗を測定することが困難な場合、漏えい電流は何mA以下であればよいか。",
+    "choices": ["1mA", "10mA", "30mA", "0.1mA"],
+    "answerIndex": 0,
+    "explanation": "やむを得ず通電状態で確認する場合は漏えい電流1mA以下。クランプ形漏れ電流計で測る。",
+    "origin": "original",
+    "syllabusIds": ["in-insulation"]
+  },
+  {
+    "id": "q-in-009",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「検査」の節。竣工検査の順序",
+    "stem": "低圧屋内配線の竣工検査で、一般的な実施順序として正しいのはどれか。",
+    "choices": [
+      "目視点検 → 絶縁抵抗測定 → 接地抵抗測定 → 導通試験",
+      "導通試験 → 目視点検 → 絶縁抵抗測定 → 接地抵抗測定",
+      "絶縁抵抗測定 → 目視点検 → 導通試験 → 接地抵抗測定",
+      "接地抵抗測定 → 導通試験 → 目視点検 → 絶縁抵抗測定"
+    ],
+    "answerIndex": 0,
+    "explanation": "まず見る、次に絶縁、次に接地、最後に導通。通電してからの動作試験はそのあと。「見る→絶縁→接地→導通」で覚える。",
+    "origin": "original",
+    "syllabusIds": ["in-order"]
+  },
+  {
+    "id": "q-in-010",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「検査」の節。目視点検で見るもの",
+    "stem": "竣工検査の目視点検で確認する内容として、適切でないのはどれか。",
+    "choices": [
+      "電路の絶縁抵抗値",
+      "電線の接続部の状態",
+      "器具の取付け状態",
+      "接地線の取付け状態"
+    ],
+    "answerIndex": 0,
+    "explanation": "絶縁抵抗値は測定器がなければ分からないので目視では確認できない。目視は「見て分かること」だけ。",
+    "origin": "original",
+    "syllabusIds": ["in-order"]
+  },
+  {
+    "id": "q-in-011",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "hozan-method",
+    "sourceWatch": "「検査」の節。通電後に行う試験",
+    "stem": "竣工検査で、通電したあとに行う試験はどれか。",
+    "choices": ["動作試験", "絶縁抵抗測定", "導通試験", "目視点検"],
+    "answerIndex": 0,
+    "explanation": "スイッチを操作して器具が正しく動くかを見る動作試験は通電後。絶縁抵抗測定は停電させて行う。",
+    "origin": "original",
+    "syllabusIds": ["in-order"]
+  },
+  {
+    "id": "q-in-012",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "どの計測器で何を測るかを並べて紹介する場面",
+    "stem": "電路が充電されているかどうかを調べる器具はどれか。",
+    "choices": ["検電器", "検相器", "回路計", "接地抵抗計"],
+    "answerIndex": 0,
+    "explanation": "検電器は充電の有無を調べる。検相器は三相の相順、回路計は電圧・抵抗・導通を測る。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-013",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "どの計測器で何を測るかを並べて紹介する場面",
+    "stem": "三相電源の相順(相回転)を調べる器具はどれか。",
+    "choices": ["検相器", "検電器", "クランプメータ", "絶縁抵抗計"],
+    "answerIndex": 0,
+    "explanation": "検相器で相順を確認する。相順が違うと三相誘導電動機が逆回転する。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-014",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-2",
+    "sourceWatch": "クランプメータの使い方を説明する場面",
+    "stem": "クランプメータで負荷電流を測定するときの使い方として正しいのはどれか。",
+    "choices": [
+      "測定したい1本の電線だけをクランプで挟む",
+      "回路の電線2本をまとめて挟む",
+      "電線を切断して直列に接続する",
+      "電線の被覆をはいでから挟む"
+    ],
+    "answerIndex": 0,
+    "explanation": "負荷電流は1本だけ挟む。2本まとめて挟むと行きと帰りが打ち消し合い、漏れ電流しか出ない。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-015",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-2",
+    "sourceWatch": "クランプメータの使い方を説明する場面。漏れ電流の測り方",
+    "stem": "クランプメータで漏れ電流を測定するときの使い方として正しいのはどれか。",
+    "choices": [
+      "その回路の電線をすべてまとめて挟む",
+      "1本だけ挟む",
+      "接地線だけを挟むことはできない",
+      "電源を切ってから挟む"
+    ],
+    "answerIndex": 0,
+    "explanation": "全線をまとめて挟むと行きと帰りが打ち消され、残った差が漏れ電流。負荷電流のときと挟み方が逆になる。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-016",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "電流計・電圧計のつなぎ方を説明する場面",
+    "stem": "回路に電流計と電圧計を接続する方法として正しいのはどれか。",
+    "choices": [
+      "電流計は負荷と直列、電圧計は負荷と並列",
+      "電流計は負荷と並列、電圧計は負荷と直列",
+      "どちらも直列",
+      "どちらも並列"
+    ],
+    "answerIndex": 0,
+    "explanation": "電流計は流れを測るので直列、電圧計は電位差を測るので並列。逆につなぐと計器を壊す。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-017",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "測定器の種類を紹介する場面。電力量計",
+    "stem": "電力量を測定する計器はどれか。",
+    "choices": ["電力量計", "電力計", "回路計", "検相器"],
+    "answerIndex": 0,
+    "explanation": "電力計は「そのときの電力(W)」、電力量計は「使った量(kW·h)」。何を測る計器かを対で押さえる。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-018",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "測定器の種類を紹介する場面。回路計(テスタ)",
+    "stem": "アナログ形の回路計(テスタ)で抵抗を測定する前に必ず行う操作はどれか。",
+    "choices": [
+      "テストリード棒を短絡して0Ωに調整する",
+      "電源を入れたまま測定する",
+      "電圧レンジで測定する",
+      "電池を外す"
+    ],
+    "answerIndex": 0,
+    "explanation": "抵抗測定は内蔵電池を使うので、測定前に0Ω調整をする。電池が弱ると値がずれる。",
+    "origin": "original",
+    "syllabusIds": ["in-meter"]
+  },
+  {
+    "id": "q-in-019",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "導通試験の目的を説明する場面",
+    "stem": "導通試験の目的として、適切でないのはどれか。",
+    "choices": [
+      "電路と大地の間の絶縁が保たれているかを調べる",
+      "電線の断線がないかを調べる",
+      "器具への結線が正しく行われているかを調べる",
+      "配線の誤接続がないかを調べる"
+    ],
+    "answerIndex": 0,
+    "explanation": "絶縁の良し悪しを見るのは絶縁抵抗測定。導通試験は「つながっているべきところがつながっているか」を見る。",
+    "origin": "original",
+    "syllabusIds": ["in-continuity"]
+  },
+  {
+    "id": "q-in-020",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-1",
+    "sourceWatch": "導通試験に使う器具を紹介する場面",
+    "stem": "導通試験に使用できる器具はどれか。",
+    "choices": ["回路計(テスタ)の抵抗レンジ", "絶縁抵抗計の高圧レンジ", "検相器", "電力量計"],
+    "answerIndex": 0,
+    "explanation": "回路計の抵抗レンジや専用の導通試験器を使う。絶縁抵抗計は高い電圧をかけるので導通確認には使わない。",
+    "origin": "original",
+    "syllabusIds": ["in-continuity"]
+  },
+  {
+    "id": "q-in-021",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-2",
+    "sourceWatch": "接地抵抗の測り方を説明する場面。補助接地極の置き方",
+    "stem": "接地抵抗計で接地抵抗を測定するときの補助接地極の配置として正しいのはどれか。",
+    "choices": [
+      "被測定接地極と2本の補助接地極を、ほぼ一直線に約10m間隔で配置する",
+      "3本を三角形に密集させて配置する",
+      "補助接地極は1本でよい",
+      "補助接地極は被測定接地極の真上に置く"
+    ],
+    "answerIndex": 0,
+    "explanation": "被測定極・補助極P・補助極Cをほぼ一直線に約10m間隔。近づけすぎると正しい値にならない。",
+    "origin": "original",
+    "syllabusIds": ["in-earth-resistance"]
+  },
+  {
+    "id": "q-in-022",
+    "lessonId": "p2-w4-l3",
+    "topicId": "inspection",
+    "sourceResourceId": "gami-inspect-2",
+    "sourceWatch": "接地抵抗の測り方を説明する場面",
+    "stem": "接地抵抗を測定する計器はどれか。",
+    "choices": ["接地抵抗計(アーステスタ)", "絶縁抵抗計(メガー)", "クランプメータ", "検相器"],
+    "answerIndex": 0,
+    "explanation": "接地抵抗は接地抵抗計。名前が似ている絶縁抵抗計は別物で、測る対象も接続方法も違う。",
+    "origin": "original",
+    "syllabusIds": ["in-earth-resistance"]
+  }
+]

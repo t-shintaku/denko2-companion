@@ -56,6 +56,25 @@ export type Topic = {
   approxQuestions: number;
 };
 
+/**
+ * 出題範囲の1項目。**「ツール通りにやれば合格ラインに乗る」を検査可能にするための単位**。
+ *
+ * 公式の「学科試験の科目及び範囲」を、教える単位まで割ったもの。
+ * 各項目には必ず (1) 教えるレッスン と (2) 確かめる問題 がある。
+ * どちらか欠けた項目が1つでもあれば、そこは「動画は見たが確認していない」穴になる。
+ * テストで機械的に落とす。
+ */
+export type SyllabusItem = {
+  id: string;
+  topicId: TopicId;
+  /** 出題項目の名前 */
+  name: string;
+  /** 学科50問中、この項目がおおよそ何問を占めるかの目安 */
+  weight: number;
+  /** 技能試験にも直結する項目か。学科で落としても技能で戻ってくる */
+  alsoSkill?: boolean;
+};
+
 /** 値の出どころ。UI で必ず区別して表示する(AT-001 / §13 信頼性) */
 export type ValueSource = 'official' | 'derived' | 'user';
 
@@ -183,6 +202,15 @@ export type LessonResourceRef = {
   minutes?: number;
 };
 
+/**
+ * 「見ないで思い出す」の1問。
+ *
+ * **必ず、そのレッスンの「まず見る」で見た中身から出す。**
+ * 以前は自由記述の感想欄に近く、見た教材で扱っていない話も混ざっていた。
+ * 見た直後に答えられない問いは、思い出す練習ではなく別の勉強を要求している。
+ * そこで参照元(sourceResourceId)・見た場所(sourceWatch)・模範解答(modelAnswer)を必須で持つ。
+ * 模範解答が書けない問いは、教材から答えを取り出せていない証拠なので載せない。
+ */
 export type RecallPrompt = {
   id: string;
   /** 選択式 / 穴埋め / 1行 / 音声メモ(FR-007) */
@@ -190,6 +218,46 @@ export type RecallPrompt = {
   prompt: string;
   choices?: string[];
   answerHint?: string;
+  /** どの教材で見た話か。そのレッスンの resources に必ず含まれる */
+  sourceResourceId: string;
+  /** その教材のどこで扱われたか。LessonResourceRef.watch と対応させる */
+  sourceWatch: string;
+  /** 答え合わせに出す模範解答。「見てから答えられる」ことの担保 */
+  modelAnswer: string;
+  /** 自己採点の手掛かり。この語が言えていれば○ */
+  acceptKeywords: string[];
+};
+
+/** 見ないで思い出すの自己採点。○=言えた / △=半分 / ×=出てこない */
+export type RecallMark = 'ok' | 'partial' | 'miss';
+
+/**
+ * アプリ内の自作4択問題。
+ *
+ * **公式過去問の本文は収録しない**(著作権。official-qa の copyrightNote を参照)。
+ * ここに入るのは、そのレッスンで見た教材の内容から本ツールが書き起こした自作問題だけ。
+ * 出典を辿れるよう sourceResourceId / sourceWatch を必須にしてある。
+ */
+export type QuizQuestion = {
+  id: string;
+  /** どのレッスンで見た内容から作ったか */
+  lessonId: string;
+  topicId: TopicId;
+  /** その内容を扱っていた教材。レッスンの resources に含まれる */
+  sourceResourceId: string;
+  /** 教材のどこで扱われたか */
+  sourceWatch: string;
+  stem: string;
+  /** 4択。順番はそのまま出す */
+  choices: string[];
+  /** 正解の添字(0始まり) */
+  answerIndex: number;
+  /** なぜそれが正解か。間違えた直後に読む1〜3行 */
+  explanation: string;
+  /** 常に 'original'。過去問の転載でないことを型と検査で担保する */
+  origin: 'original';
+  /** この問題が担保する出題項目(syllabus-2026-h2.json の id) */
+  syllabusIds: string[];
 };
 
 export type PracticeKind =
@@ -212,6 +280,20 @@ export type PracticeSpec = {
    */
   candidateNo?: number;
   instruction: string;
+  /**
+   * アプリ内で出す自作問題(kind === 'in-app-questions')。
+   * **そのレッスンの「まず見る」で見た内容から作った問題だけ**を並べる。
+   * 復習で戻す問題(前の週で見た内容)も混ぜてよいが、混ぜた分は必ず
+   * 過去のレッスンで見ている。見ていない内容は出さない。
+   */
+  questionIds?: string[];
+  /**
+   * 固定の問題番号ではなく、その時点の記録から選ぶ出題。
+   * 'mistakes' = 落とした問題・自信が低かった問題から。
+   * 'weak-topic' = 直近の正答率がいちばん低い科目から。
+   * 直前期の誤答潰しは、何を落としたかが人によって違うのでここを動的にする。
+   */
+  questionPool?: 'mistakes' | 'weak-topic';
   /** 外部教材へ誘導する場合の参照先 */
   resourceIds?: string[];
   /** その教材の**どこで**解く／作るのか。リンクだけ置くと開いた先で迷う */
@@ -349,6 +431,12 @@ export type LessonProgress = {
   inputViewedAt?: IsoDateTime;
   recallSubmittedAt?: IsoDateTime;
   recallAnswers?: string[];
+  /**
+   * 模範解答と見比べた自己採点。recallPrompts と同じ並び。
+   * **合格準備度には入れない**(自己申告の自由記述なので、科目別正答率を汚す)。
+   * 使い道は「明日もう一度言う」リストの生成だけ。
+   */
+  recallSelfMarks?: RecallMark[];
   practiceSubmittedAt?: IsoDateTime;
   practiceNote?: string;
   practiceCorrect?: number;
