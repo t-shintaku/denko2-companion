@@ -71,6 +71,32 @@ describe('見ないで思い出す ↔ まず見る', () => {
     expect(intro.recallPrompts.map((p) => p.prompt).join('\n')).not.toMatch(/水|電力/);
   });
 
+  // 実物の教材を開いて確かめた事実の固定。
+  // gami-diagram(15:37)に3路の節は無く、gami-design は説明欄のとおり「幹線設計」1本で
+  // 単相3線式・電圧降下・需要率を扱わない。無い節を指す道案内へ戻さないための杭。
+  it('3路スイッチは、実際に3路を載せている教材から出す', () => {
+    const l = lessonById.get('p2-w6-l3')!;
+    expect(l.resources.find((r) => r.use === 'first')?.resourceId).toBe('hozan-figure');
+    for (const p of l.recallPrompts) {
+      expect(p.sourceResourceId, `${p.id}`).toBe('hozan-figure');
+    }
+    const guides = l.resources.map((r) => `${r.where} ${r.watch} ${r.stop}`).join('\n');
+    expect(guides).not.toMatch(/3路スイッチの節|「3路スイッチ」の作図例/);
+  });
+
+  it('単相3線式・電圧降下は、幹線設計の動画を出どころにしない', () => {
+    const banned = new Set(['q-dd-015', 'q-dd-016', 'q-dd-017', 'q-dd-018', 'q-dd-019']);
+    for (const id of banned) {
+      expect(questionById.get(id)?.sourceResourceId, id).toBe('hozan-theory');
+    }
+    const l = lessonById.get('p2-w6-l4')!;
+    for (const p of l.recallPrompts) {
+      expect(p.sourceResourceId, `${p.id}`).not.toBe('gami-design');
+    }
+    const guides = l.resources.map((r) => `${r.where} ${r.watch} ${r.stop}`).join('\n');
+    expect(guides).not.toMatch(/単相3線式と電圧降下の節/);
+  });
+
   it('模範解答に絶対日付を焼き込んでいない(受験日から再計算できる)', () => {
     const text = lessons.flatMap((l) => l.recallPrompts.map((p) => p.modelAnswer)).join('\n');
     expect(/\d{4}-\d{2}-\d{2}/.test(text)).toBe(false);

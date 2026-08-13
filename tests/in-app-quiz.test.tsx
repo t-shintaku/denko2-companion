@@ -335,7 +335,9 @@ describe('リベンジ問題(学科タブ)', () => {
       choices.find((b) => b.textContent!.includes(target.choices[target.answerIndex]!))!,
     );
 
-    await screen.findByText(/リベンジ成功！/);
+    // 全体実行では IndexedDB の書き込み待ちで既定5秒に間に合わないことがあった。
+    // 単体では通るのに全スイートで落ちる=テスト側の待ち不足なので、待ち時間だけ延ばす。
+    await screen.findByText(/リベンジ成功！/, undefined, { timeout: 15000 });
     await waitFor(async () => {
       const row = (await repo.load()).questionAttempts[0]!;
       expect(row.reviewCount).toBe(1);

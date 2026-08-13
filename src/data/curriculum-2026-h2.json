@@ -2461,26 +2461,33 @@
       },
       "resources": [
         {
-          "resourceId": "gami-diagram",
+          "resourceId": "hozan-figure",
           "use": "first",
-          "where": "動画の3路スイッチの節まで送る",
-          "watch": "3路2個で1灯を点滅させる結線",
-          "stop": "動画の最後まで見たら閉じる",
+          "where": "複線図の一問一答を1問目から送る",
+          "watch": "問1と問3。3路スイッチを含む回路の複線図と、電線本数の数え方",
+          "stop": "問1と問3の解説を読んだら閉じる。残りの問はPhase 3で使う"
+        },
+        {
+          "resourceId": "gami-diagram",
+          "use": "more",
+          "where": "動画をそのまま再生する",
+          "watch": "複線図化の4STEP。3路そのものの節は無いので、描く手順の型だけ持ち帰る",
+          "stop": "15分37秒。最後まで見たら閉じる",
           "minutes": 12
         },
         {
           "resourceId": "hozan-figure-basic",
           "use": "more",
-          "where": "ページ内「3路スイッチ」の作図例",
-          "watch": "0番端子と1・3番端子の使い分け",
-          "stop": "4路が出たら止める。二種では優先度が低い"
+          "where": "初級編1-1と1-2",
+          "watch": "接地側を先に描く基本形と、わたり線の考え方。3路は扱っていない",
+          "stop": "1-2まで見たら閉じる"
         },
         {
           "resourceId": "hozan-diagram-video",
           "use": "stuck",
-          "where": "動画の3路の説明まで送る",
-          "watch": "同じ結線を別の説明で",
-          "stop": "3路が描けたら止める",
+          "where": "動画を冒頭から再生する(チャプター無し)",
+          "watch": "同じ描き方を別の説明で。3回詰まったときだけ",
+          "stop": "描く順番がつかめたら止める",
           "minutes": 10
         }
       ],
@@ -2489,8 +2496,8 @@
           "id": "p2-w6-l3-r1",
           "kind": "free-line",
           "prompt": "3路スイッチの0番端子には何をつなぐ?",
-          "sourceResourceId": "gami-diagram",
-          "sourceWatch": "3路スイッチの節。0番端子と1・3番端子の使い分け",
+          "sourceResourceId": "hozan-figure",
+          "sourceWatch": "問1と問3の解説。3路スイッチの結線",
           "modelAnswer": "片方の3路の0番に電源の非接地側(黒)、もう片方の3路の0番から照明へ。1番どうし・3番どうしを結ぶのが渡り線。",
           "acceptKeywords": [
             "0番",
@@ -2502,8 +2509,8 @@
           "id": "p2-w6-l3-r2",
           "kind": "free-line",
           "prompt": "3路スイッチ2個の間に必要な電線は何本?",
-          "sourceResourceId": "hozan-figure-basic",
-          "sourceWatch": "「3路スイッチ」の作図例",
+          "sourceResourceId": "hozan-figure",
+          "sourceWatch": "問1の解説。3路どうしを結ぶ電線の数え方",
           "modelAnswer": "2本。1番どうしと3番どうしを結ぶ。0番はそれぞれ電源側・負荷側へ出るのでここには来ない。",
           "acceptKeywords": [
             "2"
@@ -2514,10 +2521,10 @@
         "kind": "wiring-diagram",
         "instruction": "3路スイッチの複線図を1枚。そのあと確認クイズ6問",
         "resourceIds": [
-          "hozan-figure-basic"
+          "hozan-figure"
         ],
         "scored": false,
-        "where": "3路スイッチの作図例と同じ回路を、見ずに描く",
+        "where": "問1の3路回路を、解説を閉じてから見ずに描く",
         "questionIds": [
           "q-wd-046",
           "q-wd-047",
@@ -2571,9 +2578,9 @@
         {
           "resourceId": "hozan-theory",
           "use": "more",
-          "where": "電気理論の一問一答を送り、直列・並列回路の問題を開く",
-          "watch": "合成抵抗・電力・交流を問う問題の式と解説",
-          "stop": "直列・並列を各3問解いたら閉じる"
+          "where": "電気理論の一問一答を1問目から送る",
+          "watch": "直列・並列の合成抵抗、そのあと問10(単相3線式の断線)と問12(電圧降下)の解説",
+          "stop": "問12の電圧降下まで解いたら閉じる"
         },
         {
           "resourceId": "jemc-ohm",
@@ -2586,9 +2593,9 @@
         {
           "resourceId": "gami-design",
           "use": "more",
-          "where": "動画の単相3線式と電圧降下の節まで送る",
-          "watch": "単相3線式の100V/200Vの取り出し方、中性線の扱い、電圧降下の式",
-          "stop": "式を3つ(単相2線式・単相3線式・三相3線式)書き出せたら止める",
+          "where": "動画をそのまま再生する",
+          "watch": "幹線設計を1本にまとめた回。許容電流→減少係数→分岐回路→幹線用遮断器の順。需要率は扱っていない",
+          "stop": "23分40秒の次回予告で閉じる",
           "minutes": 10
         }
       ],
@@ -2610,8 +2617,8 @@
           "id": "p2-w6-l4-r2",
           "kind": "free-line",
           "prompt": "電圧降下の式を、配電方式3つぶん。",
-          "sourceResourceId": "gami-design",
-          "sourceWatch": "電圧降下の節。配電方式ごとの式",
+          "sourceResourceId": "hozan-theory",
+          "sourceWatch": "問12(電圧降下)の解説。単相2線式の式を確かめてから、残り2つを思い出す",
           "modelAnswer": "単相2線式 e=2Ir、単相3線式(電圧線と中性線間) e=Ir、三相3線式 e=√3Ir。2・1・√3 の並びで覚える。",
           "acceptKeywords": [
             "2Ir",
