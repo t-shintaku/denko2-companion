@@ -255,7 +255,7 @@ export function LessonPage({
       <div className="card">
         <div className="field">
           <label htmlFor="actual-minutes">
-            この段階にかかった時間(分)
+            このステップにかかった時間(分)
             {upcoming ? ` — ${STEP_LABEL[upcoming]}` : ''}
           </label>
           <div className="row">
@@ -274,32 +274,32 @@ export function LessonPage({
               className="btn-sm"
               onClick={() => setActualMinutes(String(measuredMinutes()))}
             >
-              計測値を使う
+              タイマーの時間を入れる
             </button>
           </div>
           <p className="muted">
-            <strong>段階を保存するたびに、その段階ぶんの時間が記録される。</strong>
-            今日は「見る」だけで閉じてよく、その時間は消えない。空欄なら実測値を使う。
-            記録するのは見積({upcoming ? stepMinutes(lesson, mode, upcoming) : 0}分)ではなく実績。
+            <strong>1ステップ終わるたびに、がんばった時間を残せる。</strong>
+            今日は「まず見る」だけでもOK。そこまでの時間はちゃんと残る。空欄ならタイマーの時間を使うよ。
+            目安は{upcoming ? stepMinutes(lesson, mode, upcoming) : 0}分。記録には実際にかかった時間が入る。
             {countsAsBasics(lesson)
-              ? ' この時間は基礎学習180分に算入される。'
-              : ' このレッスンは入口段階なので、基礎学習180分には算入しない。'}
+              ? ' この時間は基礎トレ180分にもプラス！'
+              : ' これは準備ステージ。基礎トレ180分のカウントは次から。'}
           </p>
         </div>
       </div>
 
       {/* --- 1. 見る --------------------------------------------------- */}
       <section className="card">
-        <h2>1. 見る</h2>
+        <h2>1. まず見る</h2>
         {guides.length === 0 && (
           <p className="muted">
-            教材リンクなし。直前期は新しい教材を足さない段階なので、手元の材料と自分の記録だけを使う。
+            直前期は新しい教材を増やさない。手元の材料と自分の記録だけで仕上げよう。
           </p>
         )}
         {firstGuide && guides.length > 1 && (
           <p className="notice">
-            今日開くのは<strong>「{firstGuide.resource!.title}」の1本だけ</strong>。
-            下の「余力があれば」「詰まったときだけ」は、先に開かない。
+            今日開くのは<strong>「{firstGuide.resource!.title}」の1本だけ！</strong>
+            補助教材は、もっと見たいときや詰まったときに開けばOK。
           </p>
         )}
         <ul className="plain stack">
@@ -339,7 +339,7 @@ export function LessonPage({
           {guides.some(({ ref }) => ref.use !== 'first') && (
             <li>
               <details className="supplemental-resources">
-                <summary>補助教材・公式確認を開く（{guides.filter(({ ref }) => ref.use !== 'first').length}件）</summary>
+                <summary>ヘルプ教材を見る（{guides.filter(({ ref }) => ref.use !== 'first').length}件）</summary>
                 <div className="supplemental-resources__body stack">
                   {guides.filter(({ ref }) => ref.use !== 'first').map(({ ref, resource: r }) => (
                     <div key={`${ref.resourceId}-${ref.use}`} className="resource-card">
@@ -360,19 +360,19 @@ export function LessonPage({
           )}
         </ul>
         <button
-          className="btn-sm btn-block"
+          className="btn-primary btn-block"
           disabled={busy || stepDone(progress, 'input')}
           onClick={() => commit('input')}
         >
-          {stepDone(progress, 'input') ? '✓ 見た' : '見たので次へ'}
+          {stepDone(progress, 'input') ? '✓ 見終わった' : '見終わった！ 次へ'}
         </button>
-        <p className="muted">見ただけでは完了にならない。XPも0のまま。</p>
+        <p className="muted">いいスタート！ 次は、画面を閉じて思い出してみよう。</p>
       </section>
 
       {/* --- 2. 閉じて答える -------------------------------------------- */}
       <section className="card">
-        <h2>2. 閉じて答える</h2>
-        <p className="muted">教材の画面を閉じてから答える。見ながら書くと意味がない。</p>
+        <h2>2. 見ないで思い出す</h2>
+        <p className="muted">教材を閉じて、覚えていることを書こう。うろ覚えでもOK！</p>
         {lesson.recallPrompts.map((p, i) => (
           <div className="field" key={p.id}>
             <label htmlFor={p.id}>{p.prompt}</label>
@@ -394,17 +394,17 @@ export function LessonPage({
           disabled={busy || recall.every((r) => r.trim() === '')}
           onClick={() => commit('recall')}
         >
-          {stepDone(progress, 'recall') ? '✓ 保存済み(上書き)' : '思い出した内容を保存'}
+          {stepDone(progress, 'recall') ? '✓ ここまで保存済み' : 'ここまでを保存'}
         </button>
       </section>
 
       {/* --- 3. 解く／作る ---------------------------------------------- */}
       <section className="card">
-        <h2>3. 解く／作る</h2>
+        <h2>3. 手を動かす</h2>
         <p>{lesson.practice.instruction}</p>
         {lesson.practice.where && (
           <p className="muted">
-            <strong>どこで:</strong> {lesson.practice.where}
+            <strong>今日やる場所:</strong> {lesson.practice.where}
           </p>
         )}
         {lesson.practice.resourceIds?.map((id) => {
@@ -420,8 +420,8 @@ export function LessonPage({
         {!lesson.practice.scored && (
           <p className="notice">
             {isUngradedFive
-              ? 'これは診断テストではない。点は数えない。知らなかった言葉を拾えれば成功。'
-              : 'このステップは採点しない。'}
+              ? 'ここはウォーミングアップ。点数は気にせず、知らない言葉を拾えたらクリア！'
+              : 'ここは練習タイム。点数は気にしなくてOK。'}
           </p>
         )}
         {lesson.practice.scored && (
@@ -453,12 +453,12 @@ export function LessonPage({
         {isCandidate && (
           <div className="stack">
             <p className="notice">
-              ここで入れた内容が<strong>そのまま技能の記録になる</strong>。
-              技能タブで入れ直す必要はない。13問到達・欠陥なし・時間の判定はこの記録で動く。
+              ここで保存すれば、<strong>技能の記録にも自動で入る</strong>。
+              二重入力なし！ 13問・欠陥・時間のチェックもこの記録で進む。
             </p>
             {lesson.practice.candidateNo === undefined && (
               <div className="field">
-                <label htmlFor="candidate-no">どの候補問題を作ったか</label>
+                <label htmlFor="candidate-no">挑戦した候補問題</label>
                 <select
                   id="candidate-no"
                   value={candidateNo}
@@ -508,11 +508,11 @@ export function LessonPage({
                 checked={completedWork}
                 onChange={(e) => setCompletedWork(e.target.checked)}
               />
-              <span>時間内に完成した</span>
+              <span>時間内に完成！</span>
             </label>
             <div>
-              <strong>欠陥(公式の判断基準で自己点検)</strong>
-              <p className="muted">1つでも該当すれば不合格。該当が無ければチェックしない。</p>
+              <strong>欠陥チェック（公式基準）</strong>
+              <p className="muted">見つかった項目だけチェック。ゼロを目指そう。</p>
               {skillDefects.map((d) => (
                 <label className="row" key={d.code} style={{ marginBottom: 6 }}>
                   <input
@@ -530,13 +530,13 @@ export function LessonPage({
               ))}
             </div>
             {alreadyRecorded && (
-              <p className="muted">この レッスンの技能記録は作成済み。追加の記録は技能タブから。</p>
+              <p className="muted">このレッスンの技能記録は保存済み！ もう一度挑戦するときは技能タブへ。</p>
             )}
           </div>
         )}
         {isUngradedFive && (
           <div className="field">
-            <label>知らなかった言葉(最大3つ)</label>
+            <label>今日見つけた新しい言葉(最大3つ)</label>
             {terms.map((t, i) => (
               <input
                 key={i}
@@ -555,7 +555,7 @@ export function LessonPage({
           </div>
         )}
         <div className="field">
-          <label htmlFor="practiceNote">やったことのメモ</label>
+          <label htmlFor="practiceNote">今日やったこと</label>
           <textarea
             id="practiceNote"
             value={practiceNote}
@@ -572,19 +572,19 @@ export function LessonPage({
           }
           onClick={() => commit('practice')}
         >
-          {stepDone(progress, 'practice') ? '✓ 保存済み(上書き)' : '結果を保存'}
+          {stepDone(progress, 'practice') ? '✓ 結果は保存済み' : '結果を残す'}
         </button>
         {isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0) && (
-          <p className="muted">施工時間を入れると保存できる(技能ゲートの判定に使う)。</p>
+          <p className="muted">施工時間を入れたら保存できるよ。技能ミッションのチェックにも使う。</p>
         )}
       </section>
 
       {/* --- 4. 1点残す ------------------------------------------------- */}
       <section className="card">
-        <h2>4. 1点残す</h2>
-        <p className="muted">間違い・不明語・次に直す点を1つだけ。多く書かない。</p>
+        <h2>4. 次の自分にひとこと</h2>
+        <p className="muted">次に直したいことを1つだけ。短くてOK！</p>
         <textarea
-          aria-label="次に直す1点"
+          aria-label="次の自分へのひとこと"
           value={takeaway}
           onChange={(e) => setTakeaway(e.target.value)}
         />
@@ -593,27 +593,27 @@ export function LessonPage({
           disabled={busy || takeaway.trim() === ''}
           onClick={() => commit('takeaway')}
         >
-          {stepDone(progress, 'takeaway') ? '✓ 保存済み(上書き)' : '保存してレッスンを閉じる'}
+          {stepDone(progress, 'takeaway') ? '✓ クリア済み' : '保存してクリア！'}
         </button>
       </section>
 
       {complete ? (
         <div className="card card--accent">
-          <strong>完了。XP +{LESSON_COMPLETE_XP}</strong>
+          <strong>クエストクリア！ XP +{LESSON_COMPLETE_XP}</strong>
           <p className="muted">
-            4段階すべてを満たした。このレッスンで記録した学習時間は{' '}
+            4ステップ達成！ 今日の積み上げは{' '}
             {snapshot.studySessions
               .filter((s) => s.lessonId === lesson.id)
               .reduce((n, s) => n + s.durationMinutes, 0)}{' '}
-            分(段階ごとの合計。見積ではなく実績)。
+            分。ナイスチャレンジ！
           </p>
           <button className="btn-block" onClick={onClose}>
-            ホームへ戻る
+            次のクエストを見る
           </button>
         </div>
       ) : (
         <p className="muted">
-          残り: {steps.filter((s) => !stepDone(progress, s)).map((s) => STEP_LABEL[s]).join(' → ')}
+          あとこれだけ: {steps.filter((s) => !stepDone(progress, s)).map((s) => STEP_LABEL[s]).join(' → ')}
         </p>
       )}
     </main>

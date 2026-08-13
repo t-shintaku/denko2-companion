@@ -37,13 +37,13 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
 
   return (
     <main className="app">
-      <h1>電工二種 合格伴走盤</h1>
+      <h1>DENKO QUESTへようこそ！</h1>
       <p className="muted">
-        まず5つだけ。あとから設定タブでいつでも変えられる。
+        スタート前に5つだけ。あとでいつでも変えられるよ。
       </p>
 
       <div className="card">
-        <h2>対象の試験</h2>
+        <h2>挑戦する試験</h2>
         <p>
           <strong>{examCycle.name}</strong>
         </p>
@@ -62,7 +62,7 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
         <p className="notice">
           出典は<a href={examCycle.sourcePdfUrl ?? examCycle.sourceUrl} target="_blank" rel="noreferrer">令和8年度下期受験案内</a>
           (確認日 {examCycle.lastVerified})。{examCycle.feeNote}
-          {' '}申込前に<a href={examCycle.sourceUrl} target="_blank" rel="noreferrer">公式ページ</a>で最新を確認する。
+          {' '}申込前に<a href={examCycle.sourceUrl} target="_blank" rel="noreferrer">公式ページ</a>もチェックしよう。
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
           </select>
         </div>
         <div className="field">
-          <label htmlFor="academicDate">学科の受験日{paperFixed ? '(筆記は全国一斉で固定)' : '(未定なら空欄でよい)'}</label>
+          <label htmlFor="academicDate">学科の受験日{paperFixed ? '(筆記は全国一斉で固定)' : '(未定なら空欄でOK)'}</label>
           <input
             id="academicDate"
             type="date"
@@ -93,8 +93,8 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
           />
           <p className="muted">
             {paperFixed
-              ? `筆記方式は ${examCycle.writtenExamDate} の全国一斉。日付は選べない。`
-              : `CBTは ${examCycle.cbtWindowStart}〜${examCycle.cbtWindowEnd} の中から予約する。目安は10月下旬。予約枠に合わせて後で直す。`}
+              ? `筆記は ${examCycle.writtenExamDate} の全国一斉。この日でセットしたよ。`
+              : `CBTは ${examCycle.cbtWindowStart}〜${examCycle.cbtWindowEnd} から予約。いまは目安で入れて、予約後に更新しよう。`}
           </p>
         </div>
         <div className="field">
@@ -112,14 +112,14 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
             ))}
           </select>
           <p className="muted">
-            技能試験日は<strong>試験地によって決まる</strong>ので自分では選べない。
-            ここは計画用の仮置き。受験票が届いたら確定させる。
+            技能試験日は<strong>試験地によって決まる</strong>。
+            いまは仮の日でOK。受験票が届いたら更新しよう。
           </p>
         </div>
       </div>
 
       <div className="card">
-        <h2>使える時間</h2>
+        <h2>勉強ペース</h2>
         <div className="field">
           <label htmlFor="weekday">平日1日あたり(分)</label>
           <input
@@ -143,12 +143,12 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
           />
         </div>
         <p className="muted">
-          初期値は平日35分・休日150分(週およそ5〜6時間)。多く入れるほど計画が前倒しになる。
+          初期値は平日35分・休日150分。無理のない数字でOK。あとで何度でも調整できる。
         </p>
       </div>
 
       <div className="card">
-        <h2>いまの状態</h2>
+        <h2>いまのスタート地点</h2>
         {(
           [
             ['knowledgeLevel', '電気の知識'],
@@ -171,7 +171,7 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
           </div>
         ))}
         <div className="field">
-          <label htmlFor="motivation">なぜ取るのか(あとで見返す)</label>
+          <label htmlFor="motivation">合格したら、何をしたい？</label>
           <textarea
             id="motivation"
             value={draft.motivation}
@@ -186,23 +186,23 @@ export function SetupWizard({ onDone }: { onDone: () => void }) {
             checked={draft.beginnerMode}
             onChange={(e) => set('beginnerMode', e.target.checked)}
           />
-          <span>完全未経験者モード(推奨: ON)</span>
+          <span>はじめてモード(おすすめ: ON)</span>
         </label>
         <p className="muted">
-          ONの間は、いきなり採点付きの診断を出さない。全体像 → 超基礎 → 器具・工具 → 採点なし5問 →
-          基礎180分 → 20問診断の順で進む。
+          ONなら、いきなり採点しない。全体像 → 超基礎 → 器具・工具 → お試し5問 →
+          基礎180分 → 20問診断の順に案内するよ。
         </p>
       </div>
 
       <div className="notice notice--safety">
-        <strong>安全について。</strong>
+        <strong>ここだけは約束！</strong>
         免状を受け取るまで、天井・壁から出ている電源線への直結工事はできない。
         練習は必ず試験用の非通電材料で行う。自宅の通電した設備を練習台にしない。
         照明が切れて困ったときは、資格取得を待たずに電気工事店へ依頼する。
       </div>
 
       <button className="btn-primary btn-block" onClick={save} disabled={saving}>
-        {saving ? '保存中…' : 'はじめる'}
+        {saving ? '準備中…' : '冒険をはじめる'}
       </button>
     </main>
   );

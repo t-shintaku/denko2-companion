@@ -164,7 +164,7 @@ function questFromLesson(
 export function stepConditionFor(lesson: CurriculumLesson, step: LessonStep): string {
   switch (step) {
     case 'input':
-      return '教材を見る(ここまでで一旦終えてよい)';
+      return '教材を見る（ここまでで今日はクリア！）';
     case 'recall':
       return `教材を閉じて${lesson.recallPrompts.length || 1}個思い出す`;
     case 'practice':
@@ -231,7 +231,7 @@ export function nextTenMinutes(ctx: QuestContext): Quest | undefined {
         detail: quest.fitsBudget
           ? `${gap}日空いた。失点ではない。${quest.minutes}分だけ戻す。`
           : `${gap}日空いた。失点ではない。この続きは${quest.minutes}分かかる。` +
-            '途中でやめてよい。段階を終えたところまで記録される。',
+            '今日は途中まででもOK。終わったステップまで記録に残る。',
       };
     }
   }

@@ -37,13 +37,13 @@ export function SettingsPage() {
   const doExport = async () => {
     const backup = await repo.exportBackup();
     download(JSON.stringify(backup, null, 2), backupFileName(), 'application/json');
-    setMessage(`書き出した(schemaVersion ${SCHEMA_VERSION})。`);
+    setMessage(`バックアップ完了！ (schemaVersion ${SCHEMA_VERSION})`);
   };
 
   const doIcsExport = () => {
     const ics = buildIcs(adminTasks);
     download(ics, icsFileName(), 'text/calendar;charset=utf-8');
-    setMessage('期限をカレンダーへ書き出した。ファイルを開いてカレンダーへ取り込む。');
+    setMessage('カレンダー用ファイルを作ったよ。開いて予定に追加しよう！');
   };
 
   const doImport = async (file: File) => {
@@ -53,15 +53,15 @@ export function SettingsPage() {
     if (!result.ok) {
       // 壊れたJSONでは既存データに一切触らない(AT-009)
       setIssues(result.issues.map((i) => `${i.path}: ${i.message}`));
-      setMessage('読み込めなかった。既存のデータはそのまま残している。');
+      setMessage('読み込めなかった。でも今のデータは無事！ ファイルを確認してもう一度試そう。');
       return;
     }
     await repo.importBackup(result.backup);
     await reload();
     setMessage(
       result.migratedFrom !== undefined
-        ? `復元した(schemaVersion ${result.migratedFrom} → ${SCHEMA_VERSION} へ移行)。`
-        : '復元した。',
+        ? `復元完了！ (schemaVersion ${result.migratedFrom} → ${SCHEMA_VERSION})`
+        : '復元完了！',
     );
   };
 
@@ -69,7 +69,7 @@ export function SettingsPage() {
     <main className="app">
       <h1>設定</h1>
 
-      <h2>受験日・方式</h2>
+      <h2>受験プラン</h2>
       <div className="card">
         <div className="field">
           <label htmlFor="s-mode">学科の方式</label>
@@ -101,7 +101,7 @@ export function SettingsPage() {
           />
           {settings.academicMode === 'paper' && (
             <p className="muted">
-              筆記方式は {examCycle.writtenExamDate} の全国一斉。日付は変更できない。
+              筆記は {examCycle.writtenExamDate} の全国一斉。この日でセット済み！
             </p>
           )}
         </div>
@@ -148,7 +148,7 @@ export function SettingsPage() {
             ))}
           </select>
           <p className="muted">
-            技能試験日は試験地によって決まる。ここは計画用の仮置きで、受験票で確定させる。
+            技能試験日は試験地で決まる。いまは仮の日でOK。受験票が届いたら更新しよう。
           </p>
         </div>
         <p className="notice">
@@ -164,7 +164,7 @@ export function SettingsPage() {
         </p>
       </div>
 
-      <h2>学習できる時間</h2>
+      <h2>勉強ペース</h2>
       <div className="card">
         <div className="field">
           <label htmlFor="s-weekday">平日(分/日)</label>
@@ -190,7 +190,7 @@ export function SettingsPage() {
         </div>
       </div>
 
-      <h2>進み方</h2>
+      <h2>学び方</h2>
       <div className="card">
         <label className="row">
           <input
@@ -202,7 +202,7 @@ export function SettingsPage() {
           <span>完全未経験者モード</span>
         </label>
         <p className="muted">
-          OFFにすると段階の縛りが外れ、すべてのレッスンが並ぶ。初回はONのままを勧める。
+          OFFなら全レッスンをすぐ選べる。はじめてならONがおすすめ！
         </p>
         {onboarding.diagnosticManualUnlockOffered && (
           <>
@@ -214,28 +214,28 @@ export function SettingsPage() {
               className="btn-sm"
               onClick={() => patch({ diagnosticUnlockedManually: true })}
             >
-              20問診断を今すぐ解禁する
+              20問診断をアンロック
             </button>
           </>
         )}
       </div>
 
-      <h2>手続きの期限</h2>
+      <h2>締切を忘れない</h2>
       <div className="card">
         <p className="muted">
-          このアプリは開かなければ何も言わない。期限だけはスマホのカレンダーへ移しておく。
-          7日前と前日に通知が出る。
+          大事な締切はスマホのカレンダーにも入れておこう。
+          7日前と前日に通知できるよ。
         </p>
         <button className="btn-primary btn-block" onClick={doIcsExport}>
-          期限をカレンダーへ書き出す(.ics)
+          締切をカレンダーに追加
         </button>
       </div>
       <AdminTaskList tasks={adminTasks} />
 
-      <h2>教材カタログ</h2>
+      <h2>教材リスト</h2>
       <div className="card">
         <p className="muted">
-          教材は学習開始時に増やさない。同じ概念で3回詰まったときだけ、補助を1つ足す。
+          教材を増やすのは、同じところで3回詰まったときだけ。いまの1本をまず攻略しよう。
         </p>
         <ul className="plain stack">
           {resources.map((r) => (
@@ -255,19 +255,19 @@ export function SettingsPage() {
 
       <SyncPanel />
 
-      <h2>バックアップ</h2>
+      <h2>データを守る</h2>
       <div className="card">
         <p className="muted">
           同期をつないでいれば、書き込みのたびに非公開リポジトリへコミットが残る(=履歴つきバックアップ)。
           つないでいない場合、データはこの端末の中だけにあり、端末を初期化すると消える。
-          月に一度は書き出してGoogle Driveへ置く。
+          月に1回、バックアップをGoogle Driveへ置けば安心！
         </p>
         <div className="stack">
           <button className="btn-primary btn-block" onClick={doExport}>
-            JSONへ書き出す
+            バックアップを作る
           </button>
           <button className="btn-block" onClick={() => fileRef.current?.click()}>
-            JSONから復元する
+            バックアップから戻す
           </button>
           <input
             ref={fileRef}
@@ -291,19 +291,19 @@ export function SettingsPage() {
         )}
       </div>
 
-      <h2>全部消す</h2>
+      <h2>はじめからやり直す</h2>
       <div className="card">
         <p className="muted">
-          消す前に必ず書き出す。取り消せない。
+          先にバックアップを作ろう。削除すると元には戻せない。
         </p>
         {!wipeArmed ? (
           <button className="btn-danger btn-block" onClick={() => setWipeArmed(true)}>
-            すべてのデータを削除する
+            データを全部消す
           </button>
         ) : (
           <div className="stack">
             <p className="notice notice--safety">
-              本当に削除する? 学習記録・設定・不明語がすべて消える。先に「JSONへ書き出す」を実行した?
+              本当に全部消す？ 学習記録・設定・新しい言葉がすべて消える。バックアップは作った？
             </p>
             <button
               className="btn-danger btn-block"
@@ -311,7 +311,7 @@ export function SettingsPage() {
                 await repo.wipe();
                 await reload();
                 setWipeArmed(false);
-                setMessage('削除した。');
+                setMessage('この端末のデータを削除した。');
               }}
             >
               はい、削除する(2段階目)

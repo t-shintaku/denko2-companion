@@ -21,20 +21,20 @@ const page = await context.newPage();
 await page.goto(BASE, { waitUntil: 'networkidle' });
 
 // 初回ウィザードを最短で通す
-if (await page.getByRole('button', { name: /はじめる|保存して開始|開始/ }).count()) {
-  await page.getByRole('button', { name: /はじめる|保存して開始|開始/ }).first().click();
+if (await page.getByRole('button', { name: /冒険をはじめる|保存して開始|開始/ }).count()) {
+  await page.getByRole('button', { name: /冒険をはじめる|保存して開始|開始/ }).first().click();
   await page.waitForTimeout(800);
 }
 
 await page.screenshot({ path: `${OUT}/01-home.png`, fullPage: true });
 
 // 今日のクエストからレッスンを開く
-await page.getByRole('button', { name: 'はじめる' }).first().click();
+await page.getByRole('button', { name: 'クエスト開始' }).first().click();
 await page.waitForTimeout(800);
 await page.screenshot({ path: `${OUT}/02-lesson.png`, fullPage: true });
 
 // 教材の道案内だけを切り出す(「1. 見る」のカード)
-const look = page.locator('section.card', { hasText: '1. 見る' }).first();
+const look = page.locator('section.card', { hasText: '1. まず見る' }).first();
 await look.screenshot({ path: `${OUT}/03-guide.png` });
 
 // 横スクロールが出ていないか(道案内のグリッドを足したので確認する)

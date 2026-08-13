@@ -20,10 +20,10 @@ export type LessonStep = 'input' | 'recall' | 'practice' | 'takeaway';
 export const LESSON_STEPS: LessonStep[] = ['input', 'recall', 'practice', 'takeaway'];
 
 export const STEP_LABEL: Record<LessonStep, string> = {
-  input: '見る',
-  recall: '閉じて答える',
-  practice: '解く／作る',
-  takeaway: '1点残す',
+  input: 'まず見る',
+  recall: '見ないで思い出す',
+  practice: '手を動かす',
+  takeaway: '次へひとこと',
 };
 
 /** 完了時に付与するXP。動画視聴のみ(input だけ)は 0 */

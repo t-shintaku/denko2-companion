@@ -71,7 +71,7 @@ export function PracticalPage({
 
   return (
     <main className="app">
-      <h1>技能</h1>
+      <h1>技能クエスト</h1>
 
       <div className="notice notice--safety">
         <strong>練習は必ず試験用の非通電材料で行う。</strong>
@@ -118,11 +118,11 @@ export function PracticalPage({
                   ? `${s.attempts}回 / 欠陥なし${s.defectFreeCount}回${
                       s.medianMinutes !== undefined ? ` / 中央値${s.medianMinutes}分` : ''
                     }${s.lastAttemptedOn ? ` / ${formatJstShort(s.lastAttemptedOn)}` : ''}`
-                  : 'まだ触れていない'}
+                  : '未挑戦'}
               </span>
             </span>
             <button className="btn-sm" onClick={() => setRecording(s.candidateNo)}>
-              記録する
+              やってみる
             </button>
           </div>
         ))}
@@ -140,19 +140,19 @@ export function PracticalPage({
         </div>
       </div>
 
-      <h2>反復欠陥</h2>
+      <h2>くり返し出た弱点</h2>
       <div className="card">
         {repeats.length === 0 ? (
           <p className="muted">
-            同じ欠陥が2回出ると、ここに上がる。上がったら候補問題を丸ごと作り直さず、その工程だけ繰り返す。
+            同じ欠陥が2回出たら、ここでピンポイント練習。問題を丸ごとやり直さなくてOK！
           </p>
         ) : (
           <>
             <p className="muted">
-              上がったら、その工程だけを繰り返して「対策した」を押す。
-              押さなくても、再発なしで{DEFECT_CLEAR_RUNS}作品を作れば自動で降りる。
-              <strong>降りる道があるので、ここでゲートが永久に閉じることはない。</strong>
-              再発すればまた上がる。
+              苦手な工程だけ練習して「練習できた！」を押そう。
+              または、再発なしで{DEFECT_CLEAR_RUNS}作品を作れば自動クリア。
+              <strong>弱点が残り続けることはない。</strong>
+              再発したら、またここでリベンジ！
             </p>
             <ul className="plain stack">
               {repeats.map((r) => (
@@ -177,7 +177,7 @@ export function PracticalPage({
                         onClick={() => setDrill(r.code)}
                         aria-label={`${defectLabel(r.code)} の部分練習を記録`}
                       >
-                        この工程を練習した
+                        この工程、練習できた！
                       </button>
                     </div>
                   )}
@@ -188,11 +188,11 @@ export function PracticalPage({
         )}
       </div>
 
-      <h2>いまの伸び</h2>
+      <h2>成長レポート</h2>
       <div className="card">
         {trend.attempts === 0 ? (
           <p className="muted">
-            1題でも記録すると、ここに合計時間と欠陥の推移が出る。まずNo.1を1題。
+            まずNo.1に挑戦！ 1題終えると、時間と欠陥の変化がここに出るよ。
           </p>
         ) : (
           <ul className="plain stack">
@@ -235,10 +235,10 @@ export function PracticalPage({
         )}
       </div>
 
-      <h2>次に作り直す1題</h2>
+      <h2>次のおすすめ1題</h2>
       <div className="card">
         {weakest.length === 0 ? (
-          <p className="muted">まだ判断材料がない。未着手の番号から順に1題ずつ作る。</p>
+          <p className="muted">まずは未挑戦の番号から、1題ずつ進めよう。</p>
         ) : (
           <ul className="plain stack">
             {weakest.map((w) => (
@@ -247,7 +247,7 @@ export function PracticalPage({
                   <strong>No.{w.candidateNo}</strong> — {w.why}
                 </span>
                 <button className="btn-sm" onClick={() => setRecording(w.candidateNo)}>
-                  記録する
+                  やってみる
                 </button>
               </li>
             ))}
@@ -255,10 +255,10 @@ export function PracticalPage({
         )}
       </div>
 
-      <h2>技能ゲート</h2>
+      <h2>技能クリアへの5ミッション</h2>
       <div className="card">
         <p className="muted">
-          いま {skillGate.passedCount} / {skillGate.total}。13問中12問が欠陥なしでも通らない。
+          いま {skillGate.passedCount} / {skillGate.total} クリア。13問すべての欠陥ゼロを目指そう！
         </p>
         <ul className="plain stack">
           {skillGate.criteria.map((c) => (
@@ -394,15 +394,15 @@ function DrillForm({ code, onClose }: { code: string; onClose: () => void }) {
       <button className="btn-sm" onClick={onClose}>
         ← 戻る
       </button>
-      <h1>この工程だけ練習した</h1>
+      <h1>弱点をピンポイント練習</h1>
       <div className="notice notice--safety">非通電の試験用材料のみ。</div>
       <div className="card">
         <p>
           <strong>{defectLabel(code)}</strong>
         </p>
         <p className="muted">
-          候補問題を丸ごと作り直さない。出た欠陥の工程だけを繰り返す。
-          記録すると反復欠陥から降り、技能ゲートが再び開く。同じ欠陥が次に出れば、また上がる。
+          問題を丸ごと作り直さず、苦手な工程だけ練習すればOK。
+          記録したら弱点ミッションをクリア！ 再発したら、またここでリベンジしよう。
         </p>
         <div className="field">
           <label htmlFor="drill-minutes">かかった時間(分)</label>
@@ -424,7 +424,7 @@ function DrillForm({ code, onClose }: { code: string; onClose: () => void }) {
           disabled={busy || Number(minutes) <= 0}
           onClick={submit}
         >
-          {busy ? '保存中…' : '対策したとして記録する'}
+          {busy ? '保存中…' : '練習できた！'}
         </button>
       </div>
     </main>
@@ -510,7 +510,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
             checked={completed}
             onChange={(e) => setCompleted(e.target.checked)}
           />
-          <span>時間内に完成した</span>
+          <span>時間内に完成！</span>
         </label>
         {total > 0 && (
           <p className={total <= TARGET_MINUTES ? 'badge badge--ok' : 'badge badge--warn'}>
@@ -523,9 +523,9 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
       </div>
 
       <div className="card">
-        <h2>欠陥(公式の判断基準で自己点検)</h2>
+        <h2>欠陥チェック（公式基準）</h2>
         <p className="muted">
-          1つでも該当すれば不合格。該当が無ければチェックせずに保存する。
+          見つかった項目だけチェック。何もなければ、そのまま保存してOK。
         </p>
         {skillDefects.map((d) => (
           <label className="row" key={d.code} style={{ marginBottom: 6 }}>
@@ -547,7 +547,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
 
       <div className="card">
         <div className="field">
-          <label htmlFor="next-fix">次に直す1点</label>
+          <label htmlFor="next-fix">次の自分へのひとこと</label>
           <textarea id="next-fix" value={nextFix} onChange={(e) => setNextFix(e.target.value)} />
         </div>
         <button
@@ -555,7 +555,7 @@ function AttemptForm({ candidateNo, onClose }: { candidateNo: number; onClose: (
           disabled={busy || work === '' || Number(work) <= 0}
           onClick={submit}
         >
-          {busy ? '保存中…' : '保存する'}
+          {busy ? '保存中…' : 'この挑戦を保存'}
         </button>
       </div>
     </main>

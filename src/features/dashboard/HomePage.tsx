@@ -57,10 +57,10 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
       {gap !== undefined && gap >= 3 && (
         <div className="card card--accent">
-          <strong>{gap}日ぶり。おかえり。</strong>
+          <strong>{gap}日ぶり。おかえり！</strong>
           <p className="muted">
-            失点ではない。連続日数は数えていない。数えているのは戻ってきた回数(いま{comebacks + 1}回目)。
-            下の「今日のクエスト」の1件だけやれば、それで今日は十分。
+            戻ってきた時点で、もう1歩前進。復帰はこれで{comebacks + 1}回目。
+            今日は下のクエストを1つクリアすればOK！
           </p>
         </div>
       )}
@@ -73,13 +73,13 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
       <div className="xp-strip">
         <svg className="xp-strip__bolt" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" /></svg>
-        <div className="xp-strip__label">努力レベル Lv.{effortLevel}<span className="xp-strip__sub">XPは努力の記録。合格準備度とは別。</span></div>
+        <div className="xp-strip__label">努力レベル Lv.{effortLevel}<span className="xp-strip__sub">XPはがんばった記録。合格ラインは別でチェック。</span></div>
         <span className="xp-strip__value">{xp} XP</span>
       </div>
 
       {urgent[0] && (
         <>
-          <h2>いま優先する手続き</h2>
+          <h2>先にクリアする手続き</h2>
           <AdminTaskRow task={urgent[0]} />
         </>
       )}
@@ -100,7 +100,7 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
 
       {quests.length === 0 && (
         <div className="card">
-          <p>今日ぶんの必須はもうない。休んでよい。</p>
+          <p>今日の必須クエストはコンプリート！ あとは休むも、もう1問やるも自由。</p>
         </div>
       )}
 
@@ -111,17 +111,17 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
             <span className="badge">{REASON_LABEL[q.reason]}</span>
           </div>
           <p className="muted">{q.detail}</p>
-          <p className="muted">クリア条件: {q.clearCondition}</p>
+          <p className="muted">クリアすると: {q.clearCondition}</p>
           {q.remainingMinutes !== undefined && q.remainingMinutes > q.minutes && (
             <p className="muted">
-              このレッスン全体では残り約{q.remainingMinutes}分。今日はここまでで区切ってよい。
+              レッスン全体は残り約{q.remainingMinutes}分。今日はキリのいいところでストップOK！
             </p>
           )}
           {!q.fitsBudget && (
             // 収まらないなら黙って出さない。「10分」と書いて60分渡すのが一番効く嘘
             <p className="notice">
-              この一手は{q.minutes}分かかる({budget}分には収まらない)。
-              途中でやめてよく、段階を終えたところまで記録される。
+              このクエストは約{q.minutes}分。今日は{budget}分だけ進めればOK。
+              終わったステップまで、ちゃんと記録に残る。
             </p>
           )}
           <div className="row row--between">
@@ -133,23 +133,23 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
                 className="btn-primary btn-sm"
                 onClick={() => onOpenLesson(q.lessonId!, modeForBudget(budget))}
               >
-                はじめる
+                クエスト開始
               </button>
             ) : (
-              <span className="muted">↑ 上の手続きカードから進む</span>
+              <span className="muted">↑ 先に上の手続きをクリアしよう</span>
             )}
           </div>
         </div>
       ))}
 
-      <h2>いまの段階</h2>
+      <h2>合格までの現在地</h2>
       <div className="card">
         <p>{STAGE_HINT[onboarding.stage]}</p>
         <ul className="plain muted">
           <li>
             オリエンテーション: {onboarding.orientationDone} / {onboarding.orientationTotal} 本
           </li>
-          <li>無採点5問: {onboarding.ungradedFiveDone ? '済' : 'まだ'}</li>
+          <li>お試し5問: {onboarding.ungradedFiveDone ? 'クリア' : 'これから'}</li>
           <li>
             基礎学習: {onboarding.basicsMinutes} / {onboarding.basicsRequiredMinutes} 分
             <div className="progressbar" aria-hidden="true">
@@ -159,10 +159,10 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
           <li>
             20問診断:{' '}
             {onboarding.diagnosticDone
-              ? '済'
+              ? 'クリア'
               : onboarding.diagnosticAvailable
-                ? '受けられる'
-                : '基礎が貯まると開く'}
+                ? 'アンロック済み'
+                : '基礎をためるとアンロック'}
           </li>
         </ul>
       </div>
@@ -178,8 +178,8 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </ul>
         {schedule.unplacedRequiredLessonIds.length > 0 && (
           <p className="notice">
-            必須レッスン {schedule.unplacedRequiredLessonIds.length} 本が受験日までに入り切らない。
-            設定タブで学習時間を増やすか、受験日を後ろにする。
+            必須レッスンが {schedule.unplacedRequiredLessonIds.length} 本、受験日までに入り切らない。
+            設定で学習時間を増やすか、受験日を見直そう。
             <br />
             入り切らない例: {schedule.unplacedRequiredLessonIds
               .slice(0, 3)
@@ -189,14 +189,14 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         )}
         {schedule.droppedOptionalLessonIds.length > 0 && (
           <p className="muted">
-            任意レッスン {schedule.droppedOptionalLessonIds.length} 本は今回の計画から外した(必須は外していない)。
+            任意レッスン {schedule.droppedOptionalLessonIds.length} 本は、今回はお休み。必須レッスンは残してある。
           </p>
         )}
       </div>
 
       {settings?.motivation && (
         <>
-          <h2>なぜ取るのか</h2>
+          <h2>合格したら、やりたいこと</h2>
           <div className="card">
             <p>{settings.motivation}</p>
           </div>

@@ -224,7 +224,7 @@ export function validateBackup(text: string, now: Date = new Date()): Validation
   } else if (obj.schemaVersion > SCHEMA_VERSION) {
     issues.push({
       path: 'schemaVersion',
-      message: `新しいバージョン(${obj.schemaVersion})のため読み込めない。アプリを更新してください`,
+      message: `このバックアップは新しい版(${obj.schemaVersion})で作られているよ。アプリを更新して、もう一度試そう`,
     });
   }
 

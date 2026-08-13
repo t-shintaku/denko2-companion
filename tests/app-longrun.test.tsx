@@ -59,7 +59,7 @@ describe('技能: 反復欠陥から抜け出せる', () => {
     expect(await screen.findByText(/未対策 1種類/)).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /の部分練習を記録/ }));
-    await user.click(await screen.findByRole('button', { name: '対策したとして記録する' }));
+    await user.click(await screen.findByRole('button', { name: '練習できた！' }));
 
     // 降りて、ゲートの条件が通る
     await waitFor(() => expect(screen.getByText('対策済み')).toBeInTheDocument());
@@ -101,7 +101,7 @@ describe('学科: 復習は1回押して終わりにならない', () => {
     await user.click(await screen.findByRole('button', { name: '学科' }));
     expect(await screen.findByText(/第3問/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: '○ 解けた' }));
+    await user.click(screen.getByRole('button', { name: '✓ クリア！' }));
     await waitFor(() => expect(screen.queryByText(/第3問/)).not.toBeInTheDocument());
 
     // 消えたのではなく、翌日に戻る予定として保存されている
@@ -127,9 +127,9 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
     await screen.findByRole('heading', { name: lesson.title });
 
     // 見る → 閉じて答える
-    await user.click(screen.getByRole('button', { name: '見たので次へ' }));
-    await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見た' })).toBeDisabled());
-    const recallSection = screen.getByRole('heading', { name: '2. 閉じて答える' }).closest('section')!;
+    await user.click(screen.getByRole('button', { name: '見終わった！ 次へ' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見終わった' })).toBeDisabled());
+    const recallSection = screen.getByRole('heading', { name: '2. 見ないで思い出す' }).closest('section')!;
     await user.type(within(recallSection).getAllByRole('textbox')[0]!, '差込コネクタ');
     await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
     await waitFor(() =>
@@ -137,11 +137,11 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
     );
 
     // 解く／作る = 技能の記録
-    const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
+    const practiceSection = screen.getByRole('heading', { name: '3. 手を動かす' }).closest('section')!;
     await user.type(within(practiceSection).getByLabelText('複線図(分)'), '10');
     await user.type(within(practiceSection).getByLabelText('施工(分)'), '38');
-    await user.type(within(practiceSection).getByLabelText('やったことのメモ'), '輪作りで手間取った');
-    await user.click(within(practiceSection).getByRole('button', { name: /結果を保存/ }));
+    await user.type(within(practiceSection).getByLabelText('今日やったこと'), '輪作りで手間取った');
+    await user.click(within(practiceSection).getByRole('button', { name: /結果を残す/ }));
 
     await waitFor(async () => {
       const attempts = (await repo.load()).skillAttempts;
@@ -170,9 +170,9 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
       </VaultProvider>,
     );
     await screen.findByRole('heading', { name: lesson.title });
-    const practiceSection = screen.getByRole('heading', { name: '3. 解く／作る' }).closest('section')!;
-    expect(within(practiceSection).getByRole('button', { name: /結果を保存/ })).toBeDisabled();
-    expect(screen.getByText(/施工時間を入れると保存できる/)).toBeInTheDocument();
+    const practiceSection = screen.getByRole('heading', { name: '3. 手を動かす' }).closest('section')!;
+    expect(within(practiceSection).getByRole('button', { name: /結果を残す/ })).toBeDisabled();
+    expect(screen.getByText(/施工時間を入れたら保存できる/)).toBeInTheDocument();
   });
 });
 

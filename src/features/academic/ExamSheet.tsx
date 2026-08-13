@@ -229,9 +229,9 @@ export function ExamSheet({
       <button className="btn-sm" onClick={onClose}>
         ← 戻る
       </button>
-      <h1>{KIND_TITLE[kind]}を記録</h1>
+      <h1>{KIND_TITLE[kind]}の結果</h1>
       <p className="muted">
-        問題はアプリに入っていない。公式ページで解いて、結果だけここへ入れる。
+        公式ページで問題を解いたら、結果だけサクッと記録しよう。
         {kind === 'mock-50' &&
           ' 50問=100点(1問2点)。公式の合格基準は60点、本ツールの目標は80点。'}
       </p>
@@ -259,7 +259,7 @@ export function ExamSheet({
                 本番同様({ACADEMIC_EXAM_MINUTES}分を計って中断なし)
                 <br />
                 <span className="muted">
-                  学科ゲートの「{ACADEMIC_EXAM_MINUTES}分模試2回」に効く。時間を入れた回だけ数える
+                  学科ミッションの「{ACADEMIC_EXAM_MINUTES}分模試2回」にプラス。時間を入れた回だけカウント
                 </span>
               </span>
             </label>
@@ -271,7 +271,7 @@ export function ExamSheet({
                   setRunning(!running);
                 }}
               >
-                {running ? '計測を止める' : '120分の計測を始める'}
+                {running ? 'タイマーを止める' : '120分タイマー開始'}
               </button>
               <span className="badge">
                 {String(Math.floor(elapsed / 60)).padStart(2, '0')}:
@@ -280,7 +280,7 @@ export function ExamSheet({
             </div>
             {running && (
               <p className="notice">
-                計測中。ここでは正誤を表示しない。解き終わってから結果を入れる。
+                本番モードで計測中！ 解き終わってから結果を入れよう。
               </p>
             )}
           </>
@@ -313,9 +313,9 @@ export function ExamSheet({
         </button>
       </div>
       <p className="muted">
-        1問ずつなら誤答の理由と自信度が残り、復習キューが効く。まとめてなら早い。
-        まとめても<strong>誤答だけ</strong>が復習キューへ入る(正解は入らない)。
-        「自信の低い正解」だけは、まとめ入力では拾えない。
+        じっくり残すなら「1問ずつ」、早く終えるなら「まとめて」。
+        まとめても<strong>間違えた問題</strong>はリベンジ問題に入るよ。
+        あやふやな正解も残したいなら「1問ずつ」がおすすめ。
       </p>
 
       {mode === 'bulk' ? (
@@ -481,7 +481,7 @@ export function ExamSheet({
           <textarea id="exam-note" value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
         <button className="btn-primary btn-block" disabled={!ready || busy} onClick={submit}>
-          {busy ? '保存中…' : '結果を保存する'}
+          {busy ? '保存中…' : '結果を保存！'}
         </button>
         {!ready && (
           <ul className="plain muted" data-testid="exam-blockers">

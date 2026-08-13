@@ -47,17 +47,17 @@ export function AdminTaskRow({ task }: { task: ResolvedAdminTask }) {
       {task.needsUserConfirm && (
         <p className="notice">
           {task.confirmNote ??
-            'この期限は本ツールが受験日から逆算した推定値。公式で確認して設定タブから入れ直すこと。'}
+            'この期限は受験日から逆算した目安。公式でチェックして、設定で日付を更新しよう。'}
         </p>
       )}
       <div className="row">
         {task.template.officialUrl && (
           <a className="btn btn-sm" href={task.template.officialUrl} target="_blank" rel="noreferrer">
-            公式ページを開く
+            公式でチェック
           </a>
         )}
         <button className={task.doneAt ? 'btn-sm' : 'btn-primary btn-sm'} onClick={toggle}>
-          {task.doneAt ? '完了を取り消す' : '完了にする'}
+          {task.doneAt ? '未完了に戻す' : 'できた！'}
         </button>
       </div>
     </div>

@@ -112,18 +112,18 @@ export function evaluateOnboarding(
 }
 
 export const STAGE_LABEL: Record<OnboardingStage, string> = {
-  orientation: '入口:試験と電気の地図',
-  'ungraded-five': '入口:問題を見てみる',
-  basics: '基礎づくり',
-  diagnostic: '20問診断',
-  regular: '通常カリキュラム',
+  orientation: 'STAGE 1 電気の地図',
+  'ungraded-five': 'STAGE 2 お試し5問',
+  basics: 'STAGE 3 基礎トレ',
+  diagnostic: 'STAGE 4 20問診断',
+  regular: 'STAGE 5 合格クエスト',
 };
 
 export const STAGE_HINT: Record<OnboardingStage, string> = {
-  orientation: '資格でできること、電圧・電流・抵抗、家庭の電気、器具と工具をひととおり見る段階。',
+  orientation: 'まずは電気の全体マップへ。資格でできること、電気の基本、器具と工具をざっくり見よう。',
   'ungraded-five':
-    '過去問5問を「見てみる」だけ。採点しない。知らなかった言葉を最大3つ拾えれば成功。',
-  basics: `写真・図記号・器具工具・超基礎理論を積む段階。累計${BASICS_REQUIRED_MINUTES}分で20問診断が開く。`,
-  diagnostic: '採点ありの20問診断。ここで初めて7科目の初期値を取る。',
-  regular: '7科目を回しながら過去問と技能を積む段階。',
+    '過去問を5問だけのぞいてみよう。点数は気にしなくてOK。知らない言葉を3つ拾えたらクリア！',
+  basics: `写真・図記号・器具工具・超基礎をトレーニング。累計${BASICS_REQUIRED_MINUTES}分で20問診断がアンロック！`,
+  diagnostic: '20問でいまの実力をチェック。ここから7科目の攻略が始まる。',
+  regular: '7科目の過去問と技能を回して、合格ラインを1つずつクリアしよう。',
 };

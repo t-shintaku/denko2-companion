@@ -40,17 +40,17 @@ export function RecordsPage() {
 
   return (
     <main className="app">
-      <h1>記録</h1>
+      <h1>成長ログ</h1>
 
       <div className="card">
         <ul className="plain">
-          <li>完了レッスン: {completed} 本</li>
-          <li>学習時間: 合計 {totalMinutes} 分</li>
-          <li>学習した日: {days.size} 日</li>
-          <li>XP: {xp}(動画を見ただけでは増えない)</li>
+          <li>クリアしたレッスン: {completed} 本</li>
+          <li>積み上げ時間: {totalMinutes} 分</li>
+          <li>冒険した日: {days.size} 日</li>
+          <li>XP: {xp}（4ステップ達成でアップ）</li>
         </ul>
         <p className="muted">
-          連続日数は数えない。数えるのは今週やった日数と、戻ってきた回数。
+          連続記録より、戻ってきた回数を大切にしているよ。
         </p>
       </div>
 
@@ -68,8 +68,8 @@ export function RecordsPage() {
             )}
           </li>
           <li>
-            空白のあと戻ってきた回数: <strong>{comebacks}</strong> 回
-            <span className="muted">(途切れた回数ではなく、戻った回数を数えている)</span>
+            カムバック: <strong>{comebacks}</strong> 回
+            <span className="muted">（戻るたびに1回プラス！）</span>
           </li>
           {trend.latest !== undefined && (
             <li>
@@ -82,7 +82,7 @@ export function RecordsPage() {
             </li>
           )}
           <li>
-            復習で解けるようになった問題: <strong>{review.solved}</strong> 問
+            リベンジ成功: <strong>{review.solved}</strong> 問
             {review.graduated > 0 && `(間隔をすべて通過して卒業: ${review.graduated}問)`}
             {review.pending > 0 && ` / まだ ${review.pending} 問`}
           </li>
@@ -100,14 +100,14 @@ export function RecordsPage() {
           )}
           {estimate.samples > 0 && estimate.ratio !== undefined && (
             <li>
-              言った時間で終わったか: 見積 {estimate.estimated}分 に対して実績 {estimate.actual}分
+              時間感覚: 目安 {estimate.estimated}分 / 実際 {estimate.actual}分
               <span className={estimate.ratio <= 1.2 ? 'badge badge--ok' : 'badge badge--warn'}>
                 {Math.round(estimate.ratio * 100)}%
               </span>
               <br />
               <span className="muted">
-                ここが大きくずれている間は、画面に出る「◯分」を鵜呑みにしない。直近
-                {estimate.samples}件で見ている。
+                ずれが大きい間は、表示時間を少し長めに見ておこう。直近
+                {estimate.samples}件から計算中。
               </span>
             </li>
           )}
@@ -133,10 +133,10 @@ export function RecordsPage() {
         </>
       )}
 
-      <h2>不明語</h2>
+      <h2>見つけた新しい言葉</h2>
       <div className="card">
         {snapshot.unknownTerms.length === 0 ? (
-          <p className="muted">まだない。無採点5問で拾ったものがここに並ぶ。</p>
+          <p className="muted">まだゼロ。お試し5問で見つけた言葉がここに並ぶよ。</p>
         ) : (
           <ul className="plain">
             {snapshot.unknownTerms.map((t) => (
@@ -148,8 +148,8 @@ export function RecordsPage() {
         )}
       </div>
 
-      <h2>学習セッション</h2>
-      {sessions.length === 0 && <p className="muted">まだ記録がない。</p>}
+      <h2>学習ログ</h2>
+      {sessions.length === 0 && <p className="muted">最初のクエストを終えると、ここに記録が残るよ。</p>}
       {sessions.map((s) => (
         <div className="card" key={s.id}>
           <div className="row row--between">
@@ -160,11 +160,11 @@ export function RecordsPage() {
             {KIND_LABEL[s.kind]} ・{s.durationMinutes}分
             {s.countsAsBasics ? ' ・基礎学習に算入' : ' ・基礎学習には算入しない'}
           </p>
-          {s.nextFix && <p>次に直す1点: {s.nextFix}</p>}
+          {s.nextFix && <p>次の自分へ: {s.nextFix}</p>}
         </div>
       ))}
 
-      <p className="muted">週次スナップショットと技能写真のBefore/Afterは次の実装で入れる。</p>
+      <p className="muted">今日の1回も、ちゃんと合格への積み上げ。</p>
     </main>
   );
 }

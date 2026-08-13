@@ -40,7 +40,7 @@ export function SyncPanel() {
     try {
       const trimmed = token.trim();
       if (!trimmed) {
-        setError('トークンを貼り付ける。');
+        setError('GitHubのトークンを貼り付けよう。');
         return;
       }
       const owner = await getViewer(trimmed);
@@ -73,11 +73,11 @@ export function SyncPanel() {
       await reload();
       setNote(
         outcome
-          ? `${owner}/${config.repo} につないだ。取り込み ${outcome.pulled}件 / 送信 ${outcome.pushed}件。`
-          : `${owner}/${config.repo} につないだ。`,
+          ? `${owner}/${config.repo} と同期完了！ 受信 ${outcome.pulled}件 / 送信 ${outcome.pushed}件。`
+          : `${owner}/${config.repo} とつながった！`,
       );
     } catch (e) {
-      setError(e instanceof SyncError ? e.message : `つながらなかった: ${String(e)}`);
+      setError(e instanceof SyncError ? e.message : `つながらなかった。もう一度試そう: ${String(e)}`);
     } finally {
       setBusy(false);
     }
@@ -87,7 +87,7 @@ export function SyncPanel() {
     setBusy(true);
     try {
       await syncEngine.disconnect();
-      setNote('この端末の同期を解除した。クラウド側と他の端末のデータはそのまま残っている。');
+      setNote('この端末の同期を解除したよ。クラウドと他の端末のデータはそのまま！');
     } finally {
       setBusy(false);
     }
@@ -108,12 +108,12 @@ export function SyncPanel() {
 
   return (
     <>
-      <h2>端末間の同期</h2>
+      <h2>データ同期</h2>
       <div className="card">
         <p className="muted">
-          スマホ・パソコン・タブレットは、放っておくと別々のデータを持つ。
-          ブラウザの保存領域が端末ごとに独立しているため。つないでおくと、
-          正答率も学習時間もゲート判定も、どの端末でも同じ数字になる。
+          スマホ・パソコン・タブレットの記録を1つにまとめよう。
+          一度つないでおけば、
+          正答率も学習時間もミッションの進み具合も、どの端末でも同じになる。
         </p>
 
         <p>
@@ -145,7 +145,7 @@ export function SyncPanel() {
             </div>
             <div className="row">
               <button type="button" onClick={() => void syncNow()} disabled={busy}>
-                今すぐ同期
+                いま同期する
               </button>
               <button type="button" className="ghost" onClick={() => void disconnect()} disabled={busy}>
                 同期を解除
@@ -187,7 +187,7 @@ export function SyncPanel() {
             </div>
             <div className="row">
               <button type="button" onClick={() => void connect()} disabled={busy}>
-                {busy ? '確認中…' : 'つないで同期を始める'}
+                {busy ? '接続中…' : '同期をスタート'}
               </button>
               <button type="button" className="ghost" onClick={() => setShowHelp((v) => !v)}>
                 トークンの作り方
@@ -213,7 +213,7 @@ export function SyncPanel() {
               <li>Permissions → Repository permissions → <strong>Contents</strong> を <strong>Read and write</strong> にする</li>
               <li>Generate token を押し、表示された <code>github_pat_</code> で始まる文字列をここへ貼る</li>
             </ol>
-            他の端末では、同じ文字列を貼るだけでよい。パスワード管理アプリに入れておくと楽。
+            他の端末では、同じ文字列を貼るだけでOK。パスワード管理アプリに入れておくと楽！
             <br />
             トークンはこの端末のブラウザ内にだけ置く。バックアップJSONには書き出さない。
           </div>

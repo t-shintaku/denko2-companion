@@ -39,12 +39,12 @@ describe('段階ごとに学習時間が残る', () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(await screen.findByRole('button', { name: 'はじめる' })); // クエストを開く
+    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
     await screen.findByRole('heading', { name: firstLesson.title });
 
-    await user.type(screen.getByLabelText(/この段階にかかった時間/), '12');
-    await user.click(screen.getByRole('button', { name: '見たので次へ' }));
-    await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見た' })).toBeInTheDocument());
+    await user.type(screen.getByLabelText(/このステップにかかった時間/), '12');
+    await user.click(screen.getByRole('button', { name: '見終わった！ 次へ' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見終わった' })).toBeInTheDocument());
 
     // ここで閉じる。まだレッスンは完了していない
     const sessions = (await repo.load()).studySessions;
@@ -61,7 +61,7 @@ describe('段階ごとに学習時間が残る', () => {
   it('段階を4つ通すと、4件の時間が積み上がる(上書き保存では二重に増えない)', async () => {
     const user = userEvent.setup();
     renderApp();
-    await user.click(await screen.findByRole('button', { name: 'はじめる' }));
+    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
     await screen.findByRole('heading', { name: firstLesson.title });
 
     /**
@@ -72,33 +72,33 @@ describe('段階ごとに学習時間が残る', () => {
      */
     const enterMinutes = async (value: string) => {
       await waitFor(() =>
-        expect(screen.getByLabelText(/この段階にかかった時間/)).toHaveValue(null),
+        expect(screen.getByLabelText(/このステップにかかった時間/)).toHaveValue(null),
       );
-      const field = screen.getByLabelText(/この段階にかかった時間/);
+      const field = screen.getByLabelText(/このステップにかかった時間/);
       await user.clear(field);
       await user.type(field, value);
       expect(field).toHaveValue(Number(value));
     };
 
     await enterMinutes('10');
-    await user.click(screen.getByRole('button', { name: '見たので次へ' }));
+    await user.click(screen.getByRole('button', { name: '見終わった！ 次へ' }));
 
     await enterMinutes('5');
     const recallBoxes = screen.getAllByRole('textbox');
     await user.type(recallBoxes[0]!, '思い出した');
-    await user.click(await screen.findByRole('button', { name: '思い出した内容を保存' }));
+    await user.click(await screen.findByRole('button', { name: 'ここまでを保存' }));
 
     await enterMinutes('8');
-    await user.type(screen.getByLabelText('やったことのメモ'), '5問解いた');
-    await user.click(await screen.findByRole('button', { name: '結果を保存' }));
+    await user.type(screen.getByLabelText('今日やったこと'), '5問解いた');
+    await user.click(await screen.findByRole('button', { name: '結果を残す' }));
 
     // 上書き保存しても時間は二重に増えない(「解く／作る」をもう一度保存する)
-    const overwrite = await screen.findAllByRole('button', { name: '✓ 保存済み(上書き)' });
+    const overwrite = await screen.findAllByRole('button', { name: /保存済み/ });
     await user.click(overwrite[overwrite.length - 1]!);
 
     await enterMinutes('3');
-    await user.type(screen.getByLabelText('次に直す1点'), '接地を復習');
-    await user.click(await screen.findByRole('button', { name: '保存してレッスンを閉じる' }));
+    await user.type(screen.getByLabelText('次の自分へのひとこと'), '接地を復習');
+    await user.click(await screen.findByRole('button', { name: '保存してクリア！' }));
 
     await waitFor(async () => {
       const loaded = await repo.load();

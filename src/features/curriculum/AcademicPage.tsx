@@ -52,31 +52,31 @@ export function AcademicPage({
 
   return (
     <main className="app">
-      <h1>学科</h1>
+      <h1>学科クエスト</h1>
 
       {/* 20問診断は、基礎180分に達するまで前面に出さない(FR-003) */}
       {onboarding.stage === 'diagnostic' && !onboarding.diagnosticDone && (
         <div className="card card--accent">
-          <strong>20問診断を受けられる</strong>
+          <strong>20問診断、アンロック！</strong>
           <p className="muted">
-            基礎 {onboarding.basicsMinutes} 分を積んだ。ここで7科目の初期値を取る。
-            公式の過去問から20問を選んで解き、結果を入れる。
+            基礎トレ {onboarding.basicsMinutes} 分クリア。ここから7科目の攻略スタート！
+            公式過去問から20問選んで、いまの実力を見てみよう。
           </p>
           <button
             className="btn-primary btn-block"
             onClick={() => setSheet({ kind: 'diagnostic-20', count: 20 })}
           >
-            20問診断を記録する
+            20問に挑戦する
           </button>
         </div>
       )}
       {onboarding.stage !== 'diagnostic' && !onboarding.diagnosticDone && (
         <div className="card">
-          <strong>20問診断はまだ開いていない</strong>
+          <strong>20問診断まで、あと少し！</strong>
           <p className="muted">
-            {STAGE_LABEL[onboarding.stage]}の段階。オリエンテーション → 採点なし5問 → 基礎
-            {onboarding.basicsRequiredMinutes}分 の順に進むと開く(いまの基礎:{' '}
-            {onboarding.basicsMinutes}分)。
+            いまは{STAGE_LABEL[onboarding.stage]}。電気の地図 → お試し5問 → 基礎トレ
+            {onboarding.basicsRequiredMinutes}分でアンロック（いま{' '}
+            {onboarding.basicsMinutes}分）。
           </p>
         </div>
       )}
@@ -131,18 +131,18 @@ export function AcademicPage({
         </table>
       </div>
 
-      <h2>復習キュー</h2>
+      <h2>リベンジ問題</h2>
       <div className="card">
         {reviewQueue.length === 0 ? (
           <p className="muted">
-            いまは空。誤答・自信の低い正解・放置している弱点がここに溜まる。
+            いまはリベンジ問題なし！ 間違えた問題や、あやふやな正解がここに入るよ。
           </p>
         ) : (
           <>
             <p className="muted">
-              誤答だけでなく「自信の低い正解」も同じ重みで入れている。まぐれ当たりは次に落ちる。
-              解けたら翌日 → 3日後 → 7日後 → 14日後と間隔を空けて戻ってくる。
-              4つの間隔をすべて解けたら卒業。解けなければ翌日また出る。
+              「たまたま正解」も、次は自力で解けるようにリベンジ。
+              クリアするたび翌日 → 3日後 → 7日後 → 14日後と間隔が広がる。
+              4回クリアで卒業！ まだなら翌日もう一度。
             </p>
             <ul className="plain stack">
               {reviewQueue.slice(0, 10).map((item) => (
@@ -169,7 +169,7 @@ export function AcademicPage({
                         await reload();
                       }}
                     >
-                      ○ 解けた
+                      ✓ クリア！
                     </button>
                     <button
                       className="btn-sm"
@@ -178,7 +178,7 @@ export function AcademicPage({
                         await reload();
                       }}
                     >
-                      × まだ(明日また出す)
+                      ↻ もう一回（明日リトライ）
                     </button>
                   </div>
                 </li>
@@ -191,17 +191,17 @@ export function AcademicPage({
         )}
       </div>
 
-      <h2>小テスト・模試</h2>
+      <h2>腕だめし</h2>
       <div className="card">
         <div className="stack">
           <button className="btn-sm btn-block" onClick={() => setSheet({ kind: 'topic-quiz', count: 10 })}>
-            カテゴリ小テスト(10問)を記録
+            10問チャレンジ
           </button>
           <button className="btn-sm btn-block" onClick={() => setSheet({ kind: 'topic-quiz', count: 20 })}>
-            週末チェック(20問)を記録
+            週末20問チェック
           </button>
           <button className="btn-primary btn-block" onClick={() => setSheet({ kind: 'mock-50', count: 50 })}>
-            50問模試を記録
+            50問模試に挑戦
           </button>
         </div>
         <p className="muted">
@@ -212,8 +212,8 @@ export function AcademicPage({
 
       {excluded.length > 0 && (
         <p className="notice">
-          {excluded.length}件の模試を集計から外している(50問でない、または正答数が0〜問題数の範囲外)。
-          点数の水増しは受験の判断をそのまま誤らせるので、集計側でも弾いている。
+          {excluded.length}件は集計の対象外（50問でない、または入力値が範囲外）。
+          合格ラインを正しく見るため、条件を満たした模試だけで計算しているよ。
         </p>
       )}
 
@@ -259,11 +259,11 @@ export function AcademicPage({
         </div>
       )}
 
-      <h2>学科ゲート</h2>
+      <h2>学科クリアへの5ミッション</h2>
       <div className="card">
         <p className="muted">
-          総合パーセントは出さない。5つの条件を1つずつ満たす。
-          いま {academicGate.passedCount} / {academicGate.total}。
+          合格の準備は、5つのミッションでチェック。
+          いま {academicGate.passedCount} / {academicGate.total} クリア！
         </p>
         <ul className="plain stack">
           {academicGate.criteria.map((c) => (
@@ -278,7 +278,7 @@ export function AcademicPage({
         </ul>
       </div>
 
-      <h2>カリキュラム</h2>
+      <h2>レッスン一覧</h2>
       <button className="btn-sm btn-block" onClick={() => setShowCurriculum((v) => !v)}>
         {showCurriculum ? '閉じる' : `全${curriculum.lessons.length}レッスンを表示`}
       </button>
@@ -301,7 +301,7 @@ export function AcademicPage({
                     <div className="row row--between">
                       <strong>{lesson.title}</strong>
                       <span className={done ? 'badge badge--ok' : 'badge'}>
-                        {done ? '完了' : `${Math.round(completionRatio(lesson, progress) * 100)}%`}
+                        {done ? 'クリア' : `${Math.round(completionRatio(lesson, progress) * 100)}%`}
                       </span>
                     </div>
                     <p className="muted">{lesson.objective}</p>
@@ -312,13 +312,13 @@ export function AcademicPage({
                         {lesson.skillTouch ? ' ・技能接触' : ''}
                       </span>
                       {locked ? (
-                        <span className="badge">{STAGE_LABEL[lesson.stage]}まで待つ</span>
+                        <span className="badge">{STAGE_LABEL[lesson.stage]}でアンロック</span>
                       ) : (
                         <button
                           className="btn-sm"
                           onClick={() => onOpenLesson(lesson.id, modeForBudget(30))}
                         >
-                          {done ? '見直す' : '開く'}
+                          {done ? 'もう一度' : '挑戦する'}
                         </button>
                       )}
                     </div>
