@@ -41,6 +41,8 @@ export function AcademicPage({
   } = useVault();
   const [sheet, setSheet] = useState<{ kind: ExamKind; count: number } | undefined>();
   const [showCurriculum, setShowCurriculum] = useState(false);
+  /** リベンジ問題で選んだ選択肢。attempt.id → 選んだ番号 */
+  const [retry, setRetry] = useState<Record<string, number>>({});
 
   if (sheet) {
     return <ExamSheet kind={sheet.kind} count={sheet.count} onClose={() => setSheet(undefined)} />;
@@ -200,12 +202,15 @@ export function AcademicPage({
               4回クリアで卒業！ まだなら翌日もう一度。
             </p>
             <ul className="plain stack">
-              {reviewQueue.slice(0, 10).map((item) => (
+              {reviewQueue.slice(0, 10).map((item) => {
+                // アプリ内出題は questionRef が問題ID。問題そのものを出し直せる
+                const question = getQuestion(item.attempt.questionRef);
+                const picked = retry[item.attempt.id];
+                return (
                 <li key={item.attempt.id} className="stack" style={{ marginBottom: 12 }}>
                   <span>
                     {topicName(item.attempt.topicId)} —{' '}
-                    {/* アプリ内出題は questionRef が問題ID。IDのままでは何の問題か分からない */}
-                    {getQuestion(item.attempt.questionRef)?.stem ?? item.attempt.questionRef}
+                    {question?.stem ?? item.attempt.questionRef}
                     <br />
                     <span className="muted">
                       {REVIEW_REASON_LABEL[item.reason]}
@@ -218,28 +223,86 @@ export function AcademicPage({
                         : ''}
                     </span>
                   </span>
-                  <div className="row">
-                    <button
-                      className="btn-primary btn-sm"
-                      onClick={async () => {
-                        await repo.markReviewed([item.attempt.id], true);
-                        await reload();
-                      }}
-                    >
-                      ✓ クリア！
-                    </button>
-                    <button
-                      className="btn-sm"
-                      onClick={async () => {
-                        await repo.markReviewed([item.attempt.id], false);
-                        await reload();
-                      }}
-                    >
-                      ↻ もう一回（明日リトライ）
-                    </button>
-                  </div>
+                  {/*
+                    アプリ内出題は、その場で解き直させる。自己申告の「クリア」だけだと
+                    解けたかどうかを本人の気分が決めてしまい、間隔反復が意味を失う。
+                    外部教材(過去問)の記録は問題文を持っていないので、従来どおり自己申告。
+                  */}
+                  {question ? (
+                    <div className="quiz-item">
+                      <ul className="plain stack quiz-choices">
+                        {question.choices.map((choice, ci) => (
+                          <li key={ci}>
+                            <button
+                              type="button"
+                              className={[
+                                'btn-sm btn-block quiz-choice',
+                                picked !== undefined && ci === question.answerIndex
+                                  ? 'quiz-choice--right'
+                                  : '',
+                                picked === ci && ci !== question.answerIndex
+                                  ? 'quiz-choice--wrong'
+                                  : '',
+                              ]
+                                .filter(Boolean)
+                                .join(' ')}
+                              disabled={picked !== undefined}
+                              onClick={async () => {
+                                setRetry((prev) => ({ ...prev, [item.attempt.id]: ci }));
+                                await repo.markReviewed(
+                                  [item.attempt.id],
+                                  ci === question.answerIndex,
+                                );
+                                await reload();
+                              }}
+                            >
+                              {['ア', 'イ', 'ウ', 'エ'][ci] ?? ci + 1}. {choice}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      {picked !== undefined && (
+                        <div
+                          className={
+                            picked === question.answerIndex
+                              ? 'quiz-feedback quiz-feedback--ok'
+                              : 'quiz-feedback'
+                          }
+                        >
+                          <strong>
+                            {picked === question.answerIndex
+                              ? 'リベンジ成功！ 次は間隔をあけて戻ってくるよ'
+                              : 'おしい！ 明日もう一回'}
+                          </strong>
+                          <p>{question.explanation}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="row">
+                      <button
+                        className="btn-primary btn-sm"
+                        onClick={async () => {
+                          await repo.markReviewed([item.attempt.id], true);
+                          await reload();
+                        }}
+                      >
+                        ✓ クリア！
+                      </button>
+                      <button
+                        className="btn-sm"
+                        onClick={async () => {
+                          await repo.markReviewed([item.attempt.id], false);
+                          await reload();
+                        }}
+                      >
+                        ↻ もう一回（明日リトライ）
+                      </button>
+                    </div>
+                  )}
                 </li>
-              ))}
+                );
+              })}
             </ul>
             {reviewQueue.length > 10 && (
               <p className="muted">ほか {reviewQueue.length - 10} 件</p>

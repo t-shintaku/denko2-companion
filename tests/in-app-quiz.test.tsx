@@ -208,3 +208,53 @@ describe('出題の出どころ', () => {
     expect(buttons.map((b) => b.textContent!.replace(/^[アイウエ]\. /, ''))).toEqual(q.choices);
   });
 });
+
+describe('リベンジ問題(学科タブ)', () => {
+  it('アプリ内で落とした問題は、その場で解き直せる。自己申告ボタンは出さない', async () => {
+    const { AcademicPage } = await import('../src/features/curriculum/AcademicPage');
+    const target = bank[0]!;
+    await repo.recordQuiz(lesson.id, [
+      { topicId: target.topicId, correct: false, confidence: 1, questionRef: target.id },
+    ]);
+
+    const user = userEvent.setup();
+    render(
+      <VaultProvider>
+        <AcademicPage onOpenLesson={() => {}} />
+      </VaultProvider>,
+    );
+
+    // 問題IDではなく問題文が出る
+    await screen.findByText(new RegExp(target.stem.slice(0, 12)));
+    expect(screen.queryByRole('button', { name: '✓ クリア！' })).not.toBeInTheDocument();
+
+    const choices = screen.getAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ });
+    await user.click(choices[target.answerIndex]!);
+
+    await screen.findByText(/リベンジ成功！/);
+    await waitFor(async () => {
+      const row = (await repo.load()).questionAttempts[0]!;
+      expect(row.reviewCount).toBe(1);
+      expect(row.lastReviewCorrect).toBe(true);
+    });
+  });
+
+  it('外部教材(過去問)の記録は問題文が無いので、従来どおり自己申告で進める', async () => {
+    const { AcademicPage } = await import('../src/features/curriculum/AcademicPage');
+    await repo.recordExam({
+      kind: 'topic-quiz',
+      label: '令和7年度上期 学科',
+      timed: false,
+      questions: [{ topicId: 'law', correct: false, confidence: 1 }],
+    });
+
+    render(
+      <VaultProvider>
+        <AcademicPage onOpenLesson={() => {}} />
+      </VaultProvider>,
+    );
+
+    expect(await screen.findByRole('button', { name: '✓ クリア！' })).toBeInTheDocument();
+    expect(screen.queryAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ })).toHaveLength(0);
+  });
+});
