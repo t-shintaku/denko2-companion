@@ -43,7 +43,7 @@ export default function App() {
 
   return (
     <>
-      {tab === 'home' && <HomePage onOpenLesson={openLesson} />}
+      {tab === 'home' && <HomePage onOpenLesson={openLesson} onGoTo={setTab} />}
       {tab === 'academic' && <AcademicPage onOpenLesson={openLesson} />}
       {tab === 'practical' && <PracticalPage onOpenLesson={openLesson} />}
       {tab === 'records' && <RecordsPage />}

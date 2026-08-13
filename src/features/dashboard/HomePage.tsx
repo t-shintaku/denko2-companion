@@ -10,7 +10,13 @@ import { useVault } from '../../state/VaultContext';
 import { AdminTaskRow } from '../milestones/AdminTaskList';
 import type { LessonMode } from '../../domain/types';
 
-export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: LessonMode) => void }) {
+export function HomePage({
+  onOpenLesson,
+  onGoTo,
+}: {
+  onOpenLesson: (id: string, mode: LessonMode) => void;
+  onGoTo?: (tab: 'academic' | 'settings') => void;
+}) {
   const vault = useVault();
   const [budget, setBudget] = useState<10 | 30 | 60>(30);
   const [keepGoing, setKeepGoing] = useState(false);
@@ -48,6 +54,10 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
   const xp = Object.values(snapshot.lessonProgress).reduce((sum, p) => sum + p.xpAwarded, 0);
   const effortLevel = Math.floor(xp / 100) + 1;
   const xpToNextLevel = 100 - (xp % 100);
+  const basicsLeft = Math.max(
+    0,
+    onboarding.basicsRequiredMinutes - onboarding.basicsMinutes,
+  );
   const basicsPct = Math.min(
     100,
     Math.round((onboarding.basicsMinutes / onboarding.basicsRequiredMinutes) * 100),
@@ -132,7 +142,34 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </div>
       )}
 
-      {showQuests && quests.length === 0 && (
+      {/*
+        基礎トレのレッスンを全部終えても、10分モードの見積合計(142分)は
+        必要な180分に届かない。ここで「コンプリート！」とだけ出すと、
+        やることが無いのに20問診断も開かない行き止まりになる。
+        抜け道(腕だめし・手動アンロック)は設定と学科タブにあるが、
+        ホームから案内していなかったので、その場で出す。
+      */}
+      {showQuests && quests.length === 0 && onboarding.stage === 'basics' && (
+        <div className="card card--accent">
+          <strong>基礎トレのレッスンは全部クリア！ あと {basicsLeft} 分でアンロック。</strong>
+          <p className="muted">
+            レッスンは尽きたけど、20問診断はまだ開いていない状態。
+            <strong>学科タブの「腕だめし」</strong>を解けば、その時間も基礎トレに入るよ。
+          </p>
+          <div className="row">
+            <button className="btn-primary btn-sm" type="button" onClick={() => onGoTo?.('academic')}>
+              腕だめしを解く
+            </button>
+            {onboarding.diagnosticManualUnlockOffered && (
+              <button className="btn-sm" type="button" onClick={() => onGoTo?.('settings')}>
+                もう分かってる。先に進む
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showQuests && quests.length === 0 && onboarding.stage !== 'basics' && (
         <div className="card">
           <p>今日の必須クエストはコンプリート！ あとは休むも、もう1問やるも自由。</p>
         </div>

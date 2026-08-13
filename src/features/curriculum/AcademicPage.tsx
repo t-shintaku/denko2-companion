@@ -142,6 +142,7 @@ export function AcademicPage({
               <th>累計</th>
               <th>累計正答率</th>
               <th>直近{RECENT_WINDOW}問(判定はこちら)</th>
+              <th>うち公式過去問</th>
               <th>最終</th>
             </tr>
           </thead>
@@ -176,11 +177,31 @@ export function AcademicPage({
                     );
                   })()}
                 </td>
+                <td>
+                  {s.pastExamTotal === 0 ? (
+                    <span className="badge badge--warn">まだ0問</span>
+                  ) : (
+                    <>
+                      {s.pastExamTotal}問 {Math.round((s.pastExamAccuracy ?? 0) * 100)}%
+                    </>
+                  )}
+                </td>
                 <td>{s.lastAttemptedOn ? formatJstShort(s.lastAttemptedOn) : '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+      {/*
+        アプリ内問題は自作で、本番より易しい。混ぜた1つの数字だけを見せると
+        「7科目クリア=受かる」と読めてしまうので、公式過去問の実績を必ず並べて出す。
+      */}
+      <div className="card">
+        <p className="muted">
+          <strong>正答率にはアプリ内の練習問題も入っているよ。</strong>
+          アプリ内問題は自作で、本番よりやさしめ。
+          <strong>合格圏かどうかは「うち公式過去問」の列と、下の模試の点数で見てね。</strong>
+        </p>
       </div>
 
       <h2>出題範囲マップ</h2>

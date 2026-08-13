@@ -8,6 +8,7 @@
  */
 
 import { addDays, diffDays, todayJst } from './jst';
+import { IN_APP_SOURCE } from './quiz';
 import type {
   ErrorReason,
   ExamKind,
@@ -90,6 +91,10 @@ export type TopicStat = {
   recentTotal: number;
   recentCorrect: number;
   recentAccuracy?: number;
+  /** 公式過去問だけの成績。アプリ内の自作問題を混ぜた数字と取り違えさせないために分けて持つ */
+  pastExamTotal: number;
+  pastExamCorrect: number;
+  pastExamAccuracy?: number;
   lastAttemptedOn?: IsoDate;
   daysSinceLast?: number;
   /** 自信度の平均(1〜3)。低いほど当てずっぽう */
@@ -113,6 +118,11 @@ export function topicStats(
     const recent = mine.slice(-RECENT_WINDOW);
     const total = mine.length;
     const correct = mine.filter((a) => a.correct).length;
+    // アプリ内の自作問題と、公式過去問を分けて持つ。
+    // 混ぜた1つの数字だけを出すと、易しい自作問題の正解が本番の実力に見える。
+    // 判定(meetsMinimum)は従来どおり混ぜたまま。ここは「誤解させない表示」のための材料。
+    const pastExam = mine.filter((a) => a.source !== IN_APP_SOURCE);
+    const pastExamCorrect = pastExam.filter((a) => a.correct).length;
     const recentCorrect = recent.filter((a) => a.correct).length;
     const last = mine[mine.length - 1];
     const accuracy = total > 0 ? correct / total : undefined;
@@ -128,6 +138,9 @@ export function topicStats(
       recentTotal: recent.length,
       recentCorrect,
       recentAccuracy,
+      pastExamTotal: pastExam.length,
+      pastExamCorrect,
+      pastExamAccuracy: pastExam.length > 0 ? pastExamCorrect / pastExam.length : undefined,
       lastAttemptedOn: last?.jstDate,
       daysSinceLast: last ? diffDays(last.jstDate, today) : undefined,
       averageConfidence:

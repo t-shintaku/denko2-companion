@@ -278,3 +278,33 @@ describe('事務タスクJSONの整合', () => {
     }
   });
 });
+
+/**
+ * 「一番長い選択肢を選ぶ」だけで科目ゲート(直近20問で60%)を抜けられてはいけない。
+ * 抜けられると、正答率も範囲カバーも復習キューも同時に嘘になり、
+ * 本人は「7科目クリア」を見たまま本番へ行く。
+ * 同率最長は等確率で引くものとして期待正答率を出す。
+ */
+describe('選択肢の長さが答えを漏らしていない', () => {
+  const expectedByLengthStrategy = (list: typeof questions) => {
+    let expected = 0;
+    for (const q of list) {
+      const max = Math.max(...q.choices.map((c) => c.length));
+      const tied = q.choices.filter((c) => c.length === max).length;
+      if (q.choices[q.answerIndex]!.length === max) expected += 1 / tied;
+    }
+    return expected / list.length;
+  };
+
+  it('長さだけで科目ゲート(60%)を抜けられる科目が1つも無い', () => {
+    const topicIdList = [...new Set(questions.map((q) => q.topicId))];
+    for (const topicId of topicIdList) {
+      const list = questions.filter((q) => q.topicId === topicId);
+      expect(expectedByLengthStrategy(list), `${topicId} が長さだけで通る`).toBeLessThan(0.6);
+    }
+  });
+
+  it('全体でも、長さ戦略はまぐれ(25%)の2倍に届かない', () => {
+    expect(expectedByLengthStrategy(questions)).toBeLessThan(0.5);
+  });
+});

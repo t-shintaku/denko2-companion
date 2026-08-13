@@ -283,8 +283,8 @@
     "id": "q-dd-015",
     "lessonId": "p2-w6-l4",
     "topicId": "distribution-design",
-    "sourceResourceId": "hozan-theory",
-    "sourceWatch": "問10(単相3線式)の回路図と解説。100Vと200Vの取り出し方",
+    "sourceResourceId": "gami-3wire",
+    "sourceWatch": "中性線をはさんだ100Vと200Vの取り出し方を図で示す場面",
     "stem": "単相3線式100/200Vの屋内配線で、200Vを取り出すのはどの線の間か。",
     "choices": [
       "両側の電圧線どうし",
@@ -303,8 +303,8 @@
     "id": "q-dd-016",
     "lessonId": "p2-w6-l4",
     "topicId": "distribution-design",
-    "sourceResourceId": "hozan-theory",
-    "sourceWatch": "問10(単相3線式)の解説。中性線の役割と断線したときの電圧",
+    "sourceResourceId": "gami-3wire",
+    "sourceWatch": "中性線に流れる電流を「右と左」で考える場面",
     "stem": "単相3線式の中性線について、正しいのはどれか。",
     "choices": [
       "中性線には過電流遮断器を設けてはならない",
@@ -323,8 +323,8 @@
     "id": "q-dd-017",
     "lessonId": "p2-w6-l4",
     "topicId": "distribution-design",
-    "sourceResourceId": "hozan-theory",
-    "sourceWatch": "問12(電圧降下)の計算過程。単相2線式の式の立て方",
+    "sourceResourceId": "kandenkou-voltdrop",
+    "sourceWatch": "単相2線式の電圧降下 e=2Ir を立てる場面",
     "stem": "単相2線式で、電線1本あたりの抵抗が0.1Ω、負荷電流が10Aのとき、電線での電圧降下は何Vか。",
     "choices": [
       "2V",
@@ -343,8 +343,8 @@
     "id": "q-dd-018",
     "lessonId": "p2-w6-l4",
     "topicId": "distribution-design",
-    "sourceResourceId": "hozan-theory",
-    "sourceWatch": "問12(電圧降下)と問17(三相3線式)の解説。配電方式ごとの係数",
+    "sourceResourceId": "kandenkou-voltdrop",
+    "sourceWatch": "三相3線式の電圧降下 e=√3Ir を単相と並べて比べる場面",
     "stem": "三相3線式の電圧降下(線間)を表す式はどれか。ただしIは線電流、rは電線1本あたりの抵抗とする。",
     "choices": [
       "√3 I r",
@@ -363,8 +363,8 @@
     "id": "q-dd-019",
     "lessonId": "p2-w6-l4",
     "topicId": "distribution-design",
-    "sourceResourceId": "hozan-theory",
-    "sourceWatch": "問12(電圧降下)の解説。電流と抵抗が損失に効くこと",
+    "sourceResourceId": "gami-loss",
+    "sourceWatch": "77秒からの令和4年上期問6。損失を減らすには何を小さくするか",
     "stem": "配電線での電力損失を減らす方法として、最も効果が大きいのはどれか。",
     "choices": [
       "電線を太くして抵抗を小さくする",
@@ -381,10 +381,10 @@
   },
   {
     "id": "q-dd-020",
-    "lessonId": "p2-w6-l4",
+    "lessonId": "p2-w5-l3",
     "topicId": "distribution-design",
     "sourceResourceId": "gami-design",
-    "sourceWatch": "需要率・設備容量の節",
+    "sourceWatch": "幹線用遮断器の施設の節。設備容量から幹線を決める考え方(需要率の式そのものはこの問題の解説で確かめる)",
     "stem": "設備容量10kW、最大需要電力6kWのときの需要率は何%か。",
     "choices": [
       "60%",
@@ -401,16 +401,16 @@
   },
   {
     "id": "q-dd-021",
-    "lessonId": "p2-w6-l4",
+    "lessonId": "p2-w5-l3",
     "topicId": "distribution-design",
     "sourceResourceId": "gami-design",
-    "sourceWatch": "需要率・設備容量の節",
+    "sourceWatch": "幹線用遮断器の施設の節。設備容量と最大需要電力の関係(需要率の定義はこの問題の解説で確かめる)",
     "stem": "需要率について、正しいのはどれか。",
     "choices": [
       "すべての負荷が同時には使われないことを見込んだ割合である",
-      "設備容量そのものを表す",
-      "負荷の力率を表す",
-      "電線の許容電流を表す"
+      "接続されている設備容量の合計そのものを表す",
+      "負荷の力率を百分率になおして表したものである",
+      "幹線に使う電線の許容電流の余裕を表している"
     ],
     "answerIndex": 0,
     "explanation": "需要率 = 最大需要電力 ÷ 設備容量。全部が同時には動かないので、幹線を設備容量そのままで設計しない。",

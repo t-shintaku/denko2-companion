@@ -204,6 +204,13 @@ export function LessonPage({
   const steps = requiredSteps(lesson);
   const upcoming = nextStep(lesson, progress);
   const complete = isLessonComplete(lesson, progress);
+  // 努力レベルは XP 100 ごと(ホームと同じ式)。このレッスンぶんで境界をまたいだかを見る。
+  const totalXp = Object.values(snapshot.lessonProgress).reduce((s, p) => s + p.xpAwarded, 0);
+  const effortLevel = Math.floor(totalXp / 100) + 1;
+  const xpToNextLevel = 100 - (totalXp % 100);
+  const leveledUp =
+    complete &&
+    Math.floor((totalXp - xpForLesson(lesson)) / 100) + 1 < effortLevel;
   const isUngradedFive = lesson.stage === 'ungraded-five';
 
   const measuredMinutes = () =>
@@ -1025,6 +1032,17 @@ export function LessonPage({
       {complete ? (
         <div className="card card--accent">
           <strong>クエストクリア！ XP +{xpForLesson(lesson)}</strong>
+          {/*
+            レベルが上がった瞬間を、上がったその場で言う。
+            ホームの「Lv.7」は静かに増えるだけで、上がった手応えがどこにも無かった。
+          */}
+          {leveledUp ? (
+            <p className="notice">
+              <strong>🎉 努力レベル Lv.{effortLevel} にアップ！</strong> ここまでの積み上げが1段上がったよ。
+            </p>
+          ) : (
+            <p className="muted">次のレベルまであと {xpToNextLevel} XP。</p>
+          )}
           <p className="muted">
             4ステップ達成！ 今日の積み上げは{' '}
             {snapshot.studySessions

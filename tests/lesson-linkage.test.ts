@@ -85,9 +85,17 @@ describe('見ないで思い出す ↔ まず見る', () => {
   });
 
   it('単相3線式・電圧降下は、幹線設計の動画を出どころにしない', () => {
-    const banned = new Set(['q-dd-015', 'q-dd-016', 'q-dd-017', 'q-dd-018', 'q-dd-019']);
-    for (const id of banned) {
-      expect(questionById.get(id)?.sourceResourceId, id).toBe('hozan-theory');
+    // gami-design は説明欄のとおり「幹線設計」1本。単相3線式も電圧降下も電力損失も扱わない。
+    // それぞれ実物を開いて内容を確かめた教材へ割り当てる。
+    const expected: Record<string, string> = {
+      'q-dd-015': 'gami-3wire',
+      'q-dd-016': 'gami-3wire',
+      'q-dd-017': 'kandenkou-voltdrop',
+      'q-dd-018': 'kandenkou-voltdrop',
+      'q-dd-019': 'gami-loss',
+    };
+    for (const [id, src] of Object.entries(expected)) {
+      expect(questionById.get(id)?.sourceResourceId, id).toBe(src);
     }
     const l = lessonById.get('p2-w6-l4')!;
     for (const p of l.recallPrompts) {

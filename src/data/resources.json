@@ -829,7 +829,10 @@
     "title": "#01 コンセントの種類とアース線",
     "url": "https://www.youtube.com/watch?v=mKvwmm6JDQc",
     "type": "video",
-    "topicIds": ["equipment-tools", "wiring-diagram"],
+    "topicIds": [
+      "equipment-tools",
+      "wiring-diagram"
+    ],
     "role": "supplement",
     "creatorKind": "individual",
     "lastVerified": "2026-08-13",
@@ -921,5 +924,56 @@
     "runtimeMinutes": 2,
     "creatorNote": "60歳から独学で受験した個人",
     "note": "手元だけを写した短い実演。長い解説の前に、手の動きだけ真似したいとき。"
+  },
+  {
+    "id": "gami-3wire",
+    "provider": "ガミデンキちゃんねる",
+    "title": "単相3線式の中性線に流れる電流は「右と左」が分かれば確実に解ける",
+    "url": "https://youtu.be/4GSA-p_qUm4",
+    "type": "video",
+    "topicIds": [
+      "distribution-design"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 8,
+    "creatorNote": "元電気科講師",
+    "note": "8分19秒。令和7年上期問7を1問だけ解く回。チャプターはOP・授業開始(45秒)・まとめ(438秒)。"
+  },
+  {
+    "id": "gami-loss",
+    "provider": "ガミデンキちゃんねる",
+    "title": "この1本の動画で電力損失の問題がとても簡単になります",
+    "url": "https://youtu.be/kLG7E5QMpII",
+    "type": "video",
+    "topicIds": [
+      "distribution-design"
+    ],
+    "role": "primary",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 12,
+    "creatorNote": "元電気科講師",
+    "note": "12分6秒。令和4年上期の問6(77秒〜)と問7(318秒〜)を解く。まとめは615秒。"
+  },
+  {
+    "id": "kandenkou-voltdrop",
+    "provider": "還電工",
+    "title": "筆記試験対策⑦ 単相3線・三相3線の電圧降下、電力損失の問題攻略",
+    "url": "https://youtu.be/nMId1XffSSw",
+    "type": "video",
+    "topicIds": [
+      "distribution-design"
+    ],
+    "role": "supplement",
+    "creatorKind": "individual",
+    "lastVerified": "2026-08-13",
+    "verification": "fetched",
+    "runtimeMinutes": 17,
+    "creatorNote": "個人",
+    "note": "16分58秒。チャプター無し。配電方式ごとの電圧降下の式を並べて説明する回。"
   }
 ]

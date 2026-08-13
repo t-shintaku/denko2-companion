@@ -2148,7 +2148,7 @@
       ],
       "practice": {
         "kind": "in-app-questions",
-        "targetCount": 14,
+        "targetCount": 16,
         "instruction": "この画面で14問。今日見た内容だけから出るよ",
         "scored": true,
         "questionIds": [
@@ -2165,7 +2165,9 @@
           "q-dd-011",
           "q-dd-012",
           "q-dd-013",
-          "q-dd-014"
+          "q-dd-014",
+          "q-dd-020",
+          "q-dd-021"
         ]
       },
       "officialTopicIds": [
@@ -2591,12 +2593,28 @@
           "minutes": 12
         },
         {
-          "resourceId": "gami-design",
+          "resourceId": "gami-3wire",
           "use": "more",
           "where": "動画をそのまま再生する",
-          "watch": "幹線設計を1本にまとめた回。許容電流→減少係数→分岐回路→幹線用遮断器の順。需要率は扱っていない",
-          "stop": "23分40秒の次回予告で閉じる",
-          "minutes": 10
+          "watch": "単相3線式の中性線。100Vと200Vの取り出し方と、中性線に流れる電流",
+          "stop": "8分19秒。まとめまで見たら閉じる",
+          "minutes": 8
+        },
+        {
+          "resourceId": "kandenkou-voltdrop",
+          "use": "more",
+          "where": "動画をそのまま再生する(チャプター無し)",
+          "watch": "配電方式ごとの電圧降下の式。単相2線式・単相3線式・三相3線式を並べて比べる",
+          "stop": "3つの式を書き出せたら止める",
+          "minutes": 17
+        },
+        {
+          "resourceId": "gami-loss",
+          "use": "more",
+          "where": "77秒の「令和4年上期 問6」から再生する",
+          "watch": "電力損失が電流の2乗で効くこと。問7(318秒)まで",
+          "stop": "615秒のまとめで閉じる",
+          "minutes": 12
         }
       ],
       "recallPrompts": [
@@ -2629,7 +2647,7 @@
       ],
       "practice": {
         "kind": "in-app-questions",
-        "targetCount": 23,
+        "targetCount": 21,
         "instruction": "この画面で23問。出どころは各問題の下に表示するよ",
         "scored": true,
         "questionIds": [
@@ -2653,9 +2671,7 @@
           "q-dd-017",
           "q-dd-018",
           "q-dd-019",
-          "q-dd-020",
-          "q-bt-021",
-          "q-dd-021"
+          "q-bt-021"
         ]
       },
       "officialTopicIds": [
