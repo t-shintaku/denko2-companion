@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { curriculum, getQuestion, resources, topicName, topics } from '../../data';
 import { repo } from '../../db/repo';
 import {
@@ -20,7 +20,8 @@ import { completionRatio, isLessonComplete, modeForBudget } from '../../domain/l
 import { STAGE_LABEL } from '../../domain/onboarding';
 import { useVault } from '../../state/VaultContext';
 import { ExamSheet } from '../academic/ExamSheet';
-import type { ExamKind, LessonMode } from '../../domain/types';
+import { presentQuestion, type PresentedQuestion } from '../../domain/quiz';
+import type { ExamKind, LessonMode, QuizQuestion } from '../../domain/types';
 
 export function AcademicPage({
   onOpenLesson,
@@ -37,12 +38,26 @@ export function AcademicPage({
     topicCoverage,
     overallCoverage,
     coverageGaps,
+    recallGaps,
     reload,
   } = useVault();
   const [sheet, setSheet] = useState<{ kind: ExamKind; count: number } | undefined>();
   const [showCurriculum, setShowCurriculum] = useState(false);
   /** リベンジ問題で選んだ選択肢。attempt.id → 選んだ番号 */
   const [retry, setRetry] = useState<Record<string, number>>({});
+  /**
+   * リベンジ問題も選択肢を並べ替える。並べ替えないと、
+   * 「前に選んだのはこの位置だったから違うほう」で正解できてしまう。
+   * 一度組んだ並びは保持する(答えている途中で動かさない)。
+   */
+  const presentedRetry = useRef(new Map<string, PresentedQuestion>());
+  const presentFor = (attemptId: string, question: QuizQuestion) => {
+    const cached = presentedRetry.current.get(attemptId);
+    if (cached) return cached;
+    const next = presentQuestion(question);
+    presentedRetry.current.set(attemptId, next);
+    return next;
+  };
 
   if (sheet) {
     return <ExamSheet kind={sheet.kind} count={sheet.count} onClose={() => setSheet(undefined)} />;
@@ -148,11 +163,22 @@ export function AcademicPage({
       <div className="card">
         <p className="muted">
           <strong>「レッスンを何本やったか」ではなく「試験に出る項目を何個押さえたか」。</strong>
-          1項目は<strong>レッスンを完了</strong>して、その項目の問題に<strong>1問でも正解</strong>したら埋まる。
+          1項目は<strong>レッスンを完了</strong>して、その項目の問題に<strong>必要数だけ正解</strong>したら埋まる
+          (本番で1問以上出る重さの項目は2問、それ未満は1問)。
           学科50問の重みで数えているから、配線図(20問ぶん)が空だと数字は伸びないよ。
         </p>
         <p className="badge badge--ok">
           範囲カバー {Math.round(overallCoverage * 100)}%
+        </p>
+        {/*
+          アプリ内の配線図問題は、記号の「意味」を言葉で問う形。
+          記号の「形」を見て答える鑑別は写真が要るので、HOZANの一問一答が担当する。
+          ここを書かないと、100%が「配線図が読める」と誤読される。
+        */}
+        <p className="notice">
+          <strong>配線図だけは、この数字だけで安心しない。</strong>
+          アプリ内は記号の意味を言葉で問う形。記号や器具の<strong>「形」を見て答える鑑別</strong>は、
+          配線図記号レッスンから飛ぶHOZANの一問一答でやろう。本番の配線図20問はそこが効く。
         </p>
         <div style={{ marginTop: 10 }}>
           {topicCoverage.map((c) => (
@@ -179,12 +205,49 @@ export function AcademicPage({
                 <li key={g.item.id} className="muted">
                   {topicName(g.item.topicId)}｜{g.item.name} —{' '}
                   {g.taught && !g.confirmed
-                    ? 'レッスンは終わってる。あと1問正解すれば埋まる！'
+                    ? `レッスンは終わってる。あと${g.requiredCorrect - g.correct}問正解すれば埋まる！`
                     : 'まだレッスンが残ってる'}
                 </li>
               ))}
             </ul>
           </div>
+        )}
+      </div>
+
+      <h2>言い直しリスト</h2>
+      <div className="card">
+        {recallGaps.length === 0 ? (
+          <p className="muted">
+            いまは言い直し待ちなし！ レッスンの「見ないで思い出す」で
+            「ちょっと惜しい」「出てこなかった」を選んだ項目がここに集まるよ。
+          </p>
+        ) : (
+          <>
+            <p className="muted">
+              自分で「言えなかった」と付けた項目。
+              <strong>合格準備度には入らない</strong>けど、口に出して言えるまで戻ってくる。
+              1日1つ、声に出して言い直すだけでいい。
+            </p>
+            <ul className="plain stack">
+              {recallGaps.map((g) => (
+                <li key={`${g.lessonId}-${g.promptId}`} style={{ marginBottom: 12 }}>
+                  <span className={g.mark === 'miss' ? 'badge badge--warn' : 'badge'}>
+                    {g.mark === 'miss' ? '出てこなかった' : 'ちょっと惜しい'}
+                  </span>{' '}
+                  <strong>{g.prompt}</strong>
+                  <details className="supplemental-resources">
+                    <summary>模範解答を見る</summary>
+                    <div className="supplemental-resources__body">
+                      <p>{g.modelAnswer}</p>
+                      <p className="muted">
+                        {g.lessonTitle} ・{formatJstShort(g.at.slice(0, 10))}
+                      </p>
+                    </div>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
 
@@ -199,12 +262,13 @@ export function AcademicPage({
             <p className="muted">
               「たまたま正解」も、次は自力で解けるようにリベンジ。
               クリアするたび翌日 → 3日後 → 7日後 → 14日後と間隔が広がる。
-              4回クリアで卒業！ まだなら翌日もう一度。
+              最後の14日後をクリアしたら卒業！ 途中で落としたら翌日からやり直し。
             </p>
             <ul className="plain stack">
               {reviewQueue.slice(0, 10).map((item) => {
                 // アプリ内出題は questionRef が問題ID。問題そのものを出し直せる
                 const question = getQuestion(item.attempt.questionRef);
+                const shown = question ? presentFor(item.attempt.id, question) : undefined;
                 const picked = retry[item.attempt.id];
                 return (
                 <li key={item.attempt.id} className="stack" style={{ marginBottom: 12 }}>
@@ -228,19 +292,19 @@ export function AcademicPage({
                     解けたかどうかを本人の気分が決めてしまい、間隔反復が意味を失う。
                     外部教材(過去問)の記録は問題文を持っていないので、従来どおり自己申告。
                   */}
-                  {question ? (
+                  {question && shown ? (
                     <div className="quiz-item">
                       <ul className="plain stack quiz-choices">
-                        {question.choices.map((choice, ci) => (
+                        {shown.choices.map((choice, ci) => (
                           <li key={ci}>
                             <button
                               type="button"
                               className={[
                                 'btn-sm btn-block quiz-choice',
-                                picked !== undefined && ci === question.answerIndex
+                                picked !== undefined && ci === shown.answerIndex
                                   ? 'quiz-choice--right'
                                   : '',
-                                picked === ci && ci !== question.answerIndex
+                                picked === ci && ci !== shown.answerIndex
                                   ? 'quiz-choice--wrong'
                                   : '',
                               ]
@@ -251,11 +315,12 @@ export function AcademicPage({
                                 setRetry((prev) => ({ ...prev, [item.attempt.id]: ci }));
                                 await repo.markReviewed(
                                   [item.attempt.id],
-                                  ci === question.answerIndex,
+                                  ci === shown.answerIndex,
                                 );
                                 await reload();
                               }}
                             >
+                              {picked !== undefined && ci === shown.answerIndex ? '✓ ' : ''}
                               {['ア', 'イ', 'ウ', 'エ'][ci] ?? ci + 1}. {choice}
                             </button>
                           </li>
@@ -264,15 +329,15 @@ export function AcademicPage({
                       {picked !== undefined && (
                         <div
                           className={
-                            picked === question.answerIndex
+                            picked === shown.answerIndex
                               ? 'quiz-feedback quiz-feedback--ok'
                               : 'quiz-feedback'
                           }
                         >
                           <strong>
-                            {picked === question.answerIndex
+                            {picked === shown.answerIndex
                               ? 'リベンジ成功！ 次は間隔をあけて戻ってくるよ'
-                              : 'おしい！ 明日もう一回'}
+                              : 'おしい！ ✓が正解。明日もう一回'}
                           </strong>
                           <p>{question.explanation}</p>
                         </div>

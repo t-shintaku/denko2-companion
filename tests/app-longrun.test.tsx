@@ -13,6 +13,7 @@ import { curriculum, getLesson } from '../src/data';
 import { repo, defaultSettings } from '../src/db/repo';
 import { addDays, todayJst } from '../src/domain/jst';
 import { candidateStates } from '../src/domain/practical';
+import { fillRecall } from './helpers/recall';
 
 /** 技能フェーズのレッスンは学科日以降にしか出ないので、画面を直接開いて確かめる */
 function LessonHarness({ lessonId }: { lessonId: string }) {
@@ -130,7 +131,7 @@ describe('候補問題のレッスンが、そのまま技能の記録になる'
     await user.click(screen.getByRole('button', { name: '見終わった！ 次へ' }));
     await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見終わった' })).toBeDisabled());
     const recallSection = screen.getByRole('heading', { name: '2. 見ないで思い出す' }).closest('section')!;
-    await user.type(within(recallSection).getAllByRole('textbox')[0]!, '差込コネクタ');
+    await fillRecall(user, recallSection, '差込コネクタ');
     await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
     await waitFor(() =>
       expect(within(recallSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),

@@ -13,6 +13,7 @@ import { adminTaskTemplates, curriculum, examCycle, questions, syllabus } from '
 import { resolveAdminTasks, type ResolvedAdminTask } from '../domain/adminTasks';
 import { buildSchedule, type ScheduleResult } from '../domain/schedule';
 import { evaluateOnboarding, type OnboardingState } from '../domain/onboarding';
+import { recallGaps as computeRecallGaps, type RecallGap } from '../domain/lessons';
 import {
   academicGate as computeAcademicGate,
   reviewQueue as computeReviewQueue,
@@ -53,6 +54,8 @@ export type VaultValue = {
   overallCoverage: number;
   /** 次に埋める穴。上から順に潰せば範囲が閉じる */
   coverageGaps: SyllabusStatus[];
+  /** 「見ないで思い出す」で言えなかった項目。合格準備度には入れず、言い直し用に出す */
+  recallGaps: RecallGap[];
   reload: () => Promise<void>;
   /** 端末間同期の状態。設定画面と各タブの表示に使う */
   syncStatus: SyncStatus;
@@ -166,6 +169,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
     const topicCoverage = computeTopicCoverage(syllabusStatus, topicIds);
     const overallCoverage = computeOverallCoverage(topicCoverage);
     const coverageGaps = computeCoverageGaps(syllabusStatus);
+    const recallGaps = computeRecallGaps(curriculum.lessons, snapshot.lessonProgress);
 
     return {
       ready,
@@ -183,6 +187,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       topicCoverage,
       overallCoverage,
       coverageGaps,
+      recallGaps,
       reload,
       syncStatus,
       syncNow,

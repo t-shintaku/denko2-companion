@@ -16,7 +16,14 @@ import {
   stepMinutes,
   type LessonStep,
 } from '../../domain/lessons';
-import { grade, pickMistakes, pickWeakTopic, toAttemptInput, type QuizAnswer } from '../../domain/quiz';
+import {
+  grade,
+  pickMistakes,
+  pickWeakTopic,
+  present,
+  toAttemptInput,
+  type QuizAnswer,
+} from '../../domain/quiz';
 import { useVault } from '../../state/VaultContext';
 import type {
   CreatorKind,
@@ -101,18 +108,20 @@ export function LessonPage({
    */
   const quizQuestions = useMemo(() => {
     const pool = lesson.practice.questionPool;
-    if (pool === 'mistakes') {
-      return pickMistakes(questionBank, snapshot.questionAttempts, lesson.practice.targetCount ?? 10);
-    }
-    if (pool === 'weak-topic') {
-      return pickWeakTopic(
-        questionBank,
-        snapshot.questionAttempts,
-        topicIds,
-        lesson.practice.targetCount ?? 10,
-      );
-    }
-    return questionsFor(lesson.practice.questionIds);
+    const picked =
+      pool === 'mistakes'
+        ? pickMistakes(questionBank, snapshot.questionAttempts, lesson.practice.targetCount ?? 10)
+        : pool === 'weak-topic'
+          ? pickWeakTopic(
+              questionBank,
+              snapshot.questionAttempts,
+              topicIds,
+              lesson.practice.targetCount ?? 10,
+            )
+          : questionsFor(lesson.practice.questionIds);
+    // 選択肢を並べ替える。バンクは正解を先頭に書いてあるので、
+    // そのまま出すと一番上を選び続けるだけで全問正解になる
+    return present(picked);
     // 出題は画面を開いた時点で固定する。解いている途中で並びが変わらないようにする
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson.id]);
@@ -120,10 +129,10 @@ export function LessonPage({
   const hasQuiz = quizQuestions.length > 0;
   /** 2段階。選択肢を選ぶ → 解説を読む → 「バッチリ / あやふや」で確定 */
   const [picks, setPicks] = useState<Record<string, { choiceIndex: number; sure?: boolean }>>({});
-  const settled: QuizAnswer[] = quizQuestions.flatMap((qq) => {
-    const p = picks[qq.id];
+  const settled: QuizAnswer[] = quizQuestions.flatMap(({ question }) => {
+    const p = picks[question.id];
     if (p?.sure === undefined) return [];
-    return [{ questionId: qq.id, choiceIndex: p.choiceIndex, sure: p.sure }];
+    return [{ questionId: question.id, choiceIndex: p.choiceIndex, sure: p.sure }];
   });
   const quizResults = grade(quizQuestions, settled);
   const quizCorrect = quizResults.filter((r) => r.correct).length;
@@ -505,13 +514,27 @@ export function LessonPage({
             </div>
           );
         })}
+        {/*
+          全部の問いに書いて、全部の答え合わせに○△×を付けてから保存する。
+          1問に1文字書けば通れた頃は、模範解答を一度も見ずにステップを終えられた。
+        */}
         <button
           className="btn-sm btn-block"
-          disabled={busy || recall.every((r) => r.trim() === '')}
+          disabled={
+            busy ||
+            recall.some((r) => r.trim() === '') ||
+            marks.some((m) => m === undefined)
+          }
           onClick={() => commit('recall')}
         >
           {stepDone(progress, 'recall') ? '✓ ここまで保存済み' : 'ここまでを保存'}
         </button>
+        {(recall.some((r) => r.trim() === '') || marks.some((m) => m === undefined)) && (
+          <p className="muted">
+            全部の問いに書いて、<strong>答え合わせ</strong>まで進むと保存できるよ。
+            うろ覚えでも書いてOK。模範解答を見て「出てこなかった」を押すのも立派な1手。
+          </p>
+        )}
       </section>
 
       {/* --- 3. 解く／作る ---------------------------------------------- */}
@@ -553,11 +576,12 @@ export function LessonPage({
             <p className="badge">
               {settled.length} / {quizQuestions.length} 問 ・ 正解 {quizCorrect}
             </p>
-            {quizQuestions.map((qq, qi) => {
+            {quizQuestions.map((presented, qi) => {
+              const qq = presented.question;
               const pick = picks[qq.id];
               const chosen = pick?.choiceIndex;
               const answered = chosen !== undefined;
-              const right = chosen === qq.answerIndex;
+              const right = chosen === presented.answerIndex;
               const source = resolveResource(qq.sourceResourceId);
               return (
                 <div className="quiz-item" key={qq.id}>
@@ -565,13 +589,13 @@ export function LessonPage({
                     <strong>Q{qi + 1}.</strong> {qq.stem}
                   </p>
                   <ul className="plain stack quiz-choices">
-                    {qq.choices.map((choice, ci) => (
+                    {presented.choices.map((choice, ci) => (
                       <li key={ci}>
                         <button
                           type="button"
                           className={[
                             'btn-sm btn-block quiz-choice',
-                            answered && ci === qq.answerIndex ? 'quiz-choice--right' : '',
+                            answered && ci === presented.answerIndex ? 'quiz-choice--right' : '',
                             answered && ci === chosen && !right ? 'quiz-choice--wrong' : '',
                           ]
                             .filter(Boolean)
@@ -582,6 +606,8 @@ export function LessonPage({
                             setPicks((prev) => ({ ...prev, [qq.id]: { choiceIndex: ci } }))
                           }
                         >
+                          {/* 色だけで正解を示さない。答えたあとは記号でも分かるようにする */}
+                          {answered && ci === presented.answerIndex ? '✓ ' : ''}
                           {['ア', 'イ', 'ウ', 'エ'][ci] ?? ci + 1}. {choice}
                         </button>
                       </li>
@@ -589,7 +615,7 @@ export function LessonPage({
                   </ul>
                   {answered && (
                     <div className={right ? 'quiz-feedback quiz-feedback--ok' : 'quiz-feedback'}>
-                      <strong>{right ? '正解！' : 'おしい！ 正解は下'}</strong>
+                      <strong>{right ? '正解！' : 'おしい！ ✓が正解'}</strong>
                       <p>{qq.explanation}</p>
                       {source && (
                         <p className="muted">
@@ -659,7 +685,19 @@ export function LessonPage({
           </div>
         )}
 
-        {lesson.practice.scored && !hasQuiz && (
+        {/*
+          記録から選ぶ出題(誤答潰し)が0件になったとき、黙って自己申告欄へ落とさない。
+          誤答がなくて空なのか、選び方の不具合で空なのかが本人に分からなくなる。
+        */}
+        {lesson.practice.questionPool && !hasQuiz && (
+          <p className="notice notice--safety">
+            出す問題がまだ無いよ。
+            {lesson.practice.questionPool === 'mistakes'
+              ? 'アプリ内の問題を落とした記録がまだ無いか、全部リベンジ済み。学科タブの「腕だめし」か公式過去問へ進もう。'
+              : '科目別の記録がまだ足りない。学科タブの「腕だめし」で先に各科目へ着手しよう。'}
+          </p>
+        )}
+        {lesson.practice.scored && !hasQuiz && !lesson.practice.questionPool && (
           <div className="row">
             <div style={{ flex: 1 }}>
               <label htmlFor="correct">正答数</label>

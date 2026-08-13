@@ -36,17 +36,55 @@ export type QuizResult = {
   correct: boolean;
 };
 
-export function isCorrect(question: QuizQuestion, answer: QuizAnswer): boolean {
-  return answer.choiceIndex === question.answerIndex;
+/**
+ * 画面へ出す形。**選択肢を毎回並べ替える。**
+ *
+ * バンクの JSON は正解を先頭(answerIndex 0)に書いてある。編集しやすいからだが、
+ * そのまま出すと**一番上を選び続けるだけで全問正解**になり、演習として成立しない。
+ * 並べ替えは出題のたびに行い、正解の位置を追従させる。
+ * 採点はこの `answerIndex`(並べ替え後)で行う。
+ */
+export type PresentedQuestion = {
+  question: QuizQuestion;
+  choices: string[];
+  answerIndex: number;
+};
+
+/** Fisher–Yates。rng を差し替えられるようにしてテストで並びを固定する */
+export function presentQuestion(
+  question: QuizQuestion,
+  rng: () => number = Math.random,
+): PresentedQuestion {
+  const order = question.choices.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1));
+    [order[i], order[j]] = [order[j]!, order[i]!];
+  }
+  return {
+    question,
+    choices: order.map((i) => question.choices[i]!),
+    answerIndex: order.indexOf(question.answerIndex),
+  };
 }
 
-export function grade(questions: QuizQuestion[], answers: QuizAnswer[]): QuizResult[] {
+export function present(
+  questions: QuizQuestion[],
+  rng: () => number = Math.random,
+): PresentedQuestion[] {
+  return questions.map((q) => presentQuestion(q, rng));
+}
+
+export function isCorrect(presented: PresentedQuestion, answer: QuizAnswer): boolean {
+  return answer.choiceIndex === presented.answerIndex;
+}
+
+export function grade(presented: PresentedQuestion[], answers: QuizAnswer[]): QuizResult[] {
   const byId = new Map(answers.map((a) => [a.questionId, a]));
-  return questions
-    .map((question) => {
-      const answer = byId.get(question.id);
+  return presented
+    .map((p) => {
+      const answer = byId.get(p.question.id);
       if (!answer) return undefined;
-      return { question, answer, correct: isCorrect(question, answer) };
+      return { question: p.question, answer, correct: isCorrect(p, answer) };
     })
     .filter((x): x is QuizResult => x !== undefined);
 }

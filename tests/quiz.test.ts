@@ -8,6 +8,8 @@ import {
   isCorrect,
   pickMistakes,
   pickWeakTopic,
+  present,
+  presentQuestion,
   toAttemptInput,
 } from '../src/domain/quiz';
 import { reviewQueue, topicStats } from '../src/domain/academic';
@@ -42,18 +44,25 @@ const attempt = (over: Partial<QuestionAttempt>): QuestionAttempt => ({
   ...over,
 });
 
+/** 並びを固定したい場面用。恒等の並べ替えになる rng */
+const noShuffle = () => 0.999999;
+
 describe('採点', () => {
   it('選んだ番号が正解番号と一致したときだけ正解', () => {
-    const question = q('q-1', 'basic-theory');
-    expect(isCorrect(question, { questionId: 'q-1', choiceIndex: 0, sure: true })).toBe(true);
-    expect(isCorrect(question, { questionId: 'q-1', choiceIndex: 1, sure: true })).toBe(false);
+    const p = presentQuestion(q('q-1', 'basic-theory'), noShuffle);
+    expect(isCorrect(p, { questionId: 'q-1', choiceIndex: p.answerIndex, sure: true })).toBe(true);
+    expect(
+      isCorrect(p, { questionId: 'q-1', choiceIndex: (p.answerIndex + 1) % 4, sure: true }),
+    ).toBe(false);
     // 未選択(時間切れ等)は誤答として扱う。空欄を正解にしない
-    expect(isCorrect(question, { questionId: 'q-1', sure: false })).toBe(false);
+    expect(isCorrect(p, { questionId: 'q-1', sure: false })).toBe(false);
   });
 
   it('答えていない問題は結果に混ぜない(途中の点数を成績へ入れない)', () => {
-    const list = [q('q-1', 'basic-theory'), q('q-2', 'law')];
-    const results = grade(list, [{ questionId: 'q-1', choiceIndex: 0, sure: true }]);
+    const list = present([q('q-1', 'basic-theory'), q('q-2', 'law')], noShuffle);
+    const results = grade(list, [
+      { questionId: 'q-1', choiceIndex: list[0]!.answerIndex, sure: true },
+    ]);
     expect(results).toHaveLength(1);
     expect(results[0]!.question.id).toBe('q-1');
   });
@@ -232,5 +241,48 @@ describe('解き直しが間隔反復につながる(週末チェック・誤答
     const rows = (await repo.load()).questionAttempts;
     const untouched = rows.find((r) => r.questionRef === b.id)!;
     expect(untouched.reviewedAt).toBeUndefined();
+  });
+});
+
+/**
+ * 【回帰】バンクは編集しやすさのために正解を先頭(answerIndex 0)で書いている。
+ * 並べ替えずに出すと、**一番上を選び続けるだけで全問正解**になり演習が成立しない。
+ * 実際にレビューで指摘された欠陥なので、データ側と表示側の両方で固定する。
+ */
+describe('選択肢の並べ替え', () => {
+  it('並べ替えても正解の中身は変わらない', () => {
+    for (const original of questions.slice(0, 40)) {
+      const p = presentQuestion(original, () => 0.42);
+      expect(new Set(p.choices)).toEqual(new Set(original.choices));
+      expect(p.choices[p.answerIndex]).toBe(original.choices[original.answerIndex]);
+    }
+  });
+
+  it('一番上を選び続けても全問正解にはならない', () => {
+    const shown = present(questions, () => 0.42);
+    const alwaysFirst = shown.filter((p) => p.answerIndex === 0).length;
+    expect(alwaysFirst).toBeLessThan(shown.length);
+    // 4択なので、全部が先頭に集まることはない
+    expect(alwaysFirst / shown.length).toBeLessThan(0.6);
+  });
+
+  it('出題のたびに並びが変わる', () => {
+    const target = questions[0]!;
+    const orders = new Set(
+      Array.from({ length: 40 }, () => presentQuestion(target).choices.join('|')),
+    );
+    expect(orders.size).toBeGreaterThan(1);
+  });
+
+  it('採点は並べ替え後の位置で行う(元の answerIndex で採点しない)', () => {
+    const target = questions.find((x) => x.answerIndex === 0)!;
+    // 先頭が正解でなくなる並びを作る
+    let p = presentQuestion(target);
+    for (let i = 0; i < 50 && p.answerIndex === 0; i += 1) p = presentQuestion(target);
+    expect(p.answerIndex).not.toBe(0);
+    expect(isCorrect(p, { questionId: target.id, choiceIndex: 0, sure: true })).toBe(false);
+    expect(isCorrect(p, { questionId: target.id, choiceIndex: p.answerIndex, sure: true })).toBe(
+      true,
+    );
   });
 });

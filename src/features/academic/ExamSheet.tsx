@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { topics } from '../../data';
+import { topicName, topics } from '../../data';
 import { repo } from '../../db/repo';
 import {
   ACADEMIC_EXAM_MINUTES,
@@ -138,6 +138,16 @@ export function ExamSheet({
       }
     } else if (perQuestionAnswered !== rows.length) {
       list.push(`未回答が ${rows.length - perQuestionAnswered}問ある`);
+    } else if (rows.length >= 10 && new Set(rows.map((r) => r.topicId)).size === 1) {
+      /*
+        科目の既定値のまま保存すると、20問・50問がまるごと1科目として記録される。
+        科目別の直近20問と出題範囲マップが同時に壊れ、しかも数字は「達成」に見える。
+        1科目しか選んでいない記録は、この規模ではまず入力漏れなので止める。
+      */
+      list.push(
+        `全${rows.length}問が「${topicName(rows[0]!.topicId)}」のまま。` +
+          '問題ごとに科目を選ぶか、まとめ入力に切り替えよう',
+      );
     }
     return list;
   }, [

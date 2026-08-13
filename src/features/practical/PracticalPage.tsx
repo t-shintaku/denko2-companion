@@ -13,6 +13,7 @@ import {
   budgetSummary,
   candidateStates,
   repeatDefects,
+  skillCapacity,
 } from '../../domain/practical';
 import { skillTrend } from '../../domain/growth';
 import { useVault } from '../../state/VaultContext';
@@ -24,6 +25,18 @@ export function PracticalPage({
   onOpenLesson: (id: string, mode: LessonMode) => void;
 }) {
   const { snapshot, skillGate, reload } = useVault();
+
+  /**
+   * 「13問すべてで欠陥なし1回」に、残りの練習枠で届くか。
+   * 枠はカリキュラムに残っている「1作品まるごと」のレッスン数で数える。
+   * 足りないと分かるのが試験直前では遅いので、常に差分を出す。
+   */
+  const slotsLeft = curriculum.lessons.filter(
+    (l) =>
+      l.practice.kind === 'candidate' &&
+      !isLessonComplete(l, snapshot.lessonProgress[l.id]),
+  ).length;
+  const capacity = skillCapacity(snapshot.skillAttempts, slotsLeft);
   const [recording, setRecording] = useState<number | undefined>();
   const [drill, setDrill] = useState<string | undefined>();
 
@@ -271,6 +284,27 @@ export function PracticalPage({
             </li>
           ))}
         </ul>
+        {/*
+          枠が足りるかを先に言う。1周目で欠陥を出した数が残り枠を超えると、
+          ゲートは数学的に閉じたまま動かなくなる。直前に気づくのが最悪。
+        */}
+        {capacity.remaining > 0 && (
+          <p className={capacity.enough ? 'notice' : 'notice notice--safety'}>
+            {capacity.enough ? (
+              <>
+                欠陥ゼロがまだの問題は <strong>{capacity.remaining}問</strong>。
+                残りの練習枠は {capacity.slotsLeft}回だから、まだ間に合う！
+              </>
+            ) : (
+              <>
+                欠陥ゼロがまだの問題が <strong>{capacity.remaining}問</strong>、
+                残りの練習枠は {capacity.slotsLeft}回。<strong>{capacity.shortBy}回ぶん足りない。</strong>
+                設定で休日の学習時間を増やすか、技能タブから自主練を追加して記録しよう。
+                1作品は複線図込みで約60分。
+              </>
+            )}
+          </p>
+        )}
       </div>
 
       <h2>工具・材料・予算</h2>

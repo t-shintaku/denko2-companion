@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../src/App';
 import { VaultProvider } from '../src/state/VaultContext';
 import { repo } from '../src/db/repo';
+import { fillRecall } from './helpers/recall';
 
 beforeEach(async () => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -65,9 +66,8 @@ describe('Sprint 1 の通し動作', () => {
     expect(screen.getByText(/あとこれだけ:/)).toBeInTheDocument();
 
     const recallSection = screen.getByRole('heading', { name: '2. 見ないで思い出す' }).closest('section')!;
-    const recallInputs = within(recallSection).getAllByRole('textbox');
-    await user.type(recallInputs[0]!, '免状申請が残る');
-    await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
+    await fillRecall(user, recallSection, '免状申請が残る');
+    await user.click(within(recallSection).getByRole('button', { name: /^ここまでを保存$/ }));
     // 段階ごとに保存が走る。保存中はボタンが無効なので、次の段階へ進む前に待つ
     await waitFor(() =>
       expect(within(recallSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),
@@ -122,7 +122,7 @@ describe('Sprint 1 の通し動作', () => {
     await user.click(await screen.findByRole('button', { name: '見終わった！ 次へ' }));
     await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見終わった' })).toBeDisabled());
     const recallSection = screen.getByRole('heading', { name: '2. 見ないで思い出す' }).closest('section')!;
-    await user.type(within(recallSection).getAllByRole('textbox')[0]!, 'a');
+    await fillRecall(user, recallSection, 'a');
     await user.click(within(recallSection).getByRole('button', { name: /保存/ }));
     await waitFor(() =>
       expect(within(recallSection).getByRole('button', { name: /保存済み/ })).toBeInTheDocument(),

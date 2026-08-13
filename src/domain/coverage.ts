@@ -22,6 +22,17 @@ import type {
 import { isLessonComplete } from './lessons';
 import { IN_APP_SOURCE } from './quiz';
 
+/**
+ * 「確認済み」と言うのに必要な正解数。
+ *
+ * 1問正解で埋めていたら、配線図の重み1.5の項目が1問当てるだけで埋まっていた。
+ * 本番で2問以上出る重さの項目を1問で「押さえた」と呼ぶのは、準備度の誇張になる。
+ * 重みが1問ぶん以上ある項目は2問、それ未満は1問。
+ */
+export function requiredCorrect(item: SyllabusItem): number {
+  return item.weight >= 1 ? 2 : 1;
+}
+
 export type SyllabusStatus = {
   item: SyllabusItem;
   /** この項目を扱うレッスン */
@@ -29,8 +40,10 @@ export type SyllabusStatus = {
   /** この項目を確かめる問題 */
   questionIds: string[];
   taught: boolean;
-  /** 1問でも正解したか */
+  /** 必要数だけ正解したか */
   confirmed: boolean;
+  /** 確認済みと言うのに必要な正解数 */
+  requiredCorrect: number;
   /** 出題した問題のうち正解した数 */
   correct: number;
   attempted: number;
@@ -101,12 +114,14 @@ export function syllabusStatus(
     });
     const mine = inApp.filter((a) => questionIds.includes(a.questionRef));
     const correct = new Set(mine.filter((a) => a.correct).map((a) => a.questionRef)).size;
+    const need = requiredCorrect(item);
     return {
       item,
       lessonIds,
       questionIds,
       taught,
-      confirmed: correct > 0,
+      confirmed: correct >= need,
+      requiredCorrect: need,
       correct,
       attempted: new Set(mine.map((a) => a.questionRef)).size,
     };

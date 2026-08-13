@@ -415,7 +415,8 @@
           "q-et-003",
           "q-wd-001",
           "q-wd-002",
-          "q-wd-003"
+          "q-wd-003",
+          "q-wd-052"
         ]
       },
       "officialTopicIds": [
@@ -571,8 +572,8 @@
         "p0-l5"
       ],
       "estimatedMinutes": {
-        "minimum": 16,
-        "standard": 30,
+        "minimum": 21,
+        "standard": 31,
         "deep": 60
       },
       "resources": [
@@ -621,8 +622,8 @@
       ],
       "practice": {
         "kind": "in-app-questions",
-        "targetCount": 14,
-        "instruction": "この画面で14問。今日見た内容だけから出るよ",
+        "targetCount": 21,
+        "instruction": "この画面で21問。今日見た内容だけから出るよ。そのあとHOZANの一問一答で、記号の「形」を見る問題も10問。アプリは言葉、HOZANは形。両方やって配線図20問が取れる",
         "scored": true,
         "questionIds": [
           "q-wd-004",
@@ -638,15 +639,26 @@
           "q-wd-014",
           "q-wd-015",
           "q-wd-016",
-          "q-wd-017"
-        ]
+          "q-wd-017",
+          "q-wd-053",
+          "q-wd-054",
+          "q-wd-055",
+          "q-wd-056",
+          "q-wd-057",
+          "q-wd-058",
+          "q-wd-059"
+        ],
+        "resourceIds": [
+          "hozan-symbols"
+        ],
+        "where": "ページ下部の一問一答。記号の「形」を見て名前を答える問題"
       },
       "officialTopicIds": [
         "wiring-diagram"
       ],
       "required": true,
       "stepMinutes": {
-        "practice": 11
+        "practice": 16
       }
     },
     {
@@ -731,7 +743,7 @@
       "practice": {
         "kind": "in-app-questions",
         "targetCount": 12,
-        "instruction": "この画面で12問。今日見た内容だけから出るよ",
+        "instruction": "この画面で12問。今日見た内容だけから出るよ。そのあとHOZANの一問一答で、記号の「形」を見る問題も10問。アプリは言葉、HOZANは形。両方やって配線図20問が取れる",
         "scored": true,
         "questionIds": [
           "q-wd-018",
@@ -746,7 +758,11 @@
           "q-wd-027",
           "q-wd-028",
           "q-wd-029"
-        ]
+        ],
+        "resourceIds": [
+          "hozan-symbols"
+        ],
+        "where": "ページ下部の一問一答。記号の「形」を見て名前を答える問題"
       },
       "officialTopicIds": [
         "wiring-diagram"
@@ -2361,9 +2377,9 @@
         "p2-w6-l1"
       ],
       "estimatedMinutes": {
-        "minimum": 25,
-        "standard": 35,
-        "deep": 45
+        "minimum": 26,
+        "standard": 36,
+        "deep": 46
       },
       "resources": [
         {
@@ -2421,7 +2437,9 @@
           "q-wd-042",
           "q-wd-043",
           "q-wd-044",
-          "q-wd-045"
+          "q-wd-045",
+          "q-wd-060",
+          "q-wd-061"
         ]
       },
       "officialTopicIds": [
@@ -2430,7 +2448,7 @@
       "required": true,
       "skillTouch": true,
       "stepMinutes": {
-        "practice": 20
+        "practice": 21
       }
     },
     {
@@ -2536,8 +2554,8 @@
         "p0-l2"
       ],
       "estimatedMinutes": {
-        "minimum": 20,
-        "standard": 30,
+        "minimum": 22,
+        "standard": 32,
         "deep": 60
       },
       "resources": [
@@ -2611,8 +2629,8 @@
       ],
       "practice": {
         "kind": "in-app-questions",
-        "targetCount": 20,
-        "instruction": "この画面で20問。今日見た内容だけから出るよ",
+        "targetCount": 22,
+        "instruction": "この画面で22問。今日見た内容だけから出るよ",
         "scored": true,
         "questionIds": [
           "q-bt-007",
@@ -2634,7 +2652,9 @@
           "q-dd-017",
           "q-dd-018",
           "q-dd-019",
-          "q-dd-020"
+          "q-dd-020",
+          "q-bt-021",
+          "q-dd-021"
         ]
       },
       "officialTopicIds": [
@@ -2642,7 +2662,7 @@
       ],
       "required": true,
       "stepMinutes": {
-        "practice": 15
+        "practice": 17
       }
     },
     {
@@ -4755,12 +4775,12 @@
       "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
     },
     {
-      "id": "p5-r1",
+      "id": "p5-r01",
       "phaseId": "phase-5",
       "order": 15,
       "stage": "regular",
-      "title": "2周目(1/3) — 弱いところから1題",
-      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。",
+      "title": "2周目(1/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
       "prerequisites": [
         "p5-c13"
       ],
@@ -4799,7 +4819,7 @@
       ],
       "recallPrompts": [
         {
-          "id": "p5-r1-r1",
+          "id": "p5-r01-r1",
           "kind": "free-line",
           "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
           "sourceResourceId": "official-defect",
@@ -4810,72 +4830,18 @@
             "工程",
             "試"
           ]
-        }
-      ],
-      "practice": {
-        "kind": "candidate",
-        "instruction": "技能タブの「弱いところ」が上位に出した1題を作り直す",
-        "scored": false
-      },
-      "officialTopicIds": [],
-      "required": true,
-      "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
-    },
-    {
-      "id": "p5-r2",
-      "phaseId": "phase-5",
-      "order": 16,
-      "stage": "regular",
-      "title": "2周目(2/3) — 弱いところから1題",
-      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。",
-      "prerequisites": [
-        "p5-c13"
-      ],
-      "estimatedMinutes": {
-        "minimum": 55,
-        "standard": 60,
-        "deep": 75
-      },
-      "stepMinutes": {
-        "practice": 45
-      },
-      "resources": [
-        {
-          "resourceId": "gami-candidates",
-          "use": "first",
-          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
-          "watch": "前回つまずいた工程だけ",
-          "stop": "その工程が終わったら止める。1本を通しで見ない",
-          "minutes": 25
         },
         {
-          "resourceId": "hozan-skill-no",
-          "use": "more",
-          "where": "作り直すNo.のページ(URL末尾の数字をそのNo.に変える)",
-          "watch": "支給材料と複線図",
-          "stop": "完成写真と見比べたら閉じる",
-          "openUrl": "https://www.hozan.co.jp/corp/denko2/pg/1no1/"
-        },
-        {
-          "resourceId": "official-defect",
-          "use": "official",
-          "where": "ページ内の欠陥の一覧",
-          "watch": "前回出した欠陥の項目を先に読む",
-          "stop": "照合が済んだら閉じる"
-        }
-      ],
-      "recallPrompts": [
-        {
-          "id": "p5-r2-r1",
+          "id": "p5-r01-r2",
           "kind": "free-line",
-          "prompt": "2周目で優先して作り直すのは、どんな題?",
           "sourceResourceId": "official-defect",
-          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
-          "modelAnswer": "欠陥が出た題、45分を超えた題、複線図で迷った題。技能タブの「くり返し出た弱点」が上位に出したものから選ぶ。",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "前回この題で出た欠陥は? 今回どこを変える?",
+          "modelAnswer": "前回の記録に出ている欠陥コードと、その工程で変える手順を1つ。工程を変えずに「気をつける」だけだと同じ手癖が出る。",
           "acceptKeywords": [
             "欠陥",
-            "45",
-            "複線図"
+            "工程",
+            "変え"
           ]
         }
       ],
@@ -4889,12 +4855,12 @@
       "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
     },
     {
-      "id": "p5-r3",
+      "id": "p5-r02",
       "phaseId": "phase-5",
-      "order": 17,
+      "order": 16,
       "stage": "regular",
-      "title": "2周目(3/3) — 弱いところから1題",
-      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。",
+      "title": "2周目(2/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
       "prerequisites": [
         "p5-c13"
       ],
@@ -4933,16 +4899,349 @@
       ],
       "recallPrompts": [
         {
-          "id": "p5-r3-r1",
+          "id": "p5-r02-r1",
           "kind": "free-line",
-          "prompt": "欠陥が消えたと言えるのは、どうなったとき?",
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
           "sourceResourceId": "official-defect",
           "sourceWatch": "前回出した欠陥の項目を先に読むところ",
-          "modelAnswer": "同じ題を作り直して、その欠陥が出ずに完成したとき。1回できただけでは手癖は消えていないので、別の題でも同じ工程が出たら確認する。",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
           "acceptKeywords": [
-            "作り直",
-            "出ず",
-            "完成"
+            "先に読",
+            "工程",
+            "試"
+          ]
+        },
+        {
+          "id": "p5-r02-r2",
+          "kind": "free-line",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "複線図で迷ったのは、どの器具の周りだった?",
+          "modelAnswer": "3路スイッチの渡り線、コンセントの接地側、レセプタクルの極性のどれか。迷った器具の周りだけ、先に単体で描き直してから通す。",
+          "acceptKeywords": [
+            "3路",
+            "接地側",
+            "極性"
+          ]
+        }
+      ],
+      "practice": {
+        "kind": "candidate",
+        "instruction": "技能タブの「弱いところ」が上位に出した1題を作り直す",
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
+    },
+    {
+      "id": "p5-r03",
+      "phaseId": "phase-5",
+      "order": 17,
+      "stage": "regular",
+      "title": "2周目(3/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
+      "prerequisites": [
+        "p5-c13"
+      ],
+      "estimatedMinutes": {
+        "minimum": 55,
+        "standard": 60,
+        "deep": 75
+      },
+      "stepMinutes": {
+        "practice": 45
+      },
+      "resources": [
+        {
+          "resourceId": "gami-candidates",
+          "use": "first",
+          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "watch": "前回つまずいた工程だけ",
+          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "minutes": 25
+        },
+        {
+          "resourceId": "hozan-skill-no",
+          "use": "more",
+          "where": "作り直すNo.のページ(URL末尾の数字をそのNo.に変える)",
+          "watch": "支給材料と複線図",
+          "stop": "完成写真と見比べたら閉じる",
+          "openUrl": "https://www.hozan.co.jp/corp/denko2/pg/1no1/"
+        },
+        {
+          "resourceId": "official-defect",
+          "use": "official",
+          "where": "ページ内の欠陥の一覧",
+          "watch": "前回出した欠陥の項目を先に読む",
+          "stop": "照合が済んだら閉じる"
+        }
+      ],
+      "recallPrompts": [
+        {
+          "id": "p5-r03-r1",
+          "kind": "free-line",
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
+          "acceptKeywords": [
+            "先に読",
+            "工程",
+            "試"
+          ]
+        },
+        {
+          "id": "p5-r03-r2",
+          "kind": "free-line",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "この題で時間を食っている工程はどこ?",
+          "modelAnswer": "たいていは複線図か、器具への結線。工程ごとに時計を見て、いちばん長い1つだけを次に短くする。",
+          "acceptKeywords": [
+            "複線図",
+            "結線",
+            "工程"
+          ]
+        }
+      ],
+      "practice": {
+        "kind": "candidate",
+        "instruction": "技能タブの「弱いところ」が上位に出した1題を作り直す",
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
+    },
+    {
+      "id": "p5-r04",
+      "phaseId": "phase-5",
+      "order": 18,
+      "stage": "regular",
+      "title": "2周目(4/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
+      "prerequisites": [
+        "p5-c13"
+      ],
+      "estimatedMinutes": {
+        "minimum": 55,
+        "standard": 60,
+        "deep": 75
+      },
+      "stepMinutes": {
+        "practice": 45
+      },
+      "resources": [
+        {
+          "resourceId": "gami-candidates",
+          "use": "first",
+          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "watch": "前回つまずいた工程だけ",
+          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "minutes": 25
+        },
+        {
+          "resourceId": "hozan-skill-no",
+          "use": "more",
+          "where": "作り直すNo.のページ(URL末尾の数字をそのNo.に変える)",
+          "watch": "支給材料と複線図",
+          "stop": "完成写真と見比べたら閉じる",
+          "openUrl": "https://www.hozan.co.jp/corp/denko2/pg/1no1/"
+        },
+        {
+          "resourceId": "official-defect",
+          "use": "official",
+          "where": "ページ内の欠陥の一覧",
+          "watch": "前回出した欠陥の項目を先に読む",
+          "stop": "照合が済んだら閉じる"
+        }
+      ],
+      "recallPrompts": [
+        {
+          "id": "p5-r04-r1",
+          "kind": "free-line",
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
+          "acceptKeywords": [
+            "先に読",
+            "工程",
+            "試"
+          ]
+        },
+        {
+          "id": "p5-r04-r2",
+          "kind": "free-line",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "前回この題で出た欠陥は? 今回どこを変える?",
+          "modelAnswer": "前回の記録に出ている欠陥コードと、その工程で変える手順を1つ。工程を変えずに「気をつける」だけだと同じ手癖が出る。",
+          "acceptKeywords": [
+            "欠陥",
+            "工程",
+            "変え"
+          ]
+        }
+      ],
+      "practice": {
+        "kind": "candidate",
+        "instruction": "技能タブの「弱いところ」が上位に出した1題を作り直す",
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
+    },
+    {
+      "id": "p5-r05",
+      "phaseId": "phase-5",
+      "order": 19,
+      "stage": "regular",
+      "title": "2周目(5/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
+      "prerequisites": [
+        "p5-c13"
+      ],
+      "estimatedMinutes": {
+        "minimum": 55,
+        "standard": 60,
+        "deep": 75
+      },
+      "stepMinutes": {
+        "practice": 45
+      },
+      "resources": [
+        {
+          "resourceId": "gami-candidates",
+          "use": "first",
+          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "watch": "前回つまずいた工程だけ",
+          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "minutes": 25
+        },
+        {
+          "resourceId": "hozan-skill-no",
+          "use": "more",
+          "where": "作り直すNo.のページ(URL末尾の数字をそのNo.に変える)",
+          "watch": "支給材料と複線図",
+          "stop": "完成写真と見比べたら閉じる",
+          "openUrl": "https://www.hozan.co.jp/corp/denko2/pg/1no1/"
+        },
+        {
+          "resourceId": "official-defect",
+          "use": "official",
+          "where": "ページ内の欠陥の一覧",
+          "watch": "前回出した欠陥の項目を先に読む",
+          "stop": "照合が済んだら閉じる"
+        }
+      ],
+      "recallPrompts": [
+        {
+          "id": "p5-r05-r1",
+          "kind": "free-line",
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
+          "acceptKeywords": [
+            "先に読",
+            "工程",
+            "試"
+          ]
+        },
+        {
+          "id": "p5-r05-r2",
+          "kind": "free-line",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "複線図で迷ったのは、どの器具の周りだった?",
+          "modelAnswer": "3路スイッチの渡り線、コンセントの接地側、レセプタクルの極性のどれか。迷った器具の周りだけ、先に単体で描き直してから通す。",
+          "acceptKeywords": [
+            "3路",
+            "接地側",
+            "極性"
+          ]
+        }
+      ],
+      "practice": {
+        "kind": "candidate",
+        "instruction": "技能タブの「弱いところ」が上位に出した1題を作り直す",
+        "scored": false
+      },
+      "officialTopicIds": [],
+      "required": true,
+      "safetyNote": "非通電の試験用材料のみ。作った作品に電源をつながない。"
+    },
+    {
+      "id": "p5-r06",
+      "phaseId": "phase-5",
+      "order": 20,
+      "stage": "regular",
+      "title": "2周目(6/6) — 弱いところから1題",
+      "objective": "欠陥が出た題・45分を超えた題・複線図で迷った題を優先して1題作り直す。13問すべてを一度は無欠陥にする。",
+      "prerequisites": [
+        "p5-c13"
+      ],
+      "estimatedMinutes": {
+        "minimum": 55,
+        "standard": 60,
+        "deep": 75
+      },
+      "stepMinutes": {
+        "practice": 45
+      },
+      "resources": [
+        {
+          "resourceId": "gami-candidates",
+          "use": "first",
+          "where": "動画の概要欄のチャプター一覧から、作り直すNo.の「技能解説」を選ぶ",
+          "watch": "前回つまずいた工程だけ",
+          "stop": "その工程が終わったら止める。1本を通しで見ない",
+          "minutes": 25
+        },
+        {
+          "resourceId": "hozan-skill-no",
+          "use": "more",
+          "where": "作り直すNo.のページ(URL末尾の数字をそのNo.に変える)",
+          "watch": "支給材料と複線図",
+          "stop": "完成写真と見比べたら閉じる",
+          "openUrl": "https://www.hozan.co.jp/corp/denko2/pg/1no1/"
+        },
+        {
+          "resourceId": "official-defect",
+          "use": "official",
+          "where": "ページ内の欠陥の一覧",
+          "watch": "前回出した欠陥の項目を先に読む",
+          "stop": "照合が済んだら閉じる"
+        }
+      ],
+      "recallPrompts": [
+        {
+          "id": "p5-r06-r1",
+          "kind": "free-line",
+          "prompt": "同じ欠陥を繰り返さないために、作り直す前にやることは?",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目を先に読むところ",
+          "modelAnswer": "前回出した欠陥の項目を先に読み、その工程だけを分解して1回試してから本番の1題に入る。作り直しながら直そうとすると同じ手癖が出る。",
+          "acceptKeywords": [
+            "先に読",
+            "工程",
+            "試"
+          ]
+        },
+        {
+          "id": "p5-r06-r2",
+          "kind": "free-line",
+          "sourceResourceId": "official-defect",
+          "sourceWatch": "前回出した欠陥の項目",
+          "prompt": "この題で時間を食っている工程はどこ?",
+          "modelAnswer": "たいていは複線図か、器具への結線。工程ごとに時計を見て、いちばん長い1つだけを次に短くする。",
+          "acceptKeywords": [
+            "複線図",
+            "結線",
+            "工程"
           ]
         }
       ],
@@ -4958,12 +5257,12 @@
     {
       "id": "p5-w6",
       "phaseId": "phase-5",
-      "order": 18,
+      "order": 21,
       "stage": "regular",
       "title": "技能仕上げ — ランダム1題を40分で",
       "objective": "本番と同じ40分で1題。ここで初めて時間を合否条件として見る。",
       "prerequisites": [
-        "p5-r3"
+        "p5-r06"
       ],
       "estimatedMinutes": {
         "minimum": 50,

@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   coverageGaps,
   overallCoverage,
+  requiredCorrect,
   syllabusStatus,
   topicCoverage,
 } from '../src/domain/coverage';
@@ -59,12 +60,27 @@ describe('出題項目の状態', () => {
     expect(branch.confirmed).toBe(false);
   });
 
-  it('1問でも正解すると「確認済み」になり、不正解だけでは、ならない', () => {
-    const wrongOnly = statusOf({}, [solved('q-dd-001', false)]);
-    expect(wrongOnly.find((s) => s.item.id === 'dd-branch-circuit')!.confirmed).toBe(false);
+  /**
+   * 本番で1問以上出る重さの項目を、1問当てただけで「押さえた」と呼ばない。
+   * 1問で埋めていた頃は、配線図の重み1.5の項目が1問正解で満点扱いになっていた。
+   */
+  it('重い項目は2問、軽い項目は1問の正解で「確認済み」になる', () => {
+    const branch = (list: QuestionAttempt[]) =>
+      statusOf({}, list).find((s) => s.item.id === 'dd-branch-circuit')!;
+    expect(branch([]).requiredCorrect).toBe(2);
+    expect(branch([solved('q-dd-001', false)]).confirmed).toBe(false);
+    expect(branch([solved('q-dd-001', true)]).confirmed).toBe(false);
+    expect(branch([solved('q-dd-001', true), solved('q-dd-002', true)]).confirmed).toBe(true);
 
-    const rightOnce = statusOf({}, [solved('q-dd-001', false), solved('q-dd-002', true)]);
-    expect(rightOnce.find((s) => s.item.id === 'dd-branch-circuit')!.confirmed).toBe(true);
+    // 重み0.3の需要率は1問でよい
+    const demand = statusOf({}, [solved('q-dd-020', true)]).find((s) => s.item.id === 'dd-demand')!;
+    expect(demand.requiredCorrect).toBe(1);
+    expect(demand.confirmed).toBe(true);
+  });
+
+  it('同じ問題を2回正解しても2問ぶんには数えない', () => {
+    const twice = statusOf({}, [solved('q-dd-001', true), { ...solved('q-dd-001', true), id: 'a2' }]);
+    expect(twice.find((s) => s.item.id === 'dd-branch-circuit')!.confirmed).toBe(false);
   });
 
   it('外部教材の記録は、出題項目の確認には使わない(どの項目かが分からないため)', () => {
@@ -86,7 +102,7 @@ describe('科目ごとの重み付け', () => {
       const attempts = items.flatMap((item) =>
         questions
           .filter((q) => q.syllabusIds.includes(item.id))
-          .slice(0, 1)
+          .slice(0, requiredCorrect(item))
           .map((q) => solved(q.id, true)),
       );
       const progress: Record<string, LessonProgress> = {};
@@ -107,7 +123,10 @@ describe('科目ごとの重み付け', () => {
     const progress: Record<string, LessonProgress> = {};
     for (const l of curriculum.lessons) progress[l.id] = completed(l.id);
     const attempts = questions.map((q) => solved(q.id, true));
-    const ratio = overallCoverage(topicCoverage(statusOf(progress, attempts), topicIds));
+    const statuses = statusOf(progress, attempts);
+    // 必要数を満たせない項目が残っていないこと(問題が足りない項目があれば落ちる)
+    expect(statuses.filter((s) => !s.confirmed)).toEqual([]);
+    const ratio = overallCoverage(topicCoverage(statuses, topicIds));
     expect(Math.round(ratio * 100)).toBe(100);
   });
 });

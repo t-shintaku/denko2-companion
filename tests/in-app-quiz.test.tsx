@@ -14,6 +14,7 @@ import { VaultProvider } from '../src/state/VaultContext';
 import { curriculum, questionsFor } from '../src/data';
 import { IN_APP_SOURCE } from '../src/domain/quiz';
 import { defaultSettings, repo } from '../src/db/repo';
+import { fillRecall } from './helpers/recall';
 
 beforeEach(async () => {
   await repo.wipe();
@@ -44,15 +45,36 @@ function quizItem(index: number): HTMLElement {
   return items[index] as HTMLElement;
 }
 
-/** index 番目の問題に choice 番目で答える */
-async function answer(
+/**
+ * index 番目の問題に、**選択肢の本文で**答える。
+ * 選択肢は毎回並べ替えられるので、位置(0番目)で指定してはいけない。
+ */
+async function answerWithText(
   user: ReturnType<typeof userEvent.setup>,
   index: number,
-  choiceIndex: number,
+  text: string,
 ) {
   const item = within(quizItem(index));
-  await user.click(item.getAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ })[choiceIndex]!);
+  const target = item
+    .getAllByRole('button', { name: /^(✓ )?(ア|イ|ウ|エ)\./ })
+    .find((b) => b.textContent!.includes(text));
+  if (!target) throw new Error(`選択肢が見つからない: ${text}`);
+  await user.click(target);
 }
+
+/** index 番目の問題に正解する */
+const answerRight = (
+  user: ReturnType<typeof userEvent.setup>,
+  index: number,
+  q: (typeof bank)[number],
+) => answerWithText(user, index, q.choices[q.answerIndex]!);
+
+/** index 番目の問題にわざと間違える */
+const answerWrong = (
+  user: ReturnType<typeof userEvent.setup>,
+  index: number,
+  q: (typeof bank)[number],
+) => answerWithText(user, index, q.choices[q.answerIndex === 0 ? 1 : 0]!);
 
 /** 正誤の確定(バッチリ / あやふや / リベンジ登録) */
 async function settle(user: ReturnType<typeof userEvent.setup>, index: number) {
@@ -85,14 +107,13 @@ describe('見ないで思い出す(答え合わせ)', () => {
     const user = userEvent.setup();
     renderLesson();
 
-    for (const p of lesson.recallPrompts) {
-      await user.type(screen.getByLabelText(p.prompt), 'おぼえたこと');
-    }
-    for (const button of screen.getAllByRole('button', { name: '答え合わせ' })) {
-      await user.click(button);
-    }
-    await user.click(screen.getAllByRole('button', { name: '出てこなかった' })[0]!);
-    await user.click(screen.getByRole('button', { name: 'ここまでを保存' }));
+    const recallSection = screen
+      .getByRole('heading', { name: '2. 見ないで思い出す' })
+      .closest('section')!;
+    // 1問目だけ「出てこなかった」にして、言い直しリストへ回るか見る
+    await fillRecall(user, recallSection, 'おぼえたこと');
+    await user.click(within(recallSection).getAllByRole('button', { name: '出てこなかった' })[0]!);
+    await user.click(within(recallSection).getByRole('button', { name: 'ここまでを保存' }));
 
     await waitFor(async () => {
       const saved = (await repo.load()).lessonProgress[lesson.id];
@@ -111,7 +132,7 @@ describe('手を動かす(アプリ内出題)', () => {
     const first = bank[0]!;
     expect(quizItem(0).querySelector('.quiz-stem')!.textContent).toContain(first.stem);
 
-    await answer(user, 0, first.answerIndex);
+    await answerRight(user, 0, first);
     const item = within(quizItem(0));
     expect(item.getByText('正解！')).toBeInTheDocument();
     expect(item.getByText(first.explanation)).toBeInTheDocument();
@@ -125,7 +146,7 @@ describe('手を動かす(アプリ内出題)', () => {
     const save = screen.getByRole('button', { name: /結果を残す/ });
     expect(save).toBeDisabled();
 
-    await answer(user, 0, bank[0]!.answerIndex);
+    await answerRight(user, 0, bank[0]!);
     await settle(user, 0);
     expect(screen.getByRole('button', { name: /結果を残す/ })).toBeDisabled();
   });
@@ -136,8 +157,8 @@ describe('手を動かす(アプリ内出題)', () => {
 
     // 1問目だけ誤答、残りは正解。誤答は復習キューへ入るはず
     for (const [i, q] of bank.entries()) {
-      const wrongIndex = q.answerIndex === 0 ? 1 : 0;
-      await answer(user, i, i === 0 ? wrongIndex : q.answerIndex);
+      if (i === 0) await answerWrong(user, i, q);
+      else await answerRight(user, i, q);
       await settle(user, i);
     }
 
@@ -172,7 +193,7 @@ describe('手を動かす(アプリ内出題)', () => {
     renderLesson();
 
     for (const [i, q] of bank.entries()) {
-      await answer(user, i, q.answerIndex);
+      await answerRight(user, i, q);
       await settle(user, i);
     }
     await user.click(screen.getByRole('button', { name: /結果を残す/ }));
@@ -187,25 +208,48 @@ describe('手を動かす(アプリ内出題)', () => {
   });
 });
 
-describe('出題の出どころ', () => {
-  it('選択肢は本文どおりの順で、正解が必ず1つだけ強調される', async () => {
+describe('選択肢の出し方', () => {
+  it('正解が1つだけ強調され、色だけでなく記号でも分かる', async () => {
     const user = userEvent.setup();
     renderLesson();
     const q = bank[1]!;
-    const wrongIndex = q.answerIndex === 0 ? 1 : 0;
-    await answer(user, 1, wrongIndex);
+    await answerWrong(user, 1, q);
 
     const item = within(quizItem(1));
-    const buttons = item.getAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ });
+    const buttons = item.getAllByRole('button', { name: /^(✓ )?(ア|イ|ウ|エ)\./ });
     const right = buttons.filter((b) => b.className.includes('quiz-choice--right'));
     const wrong = buttons.filter((b) => b.className.includes('quiz-choice--wrong'));
     expect(right).toHaveLength(1);
     expect(wrong).toHaveLength(1);
     expect(right[0]!.textContent).toContain(q.choices[q.answerIndex]!);
-    // 色だけで示さない。テキストでも正誤が分かる(§13)
-    expect(item.getByText('おしい！ 正解は下')).toBeInTheDocument();
-    // 選択肢は本文どおりの順で出す
-    expect(buttons.map((b) => b.textContent!.replace(/^[アイウエ]\. /, ''))).toEqual(q.choices);
+    // 色だけで示さない。✓ と文言の両方で分かる(§13)
+    expect(right[0]!.textContent).toContain('✓');
+    expect(item.getByText('おしい！ ✓が正解')).toBeInTheDocument();
+    // 中身は欠けも重複もしない
+    expect(
+      buttons.map((b) => b.textContent!.replace(/^(✓ )?[アイウエ]\. /, '')).sort(),
+    ).toEqual([...q.choices].sort());
+  });
+
+  /**
+   * 【回帰】バンクは正解を先頭に書いてある。並べ替えないと
+   * 「一番上を押すだけで全問正解」になる。実画面でも並びが動くことを確かめる。
+   */
+  it('画面上でも、正解が常に先頭に来るわけではない', () => {
+    const positions = new Set<number>();
+    for (let i = 0; i < 12; i += 1) {
+      const { unmount } = renderLesson();
+      for (const [qi, q] of bank.entries()) {
+        const buttons = within(quizItem(qi)).getAllByRole('button', {
+          name: /^(✓ )?(ア|イ|ウ|エ)\./,
+        });
+        positions.add(
+          buttons.findIndex((b) => b.textContent!.includes(q.choices[q.answerIndex]!)),
+        );
+      }
+      unmount();
+    }
+    expect(positions.size).toBeGreaterThan(1);
   });
 });
 
@@ -228,8 +272,10 @@ describe('リベンジ問題(学科タブ)', () => {
     await screen.findByText(new RegExp(target.stem.slice(0, 12)));
     expect(screen.queryByRole('button', { name: '✓ クリア！' })).not.toBeInTheDocument();
 
-    const choices = screen.getAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ });
-    await user.click(choices[target.answerIndex]!);
+    const choices = screen.getAllByRole('button', { name: /^(✓ )?(ア|イ|ウ|エ)\./ });
+    await user.click(
+      choices.find((b) => b.textContent!.includes(target.choices[target.answerIndex]!))!,
+    );
 
     await screen.findByText(/リベンジ成功！/);
     await waitFor(async () => {
@@ -255,6 +301,6 @@ describe('リベンジ問題(学科タブ)', () => {
     );
 
     expect(await screen.findByRole('button', { name: '✓ クリア！' })).toBeInTheDocument();
-    expect(screen.queryAllByRole('button', { name: /^(ア|イ|ウ|エ)\./ })).toHaveLength(0);
+    expect(screen.queryAllByRole('button', { name: /^(✓ )?(ア|イ|ウ|エ)\./ })).toHaveLength(0);
   });
 });

@@ -15,7 +15,9 @@
     "answerIndex": 0,
     "explanation": "ケーブル・金属管・合成樹脂管の3つは場所を選ばない万能工事。まずこの3つを覚え、残りを「使えない場所がある工事」として覚える。",
     "origin": "original",
-    "syllabusIds": ["cm-place"]
+    "syllabusIds": [
+      "cm-place"
+    ]
   },
   {
     "id": "q-cm-002",
@@ -24,11 +26,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「工事の種類」の節。どの工事がどの場所で使えるかの表",
     "stem": "点検できない隠ぺい場所に施工できない工事はどれか。",
-    "choices": ["金属線ぴ工事", "ケーブル工事", "金属管工事", "合成樹脂管工事"],
+    "choices": [
+      "金属線ぴ工事",
+      "ケーブル工事",
+      "金属管工事",
+      "合成樹脂管工事"
+    ],
     "answerIndex": 0,
     "explanation": "金属線ぴ工事は乾燥した展開場所か、乾燥した点検できる隠ぺい場所に限られる。点検できない場所には使えない。",
     "origin": "original",
-    "syllabusIds": ["cm-place"]
+    "syllabusIds": [
+      "cm-place"
+    ]
   },
   {
     "id": "q-cm-003",
@@ -37,11 +46,19 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「工事の種類」の節。どの工事がどの場所で使えるかの表",
     "stem": "水気のある場所に施工できない工事はどれか。",
-    "choices": ["ライティングダクト工事", "ケーブル工事", "金属管工事", "合成樹脂管工事"],
+    "choices": [
+      "ライティングダクト工事",
+      "ケーブル工事",
+      "金属管工事",
+      "合成樹脂管工事"
+    ],
     "answerIndex": 0,
     "explanation": "ライティングダクトは湿気の多い場所・水気のある場所には施設できない。開口部を下向きにする、造営材を貫通しないという条件も併せて出る。",
     "origin": "original",
-    "syllabusIds": ["cm-place", "cm-raceway"]
+    "syllabusIds": [
+      "cm-place",
+      "cm-raceway"
+    ]
   },
   {
     "id": "q-cm-004",
@@ -50,11 +67,19 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「工事の種類」の節。使用電圧による制限",
     "stem": "金属線ぴ工事を施工できる使用電圧の上限はどれか。",
-    "choices": ["300V以下", "150V以下", "600V以下", "電圧の制限はない"],
+    "choices": [
+      "300V以下",
+      "150V以下",
+      "600V以下",
+      "電圧の制限はない"
+    ],
     "answerIndex": 0,
     "explanation": "金属線ぴ・ライティングダクト・金属ダクトなどは使用電圧300V以下に限られる。「万能3工事」以外は電圧か場所に制限が付く。",
     "origin": "original",
-    "syllabusIds": ["cm-place", "cm-raceway"]
+    "syllabusIds": [
+      "cm-place",
+      "cm-raceway"
+    ]
   },
   {
     "id": "q-cm-005",
@@ -72,7 +97,9 @@
     "answerIndex": 0,
     "explanation": "展開した場所=露出して見える場所。隠ぺい場所は「点検できる隠ぺい場所(天井裏など)」と「点検できない隠ぺい場所(壁内・コンクリート内)」に分かれる。",
     "origin": "original",
-    "syllabusIds": ["cm-place"]
+    "syllabusIds": [
+      "cm-place"
+    ]
   },
   {
     "id": "q-cm-006",
@@ -90,7 +117,9 @@
     "answerIndex": 0,
     "explanation": "電気抵抗を増加させないことが原則。抵抗が増えるとそこが発熱して火災の原因になる。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-007",
@@ -99,11 +128,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「電線の接続」の節。接続の4原則",
     "stem": "電線の接続で、引張強さを何%以上減少させてはならないか。",
-    "choices": ["20%", "10%", "30%", "50%"],
+    "choices": [
+      "20%",
+      "10%",
+      "30%",
+      "50%"
+    ],
     "answerIndex": 0,
     "explanation": "引張強さを20%以上減少させないこと。数字を問う出題が多いので「抵抗を増やさない・強さを20%以上減らさない」でセット暗記する。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-008",
@@ -121,7 +157,9 @@
     "answerIndex": 0,
     "explanation": "管内に接続点を作ってはならない。接続はボックスの中で行う。点検も交換もできなくなるため。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-009",
@@ -139,7 +177,9 @@
     "answerIndex": 0,
     "explanation": "求められるのは「同等以上の絶縁効力」。差込形コネクタなど所定の接続器を使った場合はテープ巻きは不要。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-010",
@@ -148,11 +188,18 @@
     "sourceResourceId": "gami-method-1",
     "sourceWatch": "工事の種類を並べて整理する場面。がいし引き工事",
     "stem": "がいし引き工事で使用できない電線はどれか。",
-    "choices": ["屋外用ビニル絶縁電線(OW)", "600Vビニル絶縁電線(IV)", "600V二種ビニル絶縁電線(HIV)", "600Vゴム絶縁電線"],
+    "choices": [
+      "屋外用ビニル絶縁電線(OW)",
+      "600Vビニル絶縁電線(IV)",
+      "600V二種ビニル絶縁電線(HIV)",
+      "600Vゴム絶縁電線"
+    ],
     "answerIndex": 0,
     "explanation": "屋内配線には絶縁電線を使うが、OW(屋外用)とDV(引込用)は屋内配線に使えない。がいし引きでも同じ。",
     "origin": "original",
-    "syllabusIds": ["cm-place"]
+    "syllabusIds": [
+      "cm-place"
+    ]
   },
   {
     "id": "q-cm-011",
@@ -161,11 +208,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "ケーブル工事の節。支持点間隔の数字",
     "stem": "ケーブルを造営材の側面または下面に沿って取り付ける場合、支持点間の距離は何m以下にするか。",
-    "choices": ["2m", "1.5m", "3m", "6m"],
+    "choices": [
+      "2m",
+      "1.5m",
+      "3m",
+      "6m"
+    ],
     "answerIndex": 0,
     "explanation": "原則2m以下。接触防護措置を施した場所で垂直に取り付ける場合だけ6m以下まで緩む。",
     "origin": "original",
-    "syllabusIds": ["cm-cable"]
+    "syllabusIds": [
+      "cm-cable"
+    ]
   },
   {
     "id": "q-cm-012",
@@ -174,11 +228,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "ケーブル工事の節。支持点間隔の数字",
     "stem": "接触防護措置を施した場所で、ケーブルを垂直に取り付ける場合の支持点間距離の上限はどれか。",
-    "choices": ["6m", "2m", "1.5m", "3m"],
+    "choices": [
+      "6m",
+      "2m",
+      "1.5m",
+      "3m"
+    ],
     "answerIndex": 0,
     "explanation": "垂直かつ接触防護措置ありなら6m以下。条件が2つそろって初めて緩む点が引っかけになる。",
     "origin": "original",
-    "syllabusIds": ["cm-cable"]
+    "syllabusIds": [
+      "cm-cable"
+    ]
   },
   {
     "id": "q-cm-013",
@@ -196,7 +257,9 @@
     "answerIndex": 0,
     "explanation": "外径の6倍以上が目安(単心のものは8倍以上)。きつく曲げると絶縁体が痛む。",
     "origin": "original",
-    "syllabusIds": ["cm-cable"]
+    "syllabusIds": [
+      "cm-cable"
+    ]
   },
   {
     "id": "q-cm-014",
@@ -214,7 +277,9 @@
     "answerIndex": 0,
     "explanation": "貫通部は擦れて損傷しやすいので保護する。貫通部で接続することは認められない。",
     "origin": "original",
-    "syllabusIds": ["cm-cable"]
+    "syllabusIds": [
+      "cm-cable"
+    ]
   },
   {
     "id": "q-cm-015",
@@ -223,11 +288,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「金属管工事」の節。支持間隔と管の厚さ",
     "stem": "金属管工事で、管を造営材に固定する支持点間の距離は何m以下が目安か。",
-    "choices": ["2m", "1.5m", "3m", "1m"],
+    "choices": [
+      "2m",
+      "1.5m",
+      "3m",
+      "1m"
+    ],
     "answerIndex": 0,
-    "explanation": "金属管は2m以下。合成樹脂管は1.5m以下。「金属2・樹脂1.5」で対にして覚える。",
+    "explanation": "金属管は2m以下(内線規程)。合成樹脂管は1.5m以下(電技解釈158条)。「金属2・樹脂1.5」で対にして覚える。",
     "origin": "original",
-    "syllabusIds": ["cm-metal-conduit"]
+    "syllabusIds": [
+      "cm-metal-conduit"
+    ]
   },
   {
     "id": "q-cm-016",
@@ -236,11 +308,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「金属管工事」の節。管の厚さ",
     "stem": "コンクリートに埋め込む金属管の厚さは何mm以上必要か。",
-    "choices": ["1.2mm", "1.0mm", "0.8mm", "2.0mm"],
+    "choices": [
+      "1.2mm",
+      "1.0mm",
+      "0.8mm",
+      "2.0mm"
+    ],
     "answerIndex": 0,
     "explanation": "コンクリート埋設は1.2mm以上、それ以外は1mm以上。埋めるほうが厳しい、と覚える。",
     "origin": "original",
-    "syllabusIds": ["cm-metal-conduit"]
+    "syllabusIds": [
+      "cm-metal-conduit"
+    ]
   },
   {
     "id": "q-cm-017",
@@ -258,7 +337,9 @@
     "answerIndex": 0,
     "explanation": "短小な管を除き、単線なら直径3.2mm以下。太い単線は管内で曲げられない。裸電線・OWは屋内配線に使えない。",
     "origin": "original",
-    "syllabusIds": ["cm-metal-conduit"]
+    "syllabusIds": [
+      "cm-metal-conduit"
+    ]
   },
   {
     "id": "q-cm-018",
@@ -276,7 +357,9 @@
     "answerIndex": 0,
     "explanation": "ねじなしボックスコネクタは、ネジの頭がねじ切れるまで締めるのが正しい施工。半端だと電気的接続と固定が不十分になる。",
     "origin": "original",
-    "syllabusIds": ["cm-metal-conduit"]
+    "syllabusIds": [
+      "cm-metal-conduit"
+    ]
   },
   {
     "id": "q-cm-019",
@@ -285,11 +368,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「合成樹脂管工事」の節。支持間隔と差込み深さ",
     "stem": "合成樹脂管(VE管)を造営材に固定する支持点間の距離は何m以下が目安か。",
-    "choices": ["1.5m", "2m", "3m", "1m"],
+    "choices": [
+      "1.5m",
+      "2m",
+      "3m",
+      "1m"
+    ],
     "answerIndex": 0,
     "explanation": "合成樹脂管は1.5m以下。金属管の2m以下より短い。管が柔らかいぶん支持を増やす。",
     "origin": "original",
-    "syllabusIds": ["cm-synthetic-conduit"]
+    "syllabusIds": [
+      "cm-synthetic-conduit"
+    ]
   },
   {
     "id": "q-cm-020",
@@ -298,11 +388,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「合成樹脂管工事」の節。支持間隔と差込み深さ",
     "stem": "硬質塩化ビニル電線管(VE管)どうしをカップリングで接続するとき、接着剤を使わない場合の差込み深さはどれか。",
-    "choices": ["管外径の1.2倍以上", "管外径の0.8倍以上", "管外径と同じ", "管外径の0.5倍以上"],
+    "choices": [
+      "管外径の1.2倍以上",
+      "管外径の0.8倍以上",
+      "管外径と同じ",
+      "管外径の0.5倍以上"
+    ],
     "answerIndex": 0,
     "explanation": "接着剤なしは1.2倍以上、接着剤ありは0.8倍以上。接着剤を使うと浅くてよい。",
     "origin": "original",
-    "syllabusIds": ["cm-synthetic-conduit"]
+    "syllabusIds": [
+      "cm-synthetic-conduit"
+    ]
   },
   {
     "id": "q-cm-021",
@@ -314,13 +411,15 @@
     "choices": [
       "直接コンクリートに埋め込んで使用する",
       "屋内の露出配管に使用する",
-      "点検できる隠ぺい場所に露出して使用する",
+      "点検できる隠ぺい場所で、管をそのまま用いる",
       "屋外の架空配線に使用する"
     ],
     "answerIndex": 0,
     "explanation": "CD管は自己消火性がないので、コンクリート埋設が原則。露出や隠ぺいで使えるのはPF管。",
     "origin": "original",
-    "syllabusIds": ["cm-synthetic-conduit"]
+    "syllabusIds": [
+      "cm-synthetic-conduit"
+    ]
   },
   {
     "id": "q-cm-022",
@@ -338,7 +437,9 @@
     "answerIndex": 0,
     "explanation": "開口部は下向き。造営材の貫通は禁止、水気・湿気の多い場所も不可。支持点間隔は2m以下。",
     "origin": "original",
-    "syllabusIds": ["cm-raceway"]
+    "syllabusIds": [
+      "cm-raceway"
+    ]
   },
   {
     "id": "q-cm-023",
@@ -347,11 +448,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「接地工事」の節。A〜D種の表",
     "stem": "使用電圧300V以下の低圧機器の金属製外箱に施す接地工事はどれか。",
-    "choices": ["D種接地工事", "C種接地工事", "B種接地工事", "A種接地工事"],
+    "choices": [
+      "D種接地工事",
+      "C種接地工事",
+      "B種接地工事",
+      "A種接地工事"
+    ],
     "answerIndex": 0,
     "explanation": "300V以下はD種、300V超はC種。第二種の範囲ではD種が主役になる。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-024",
@@ -360,11 +468,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「接地工事」の節。A〜D種の表",
     "stem": "D種接地工事の接地抵抗値は原則として何Ω以下か。",
-    "choices": ["100Ω", "10Ω", "500Ω", "50Ω"],
+    "choices": [
+      "100Ω",
+      "10Ω",
+      "500Ω",
+      "50Ω"
+    ],
     "answerIndex": 0,
     "explanation": "D種は原則100Ω以下。ただし0.5秒以内に動作する漏電遮断器を施設すれば500Ω以下まで緩和される。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-025",
@@ -382,7 +497,9 @@
     "answerIndex": 0,
     "explanation": "0.5秒以内に動作する漏電遮断器があれば500Ω以下でよい。C種(10Ω→500Ω)も同じ条件で緩和される。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-026",
@@ -391,11 +508,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「接地工事」の節。C種の抵抗値",
     "stem": "C種接地工事の接地抵抗値は原則として何Ω以下か。",
-    "choices": ["10Ω", "100Ω", "500Ω", "50Ω"],
+    "choices": [
+      "10Ω",
+      "100Ω",
+      "500Ω",
+      "50Ω"
+    ],
     "answerIndex": 0,
     "explanation": "C種は原則10Ω以下(300V超の低圧機器)。D種の100Ωより厳しい。電圧が高いほど厳しくなる。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-027",
@@ -404,11 +528,18 @@
     "sourceResourceId": "hozan-method",
     "sourceWatch": "「接地工事」の節。接地線の太さ",
     "stem": "D種接地工事に使用する軟銅線の太さは、直径何mm以上か。",
-    "choices": ["1.6mm", "2.0mm", "2.6mm", "1.2mm"],
+    "choices": [
+      "1.6mm",
+      "2.0mm",
+      "2.6mm",
+      "1.2mm"
+    ],
     "answerIndex": 0,
     "explanation": "D種・C種の接地線は直径1.6mm以上の軟銅線。細すぎると地絡電流を流しきれない。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-028",
@@ -426,7 +557,9 @@
     "answerIndex": 0,
     "explanation": "二重絶縁構造の機器はもともと外箱に電圧が出ない前提なので省略できる。「距離が遠い」「屋外」は省略の理由にならない。",
     "origin": "original",
-    "syllabusIds": ["cm-earth"]
+    "syllabusIds": [
+      "cm-earth"
+    ]
   },
   {
     "id": "q-cm-029",
@@ -444,7 +577,9 @@
     "answerIndex": 0,
     "explanation": "心線がスリーブから出ていないと圧着が効いていない疑いになり欠陥。出しすぎも欠陥なので、少し出して切りそろえる。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-030",
@@ -462,7 +597,9 @@
     "answerIndex": 0,
     "explanation": "奥まで差し込み、確認窓で心線が見えることを確かめる。差込形コネクタは所定の接続器なのでテープ巻きは不要。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-031",
@@ -480,7 +617,9 @@
     "answerIndex": 0,
     "explanation": "1つのスリーブへの二度圧着は欠陥。刻印が正しく1つ入っていることを確認する。判定の正本は公式の欠陥判断基準。",
     "origin": "original",
-    "syllabusIds": ["cm-connection"]
+    "syllabusIds": [
+      "cm-connection"
+    ]
   },
   {
     "id": "q-cm-032",
@@ -490,14 +629,17 @@
     "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの選び方",
     "stem": "リングスリーブを選ぶときの基準として正しいのはどれか。",
     "choices": [
-      "接続する心線の断面積の合計で決める",
+      "接続する電線の太さと本数の組合せ(＝心線の断面積の合計)で決める",
       "接続する電線の本数だけで決める",
       "ケーブルの外装の色で決める",
       "使用する圧着工具の色で決める"
     ],
     "answerIndex": 0,
-    "explanation": "太さと本数から求まる断面積の合計で小・中・大を選ぶ。同じ本数でも1.6mmと2.0mmが混ざれば選ぶスリーブが変わる。",
+    "explanation": "太さと本数の組合せ表で小・中・大を選ぶ(実質は心線の断面積の合計)。同じ本数でも1.6mmと2.0mmが混ざれば選ぶスリーブが変わる。",
     "origin": "original",
-    "syllabusIds": ["cm-connection", "wd-ring-sleeve"]
+    "syllabusIds": [
+      "cm-connection",
+      "wd-ring-sleeve"
+    ]
   }
 ]

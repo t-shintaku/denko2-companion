@@ -6,11 +6,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「一般配線」の行。線の種類の違い",
     "stem": "配線図で「天井隠ぺい配線」を表す線の種類はどれか。",
-    "choices": ["実線", "破線", "点線", "一点鎖線"],
+    "choices": [
+      "実線",
+      "破線",
+      "点線",
+      "一点鎖線"
+    ],
     "answerIndex": 0,
     "explanation": "天井隠ぺい=実線、床隠ぺい=破線、露出=点線。3つセットで覚える。いちばんよく出るのが実線の天井隠ぺい。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-002",
@@ -19,11 +26,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「一般配線」の行。線の種類の違い",
     "stem": "配線図で「露出配線」を表す線の種類はどれか。",
-    "choices": ["点線", "実線", "破線", "二重線"],
+    "choices": [
+      "点線",
+      "実線",
+      "破線",
+      "二重線"
+    ],
     "answerIndex": 0,
     "explanation": "露出配線は点線。破線は床隠ぺい配線で、見た目が似ているので取り違えやすい。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-003",
@@ -32,11 +46,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「照明器具」の行。傍記の意味",
     "stem": "照明器具の図記号に付ける傍記「CL」が表すものはどれか。",
-    "choices": ["シーリング(天井直付)", "シャンデリヤ", "ダウンライト", "ペンダント"],
+    "choices": [
+      "シーリング(天井直付)",
+      "シャンデリヤ",
+      "ダウンライト",
+      "ペンダント"
+    ],
     "answerIndex": 0,
     "explanation": "CL=シーリング(天井直付)、CH=シャンデリヤ、DL=ダウンライト(埋込器具)。アルファベットの略で覚える。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-lighting"]
+    "syllabusIds": [
+      "wd-symbol-lighting"
+    ]
   },
   {
     "id": "q-wd-004",
@@ -45,11 +66,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、一般配線の記号を並べる場面",
     "stem": "配線図で「床隠ぺい配線」を表す線の種類はどれか。",
-    "choices": ["破線", "実線", "点線", "一点鎖線"],
+    "choices": [
+      "破線",
+      "実線",
+      "点線",
+      "一点鎖線"
+    ],
     "answerIndex": 0,
     "explanation": "床隠ぺいは破線。天井隠ぺい(実線)と露出(点線)との3択で出るので、3つまとめて頭に入れる。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-005",
@@ -58,11 +86,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、一般配線の記号を並べる場面。電線本数の表し方",
     "stem": "配線図で、配線の上に斜線が3本引かれているとき、それが表すものはどれか。",
-    "choices": ["電線の心線が3本", "電線管が3本", "接続点が3か所", "回路数が3"],
+    "choices": [
+      "電線の心線が3本",
+      "電線管が3本",
+      "接続点が3か所",
+      "回路数が3"
+    ],
     "answerIndex": 0,
     "explanation": "斜線の数がそのまま電線(心線)の本数。斜線がなければ2本を意味する。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-006",
@@ -71,11 +106,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「一般配線」の行。傍記の読み方",
     "stem": "配線の傍記「IV1.6(19)」の(19)が表すものはどれか。",
-    "choices": ["電線管の呼び方(薄鋼電線管19)", "電線の本数19本", "配線の長さ19m", "許容電流19A"],
+    "choices": [
+      "電線管の呼び方(薄鋼電線管19)",
+      "電線の本数19本",
+      "配線の長さ19m",
+      "許容電流19A"
+    ],
     "answerIndex": 0,
     "explanation": "カッコ内は電線管の呼び方。IV1.6が電線の種類と太さ、(19)が管のサイズ。E19ならねじなし電線管。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-007",
@@ -84,11 +126,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「一般配線」の行。立上り・引下げ",
     "stem": "配線図で、配線が上の階へ続いていることを示す表現はどれか。",
-    "choices": ["立上り", "引下げ", "素通し", "分岐"],
+    "choices": [
+      "立上り",
+      "引下げ",
+      "素通し",
+      "分岐"
+    ],
     "answerIndex": 0,
     "explanation": "上へ行くのが立上り、下へ行くのが引下げ、上下を通り抜けるのが素通し。3つが同じ場所に並んで出題される。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-008",
@@ -106,7 +155,9 @@
     "answerIndex": 0,
     "explanation": "ボックスは接続と分岐の場所。複線図を描くときは、まずボックスを基点に線を引き分ける。",
     "origin": "original",
-    "syllabusIds": ["wd-general"]
+    "syllabusIds": [
+      "wd-general"
+    ]
   },
   {
     "id": "q-wd-009",
@@ -115,11 +166,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、機器の記号を並べる場面",
     "stem": "機器の図記号で「M」が表すものはどれか。",
-    "choices": ["電動機", "電熱器", "コンデンサ", "変圧器"],
+    "choices": [
+      "電動機",
+      "電熱器",
+      "コンデンサ",
+      "変圧器"
+    ],
     "answerIndex": 0,
     "explanation": "M=電動機(Motor)、H=電熱器(Heater)、C=コンデンサ。アルファベットが頭文字になっている。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-device"]
+    "syllabusIds": [
+      "wd-symbol-device"
+    ]
   },
   {
     "id": "q-wd-010",
@@ -128,11 +186,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、機器の記号を並べる場面",
     "stem": "機器の図記号で「H」が表すものはどれか。",
-    "choices": ["電熱器", "電動機", "換気扇", "分電盤"],
+    "choices": [
+      "電熱器",
+      "電動機",
+      "換気扇",
+      "分電盤"
+    ],
     "answerIndex": 0,
     "explanation": "H=電熱器(Heater)。スイッチの傍記に付く「H」は位置表示灯内蔵で意味がまったく違うので、どこに付いているかで読み分ける。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-device"]
+    "syllabusIds": [
+      "wd-symbol-device"
+    ]
   },
   {
     "id": "q-wd-011",
@@ -141,11 +206,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「機器・盤」の行",
     "stem": "配線図で、内部に斜線が入った四角形が表す盤はどれか。",
-    "choices": ["分電盤", "配電盤", "制御盤", "実験盤"],
+    "choices": [
+      "分電盤",
+      "配電盤",
+      "制御盤",
+      "実験盤"
+    ],
     "answerIndex": 0,
     "explanation": "分電盤は斜線入り、配電盤は塗りつぶし、制御盤は格子。盤の記号は3種類の塗り分けで見分ける。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-device"]
+    "syllabusIds": [
+      "wd-symbol-device"
+    ]
   },
   {
     "id": "q-wd-012",
@@ -154,11 +226,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、開閉器・遮断器の記号を並べる場面",
     "stem": "図記号の傍記「B」が表すものはどれか。",
-    "choices": ["配線用遮断器", "漏電遮断器", "開閉器", "電磁開閉器"],
+    "choices": [
+      "配線用遮断器",
+      "漏電遮断器",
+      "開閉器",
+      "電磁開閉器"
+    ],
     "answerIndex": 0,
     "explanation": "B=配線用遮断器(Breaker)、E=漏電遮断器(Earth leakage)、S=開閉器(Switch)。1文字の違いで別物になる。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-meter"]
+    "syllabusIds": [
+      "wd-symbol-meter"
+    ]
   },
   {
     "id": "q-wd-013",
@@ -167,11 +246,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "前半、開閉器・遮断器の記号を並べる場面",
     "stem": "図記号の傍記「E」が単独で付いた遮断器が表すものはどれか。",
-    "choices": ["漏電遮断器", "配線用遮断器", "電磁開閉器", "電流計付開閉器"],
+    "choices": [
+      "漏電遮断器",
+      "配線用遮断器",
+      "電磁開閉器",
+      "電流計付開閉器"
+    ],
     "answerIndex": 0,
     "explanation": "E=漏電遮断器。過負荷保護も兼ねるものは「BE」と書く。BとEの組み合わせで読み分ける。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-meter"]
+    "syllabusIds": [
+      "wd-symbol-meter"
+    ]
   },
   {
     "id": "q-wd-014",
@@ -180,11 +266,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「計器」の行",
     "stem": "配線図で「Wh」と書かれた記号が表すものはどれか。",
-    "choices": ["電力量計", "電力計", "電流計", "電圧計"],
+    "choices": [
+      "電力量計",
+      "電力計",
+      "電流計",
+      "電圧計"
+    ],
     "answerIndex": 0,
     "explanation": "Wh=電力量計。単位そのものが記号になっている。W=電力計、A=電流計、V=電圧計。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-meter"]
+    "syllabusIds": [
+      "wd-symbol-meter"
+    ]
   },
   {
     "id": "q-wd-015",
@@ -193,11 +286,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「小勢力回路・警報」の行",
     "stem": "小勢力回路で使う「押しボタン」の図記号と組み合わせて使われることが多い器具はどれか。",
-    "choices": ["ベル・ブザー・チャイム", "電力量計", "分電盤", "コンデンサ"],
+    "choices": [
+      "ベル・ブザー・チャイム",
+      "電力量計",
+      "分電盤",
+      "コンデンサ"
+    ],
     "answerIndex": 0,
     "explanation": "押しボタンとベル・ブザー・チャイムは小勢力回路のセット。玄関チャイムの回路として出題される。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-other"]
+    "syllabusIds": [
+      "wd-symbol-other"
+    ]
   },
   {
     "id": "q-wd-016",
@@ -213,9 +313,11 @@
       "接地を必要としない高圧回路である"
     ],
     "answerIndex": 0,
-    "explanation": "小勢力回路は小型変圧器の二次側の低い電圧の回路。36V以下のものは電気工事士でなくても配線できる「軽微な工事」に当たる。",
+    "explanation": "小勢力回路は小型変圧器で電圧を下げた回路で、最大使用電圧は60V以下。このうち二次電圧36V以下の小型変圧器の二次側配線は「軽微な工事」にあたり、電気工事士でなくても施工できる。60Vと36Vは別の数字なので混ぜないこと。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-other"]
+    "syllabusIds": [
+      "wd-symbol-other"
+    ]
   },
   {
     "id": "q-wd-017",
@@ -224,11 +326,18 @@
     "sourceResourceId": "hozan-symbols",
     "sourceWatch": "記号一覧表の「照明器具」の行。傍記の意味",
     "stem": "照明器具の傍記「DL」が表すものはどれか。",
-    "choices": ["ダウンライト(埋込器具)", "シャンデリヤ", "シーリング", "ペンダント"],
+    "choices": [
+      "ダウンライト(埋込器具)",
+      "シャンデリヤ",
+      "シーリング",
+      "ペンダント"
+    ],
     "answerIndex": 0,
     "explanation": "DL=ダウンライト。CL=シーリング、CH=シャンデリヤと合わせて3つで覚える。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-lighting"]
+    "syllabusIds": [
+      "wd-symbol-lighting"
+    ]
   },
   {
     "id": "q-wd-018",
@@ -237,11 +346,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "後半、点滅器(スイッチ)の節。3路・4路の記号",
     "stem": "点滅器の図記号に傍記「3」が付いているとき、それが表すものはどれか。",
-    "choices": ["3路スイッチ", "3個口のスイッチ", "3極スイッチ", "3A用のスイッチ"],
+    "choices": [
+      "3路スイッチ",
+      "3個口のスイッチ",
+      "3極スイッチ",
+      "3A用のスイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "傍記の3は3路スイッチ、4は4路スイッチ。個数や極数ではない。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-019",
@@ -250,11 +366,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "後半、点滅器(スイッチ)の節。3路・4路の記号",
     "stem": "点滅器の図記号に傍記「4」が付いているとき、それが表すものはどれか。",
-    "choices": ["4路スイッチ", "4個口のスイッチ", "4極スイッチ", "4A用のスイッチ"],
+    "choices": [
+      "4路スイッチ",
+      "4個口のスイッチ",
+      "4極スイッチ",
+      "4A用のスイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "4路スイッチ。3路2個の間に入れて、3か所以上から点滅させるときに使う。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-020",
@@ -263,11 +386,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "後半、点滅器(スイッチ)の節。確認表示灯・位置表示灯",
     "stem": "点滅器の図記号に傍記「H」が付いているとき、それが表すものはどれか。",
-    "choices": ["位置表示灯内蔵スイッチ(ほたる)", "確認表示灯内蔵スイッチ", "電熱器用スイッチ", "防雨形スイッチ"],
+    "choices": [
+      "位置表示灯内蔵スイッチ(ほたる)",
+      "確認表示灯内蔵スイッチ",
+      "電熱器用スイッチ",
+      "防雨形スイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "H=位置表示灯内蔵(消灯時に光る)、L=確認表示灯内蔵(点灯時に光る)。HとLの対で覚える。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-021",
@@ -276,11 +406,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "後半、点滅器(スイッチ)の節。確認表示灯・位置表示灯",
     "stem": "点滅器の図記号に傍記「L」が付いているとき、それが表すものはどれか。",
-    "choices": ["確認表示灯内蔵スイッチ(パイロット)", "位置表示灯内蔵スイッチ", "調光器", "リモコンスイッチ"],
+    "choices": [
+      "確認表示灯内蔵スイッチ(パイロット)",
+      "位置表示灯内蔵スイッチ",
+      "調光器",
+      "リモコンスイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "L=確認表示灯内蔵。負荷が動いているときに光る。換気扇など、動いているか見えない負荷に使う。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-022",
@@ -289,11 +426,18 @@
     "sourceResourceId": "gami-symbols",
     "sourceWatch": "後半、点滅器(スイッチ)の節。自動点滅器・タイマ",
     "stem": "点滅器の図記号に傍記「A」が付いているとき、それが表すものはどれか。",
-    "choices": ["自動点滅器", "電流計付スイッチ", "調光器", "警報スイッチ"],
+    "choices": [
+      "自動点滅器",
+      "電流計付スイッチ",
+      "調光器",
+      "警報スイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "A=自動点滅器(Auto)。周囲が暗くなると点灯する屋外灯に使う。T=タイマ付スイッチ。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-023",
@@ -302,11 +446,18 @@
     "sourceResourceId": "kemichiru-symbols",
     "sourceWatch": "一般図記号を読み上げる箇所。点滅器の極数",
     "stem": "点滅器の図記号に傍記「2P」が付いているとき、それが表すものはどれか。",
-    "choices": ["2極スイッチ", "2個口のスイッチ", "2路スイッチ", "200V用スイッチ"],
+    "choices": [
+      "2極スイッチ",
+      "2個口のスイッチ",
+      "2路スイッチ",
+      "200V用スイッチ"
+    ],
     "answerIndex": 0,
     "explanation": "2P=2極(両切り)スイッチ。2本の電線を同時に切る。傍記の数字だけを見て3路・4路と混同しないこと。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-switch"]
+    "syllabusIds": [
+      "wd-symbol-switch"
+    ]
   },
   {
     "id": "q-wd-024",
@@ -315,11 +466,18 @@
     "sourceResourceId": "gami-outlets",
     "sourceWatch": "コンセント24種類のうち、防雨形が出てくるところ",
     "stem": "コンセントの図記号に傍記「WP」が付いているとき、それが表すものはどれか。",
-    "choices": ["防雨形", "抜け止め形", "接地極付", "医用"],
+    "choices": [
+      "防雨形",
+      "抜け止め形",
+      "接地極付",
+      "医用"
+    ],
     "answerIndex": 0,
     "explanation": "WP=Weather Proof(防雨形)。屋外に付けるコンセントに使う。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-025",
@@ -328,11 +486,18 @@
     "sourceResourceId": "gami-outlets",
     "sourceWatch": "コンセント24種類のうち、抜け止め形が出てくるところ",
     "stem": "コンセントの図記号に傍記「LK」が付いているとき、それが表すものはどれか。",
-    "choices": ["抜け止め形", "漏電遮断器付", "接地端子付", "防雨形"],
+    "choices": [
+      "抜け止め形",
+      "漏電遮断器付",
+      "接地端子付",
+      "防雨形"
+    ],
     "answerIndex": 0,
     "explanation": "LK=Locking(抜け止め形)。差し込んで回すと抜けにくくなる。ELは漏電遮断器付で別物。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-026",
@@ -341,11 +506,18 @@
     "sourceResourceId": "gami-outlets",
     "sourceWatch": "コンセント24種類のうち、接地極付・接地端子付が並ぶところ",
     "stem": "コンセントの図記号に傍記「E」が付いているとき、それが表すものはどれか。",
-    "choices": ["接地極付", "接地端子付", "漏電遮断器付", "非常用"],
+    "choices": [
+      "接地極付",
+      "接地端子付",
+      "漏電遮断器付",
+      "非常用"
+    ],
     "answerIndex": 0,
     "explanation": "E=接地極付、ET=接地端子付、EET=接地極付接地端子付。Tが付くかどうかで端子の有無が変わる。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-027",
@@ -354,11 +526,18 @@
     "sourceResourceId": "gami-outlets",
     "sourceWatch": "コンセント24種類のうち、接地極付・接地端子付が並ぶところ",
     "stem": "コンセントの図記号に傍記「ET」が付いているとき、それが表すものはどれか。",
-    "choices": ["接地端子付", "接地極付", "接地極付接地端子付", "防雨形"],
+    "choices": [
+      "接地端子付",
+      "接地極付",
+      "接地極付接地端子付",
+      "防雨形"
+    ],
     "answerIndex": 0,
     "explanation": "ET=接地端子付。アース線をねじで留める端子が付いている。E(接地極付)は刃受け自体に接地極がある。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-028",
@@ -376,7 +555,9 @@
     "answerIndex": 0,
     "explanation": "定格電圧の傍記。125Vと250Vで刃受けの形が違い、200V機器は250V用のコンセントに差す。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-029",
@@ -385,11 +566,18 @@
     "sourceResourceId": "gami-outlets",
     "sourceWatch": "コンセント24種類のうち、漏電遮断器付が出てくるところ",
     "stem": "コンセントの図記号に傍記「EL」が付いているとき、それが表すものはどれか。",
-    "choices": ["漏電遮断器付", "接地極付", "抜け止め形", "防雨形"],
+    "choices": [
+      "漏電遮断器付",
+      "接地極付",
+      "抜け止め形",
+      "防雨形"
+    ],
     "answerIndex": 0,
     "explanation": "EL=Earth Leakage(漏電遮断器付)。E(接地極付)・LK(抜け止め形)と並べると紛らわしいので3つ同時に確認する。",
     "origin": "original",
-    "syllabusIds": ["wd-symbol-outlet"]
+    "syllabusIds": [
+      "wd-symbol-outlet"
+    ]
   },
   {
     "id": "q-wd-030",
@@ -398,11 +586,18 @@
     "sourceResourceId": "hozan-skill-unit",
     "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの大きさと刻印の対応表",
     "stem": "直径1.6mmの電線2本をリングスリーブで接続するとき、使用するスリーブと圧着マークの組み合わせはどれか。",
-    "choices": ["小スリーブ・刻印「○」", "小スリーブ・刻印「小」", "中スリーブ・刻印「中」", "大スリーブ・刻印「大」"],
+    "choices": [
+      "小スリーブ・刻印「○」",
+      "小スリーブ・刻印「小」",
+      "中スリーブ・刻印「中」",
+      "大スリーブ・刻印「大」"
+    ],
     "answerIndex": 0,
     "explanation": "1.6mm×2本だけが刻印「○」。この1行を外すと、技能でも学科でも落とす。最優先で覚える。",
     "origin": "original",
-    "syllabusIds": ["wd-ring-sleeve"]
+    "syllabusIds": [
+      "wd-ring-sleeve"
+    ]
   },
   {
     "id": "q-wd-031",
@@ -411,11 +606,18 @@
     "sourceResourceId": "hozan-skill-unit",
     "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの大きさと刻印の対応表",
     "stem": "直径1.6mmの電線4本をリングスリーブで接続するとき、使用するスリーブと圧着マークの組み合わせはどれか。",
-    "choices": ["小スリーブ・刻印「小」", "小スリーブ・刻印「○」", "中スリーブ・刻印「中」", "大スリーブ・刻印「大」"],
+    "choices": [
+      "小スリーブ・刻印「小」",
+      "小スリーブ・刻印「○」",
+      "中スリーブ・刻印「中」",
+      "大スリーブ・刻印「大」"
+    ],
     "answerIndex": 0,
     "explanation": "1.6mm×3〜4本は小スリーブで刻印「小」。同じ小スリーブでも本数で刻印が「○」と「小」に分かれる。",
     "origin": "original",
-    "syllabusIds": ["wd-ring-sleeve"]
+    "syllabusIds": [
+      "wd-ring-sleeve"
+    ]
   },
   {
     "id": "q-wd-032",
@@ -424,11 +626,18 @@
     "sourceResourceId": "hozan-skill-unit",
     "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの大きさと刻印の対応表",
     "stem": "直径2.0mmの電線2本をリングスリーブで接続するとき、使用するスリーブと圧着マークの組み合わせはどれか。",
-    "choices": ["小スリーブ・刻印「小」", "小スリーブ・刻印「○」", "中スリーブ・刻印「中」", "中スリーブ・刻印「小」"],
+    "choices": [
+      "小スリーブ・刻印「小」",
+      "小スリーブ・刻印「○」",
+      "中スリーブ・刻印「中」",
+      "中スリーブ・刻印「小」"
+    ],
     "answerIndex": 0,
     "explanation": "2.0mm×2本は小スリーブで刻印「小」。太さが変わると2本でも「○」にならない。",
     "origin": "original",
-    "syllabusIds": ["wd-ring-sleeve"]
+    "syllabusIds": [
+      "wd-ring-sleeve"
+    ]
   },
   {
     "id": "q-wd-033",
@@ -437,11 +646,18 @@
     "sourceResourceId": "hozan-skill-unit",
     "sourceWatch": "「リングスリーブによる圧着接続」の節。スリーブの大きさと刻印の対応表",
     "stem": "直径1.6mmの電線5本をリングスリーブで接続するとき、使用するスリーブと圧着マークの組み合わせはどれか。",
-    "choices": ["中スリーブ・刻印「中」", "小スリーブ・刻印「小」", "小スリーブ・刻印「○」", "大スリーブ・刻印「大」"],
+    "choices": [
+      "中スリーブ・刻印「中」",
+      "小スリーブ・刻印「小」",
+      "小スリーブ・刻印「○」",
+      "大スリーブ・刻印「大」"
+    ],
     "answerIndex": 0,
     "explanation": "1.6mm×5〜6本は中スリーブで刻印「中」。4本までは小、5本から中に変わる境目を押さえる。",
     "origin": "original",
-    "syllabusIds": ["wd-ring-sleeve"]
+    "syllabusIds": [
+      "wd-ring-sleeve"
+    ]
   },
   {
     "id": "q-wd-034",
@@ -449,7 +665,7 @@
     "topicId": "wiring-diagram",
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "勝利の4STEPの1手目。接地側電線を先に引く場面",
-    "stem": "複線図を描くとき、最初に引く線として動画で示されている手順はどれか。",
+    "stem": "複線図を描くとき、最初に引く線として正しいのはどれか。",
     "choices": [
       "電源の接地側(白)を、スイッチを通さずに照明器具やコンセントへ直接つなぐ",
       "電源の非接地側(黒)を、すべての器具へつなぐ",
@@ -459,7 +675,9 @@
     "answerIndex": 0,
     "explanation": "1手目は接地側(白)を負荷へ直行。スイッチを通さないのがポイント。ここを固定すると以降の線が迷わなくなる。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-035",
@@ -467,7 +685,7 @@
     "topicId": "wiring-diagram",
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "勝利の4STEPの2手目。非接地側電線を引く場面",
-    "stem": "複線図の2手目で、電源の非接地側(黒)をつなぐ相手として正しいのはどれか。",
+    "stem": "複線図で、電源の非接地側(黒)をつなぐ相手として正しいのはどれか。",
     "choices": [
       "スイッチとコンセント",
       "照明器具とコンセント",
@@ -477,7 +695,9 @@
     "answerIndex": 0,
     "explanation": "非接地側(黒)はスイッチとコンセントへ。照明器具へ直接は行かない。1手目(白は負荷へ)と対にして覚える。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-036",
@@ -486,11 +706,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「1灯1点滅」の作図例。線を引く順番",
     "stem": "ランプレセプタクルの受金ねじ部(ねじ込み側)に結線する電線はどれか。",
-    "choices": ["接地側電線(白)", "非接地側電線(黒)", "接地線(緑)", "どちらでもよい"],
+    "choices": [
+      "接地側電線(白)",
+      "非接地側電線(黒)",
+      "接地線(緑)",
+      "どちらでもよい"
+    ],
     "answerIndex": 0,
     "explanation": "受金ねじ部には接地側(白)。逆にすると、電球を替えるときに指が触れる部分が充電される。技能試験でも欠陥になる。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-037",
@@ -499,11 +726,18 @@
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "1灯1点滅の例で、電線本数を数える場面",
     "stem": "1灯1点滅の回路で、ジョイントボックスと片切スイッチの間に必要な電線の最少本数はどれか。",
-    "choices": ["2本", "1本", "3本", "4本"],
+    "choices": [
+      "2本",
+      "1本",
+      "3本",
+      "4本"
+    ],
     "answerIndex": 0,
     "explanation": "スイッチへ行く非接地側1本と、スイッチから戻る負荷側1本で2本。スイッチは「行って戻る」ので必ず2本になる。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-038",
@@ -512,11 +746,18 @@
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "1灯1点滅の例で、電線本数を数える場面",
     "stem": "1つのジョイントボックスから、2つの照明をそれぞれ別の片切スイッチで点滅させる。ボックスとスイッチボックス(スイッチ2個)の間に必要な電線の最少本数はどれか。",
-    "choices": ["3本", "2本", "4本", "5本"],
+    "choices": [
+      "3本",
+      "2本",
+      "4本",
+      "5本"
+    ],
     "answerIndex": 0,
     "explanation": "非接地側は2つのスイッチで共用できるので1本、各スイッチから戻る線が2本。合わせて3本。スイッチが3個なら4本になる。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-039",
@@ -525,11 +766,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「1灯1点滅」の作図例。ジョイントボックスと照明の間",
     "stem": "1灯1点滅の回路で、ジョイントボックスと照明器具の間に必要な電線の最少本数はどれか。",
-    "choices": ["2本", "1本", "3本", "4本"],
+    "choices": [
+      "2本",
+      "1本",
+      "3本",
+      "4本"
+    ],
     "answerIndex": 0,
     "explanation": "接地側(白)1本と、スイッチから戻ってきた線1本で2本。負荷には必ず2本来る。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-040",
@@ -547,7 +795,9 @@
     "answerIndex": 0,
     "explanation": "コンセントは常時電気が来ている必要があるので、白と黒が直接来る。スイッチを経由しない点が照明との違い。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-041",
@@ -556,11 +806,18 @@
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "コンセントを足す例。電線本数を数える場面",
     "stem": "1灯1点滅の回路にコンセントを1個追加した。ジョイントボックスとコンセントの間に必要な電線の最少本数はどれか。",
-    "choices": ["2本", "1本", "3本", "4本"],
+    "choices": [
+      "2本",
+      "1本",
+      "3本",
+      "4本"
+    ],
     "answerIndex": 0,
     "explanation": "白と黒の2本。コンセントは接地極付でなければ2本で足りる。接地極付なら接地線が加わって3本になる。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-042",
@@ -569,11 +826,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「コンセントがある回路」の作図例。接地極付コンセント",
     "stem": "接地極付コンセントに来る電線の最少本数はどれか。",
-    "choices": ["3本", "2本", "4本", "1本"],
+    "choices": [
+      "3本",
+      "2本",
+      "4本",
+      "1本"
+    ],
     "answerIndex": 0,
     "explanation": "白・黒に加えて接地線(緑)が必要なので3本。接地極付かどうかで本数が1本変わるのが定番の引っかけ。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-043",
@@ -582,11 +846,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「コンセントがある回路」の作図例。接続箇所の数え方",
     "stem": "差込形コネクタで電線3本を1か所にまとめて接続するとき、使用するコネクタはどれか。",
-    "choices": ["3本用(3極)のコネクタ1個", "2本用のコネクタ2個", "4本用のコネクタ1個", "リングスリーブ小1個"],
+    "choices": [
+      "3本用(3極)のコネクタ1個",
+      "2本用のコネクタ2個",
+      "4本用のコネクタ1個",
+      "リングスリーブ小1個"
+    ],
     "answerIndex": 0,
     "explanation": "差込形コネクタは接続する電線の本数＝極数。3本なら3本用を1個。本数を数えて選ぶだけなので確実に取りたい。",
     "origin": "original",
-    "syllabusIds": ["wd-connector"]
+    "syllabusIds": [
+      "wd-connector"
+    ]
   },
   {
     "id": "q-wd-044",
@@ -595,11 +866,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「コンセントがある回路」の作図例。接続箇所の数え方",
     "stem": "複線図で、あるジョイントボックス内に「白3本を1か所」「黒2本を1か所」「スイッチ戻り2本を1か所」の接続がある。差込形コネクタで施工する場合の必要個数はどれか。",
-    "choices": ["3本用1個・2本用2個", "3本用3個", "2本用3個", "4本用1個・2本用1個"],
+    "choices": [
+      "3本用1個・2本用2個",
+      "3本用3個",
+      "2本用3個",
+      "4本用1個・2本用1個"
+    ],
     "answerIndex": 0,
     "explanation": "接続の「か所」ごとに1個、極数はその箇所の本数。3本の箇所に3本用1個、2本の箇所に2本用が2個。",
     "origin": "original",
-    "syllabusIds": ["wd-connector"]
+    "syllabusIds": [
+      "wd-connector"
+    ]
   },
   {
     "id": "q-wd-045",
@@ -617,7 +895,9 @@
     "answerIndex": 0,
     "explanation": "接続箇所→本数→スリーブ/コネクタの順。器具の数と接続箇所の数は一致しない。",
     "origin": "original",
-    "syllabusIds": ["wd-material-count"]
+    "syllabusIds": [
+      "wd-material-count"
+    ]
   },
   {
     "id": "q-wd-046",
@@ -635,7 +915,9 @@
     "answerIndex": 0,
     "explanation": "0番は「外」につながる端子。片方の3路の0番に電源の黒、もう片方の3路の0番から負荷へ。1番と3番どうしが渡り線になる。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-047",
@@ -644,11 +926,18 @@
     "sourceResourceId": "gami-diagram",
     "sourceWatch": "3路スイッチの節。渡り線の本数",
     "stem": "1灯を2か所の3路スイッチで点滅させる回路で、2つの3路スイッチの間に必要な電線の最少本数はどれか。",
-    "choices": ["2本", "1本", "3本", "4本"],
+    "choices": [
+      "2本",
+      "1本",
+      "3本",
+      "4本"
+    ],
     "answerIndex": 0,
     "explanation": "1番どうし・3番どうしを結ぶので2本。0番は電源側と負荷側にそれぞれ出るので、スイッチ間には来ない。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-048",
@@ -657,11 +946,18 @@
     "sourceResourceId": "hozan-figure-basic",
     "sourceWatch": "「3路スイッチ」の作図例。4路を入れた場合",
     "stem": "3か所から1灯を点滅させる回路(3路2個＋4路1個)で、3路スイッチと4路スイッチの間に必要な電線の最少本数はどれか。",
-    "choices": ["2本", "1本", "3本", "4本"],
+    "choices": [
+      "2本",
+      "1本",
+      "3本",
+      "4本"
+    ],
     "answerIndex": 0,
     "explanation": "4路スイッチは2本を受けて2本を送る。3路―4路間も4路―3路間もそれぞれ2本になる。",
     "origin": "original",
-    "syllabusIds": ["wd-min-wires"]
+    "syllabusIds": [
+      "wd-min-wires"
+    ]
   },
   {
     "id": "q-wd-049",
@@ -679,7 +975,9 @@
     "answerIndex": 0,
     "explanation": "照明には白が直行し、もう1本は負荷側の3路スイッチの0番から来る。ここを間違えるとスイッチを切っても消えない回路になる。",
     "origin": "original",
-    "syllabusIds": ["wd-diagram-read"]
+    "syllabusIds": [
+      "wd-diagram-read"
+    ]
   },
   {
     "id": "q-wd-050",
@@ -697,24 +995,230 @@
     "answerIndex": 0,
     "explanation": "スリーブは「接続か所」ごとに1個。ボックスを通過するだけの渡り線は接続ではないので数えない。",
     "origin": "original",
-    "syllabusIds": ["wd-ring-sleeve", "wd-material-count"]
+    "syllabusIds": [
+      "wd-ring-sleeve",
+      "wd-material-count"
+    ]
   },
   {
     "id": "q-wd-051",
     "lessonId": "p2-w6-l3",
     "topicId": "wiring-diagram",
     "sourceResourceId": "hozan-figure-basic",
-    "sourceWatch": "「3路スイッチ」の作図例。材料の拾い出し",
-    "stem": "複線図から支給材料を確認したところ、図から数えた本数と支給されたケーブルの数が合わない。技能試験で優先すべきはどれか。",
+    "sourceWatch": "「3路スイッチ」の作図例。ボックス内の接続箇所と本数の数え方",
+    "stem": "ジョイントボックス内で、電線4本を1か所にまとめて接続する。差込形コネクタで施工する場合に使うものはどれか。",
     "choices": [
-      "公表された施工条件と支給材料を正とし、複線図を描き直す",
-      "自分の複線図を正として、足りない材料を使わずに仕上げる",
-      "余った材料を使い切るように結線を変える",
-      "本数が合うまで器具を省略する"
+      "4本用(4極)のコネクタ1個",
+      "2本用のコネクタ2個",
+      "3本用のコネクタ1個と2本用1個",
+      "リングスリーブ中1個"
     ],
     "answerIndex": 0,
-    "explanation": "施工条件と支給材料が正本。図と食い違ったら図を疑う。動画の解説と支給材料が違う場合も、公式の施工条件が優先する。",
+    "explanation": "差込形コネクタは1か所につき1個で、極数＝その箇所の電線本数。4本なら4本用を1個。2本用を2個にすると別々の接続になってしまう。",
     "origin": "original",
-    "syllabusIds": ["wd-material-count"]
+    "syllabusIds": [
+      "wd-connector",
+      "wd-material-count"
+    ]
+  },
+  {
+    "id": "q-wd-052",
+    "lessonId": "p0-l4",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「照明器具」の行",
+    "stem": "照明器具の図記号で、細長い長方形で表されるものはどれか。",
+    "choices": [
+      "蛍光灯",
+      "白熱灯",
+      "屋外灯",
+      "誘導灯"
+    ],
+    "answerIndex": 0,
+    "explanation": "蛍光灯は細長い長方形。白熱灯・HID灯は丸。形が違うので、まず丸か長方形かで分ける。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-lighting"
+    ]
+  },
+  {
+    "id": "q-wd-053",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「照明器具」の行。傍記の意味",
+    "stem": "照明器具の傍記「CH」が表すものはどれか。",
+    "choices": [
+      "シャンデリヤ",
+      "シーリング(天井直付)",
+      "ダウンライト",
+      "チャイム"
+    ],
+    "answerIndex": 0,
+    "explanation": "CH=シャンデリヤ。CL=シーリング、DL=ダウンライト。チャイムは照明ではなく小勢力回路の器具。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-lighting"
+    ]
+  },
+  {
+    "id": "q-wd-054",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "gami-symbols",
+    "sourceWatch": "前半、機器の記号を並べる場面",
+    "stem": "機器の図記号で「C」が表すものはどれか。",
+    "choices": [
+      "コンデンサ",
+      "電動機",
+      "電熱器",
+      "制御盤"
+    ],
+    "answerIndex": 0,
+    "explanation": "C=コンデンサ(進相コンデンサ)。M=電動機、H=電熱器と合わせて3つで覚える。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-device"
+    ]
+  },
+  {
+    "id": "q-wd-055",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「機器・盤」の行",
+    "stem": "配線図で、内部を塗りつぶした四角形が表す盤はどれか。",
+    "choices": [
+      "配電盤",
+      "分電盤",
+      "制御盤",
+      "実験盤"
+    ],
+    "answerIndex": 0,
+    "explanation": "配電盤は塗りつぶし、分電盤は斜線入り、制御盤は格子。塗り分けで見分ける。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-device"
+    ]
+  },
+  {
+    "id": "q-wd-056",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "gami-symbols",
+    "sourceWatch": "前半、開閉器・遮断器の記号を並べる場面",
+    "stem": "図記号の傍記「BE」が表すものはどれか。",
+    "choices": [
+      "過負荷保護付漏電遮断器",
+      "配線用遮断器",
+      "開閉器",
+      "電磁開閉器"
+    ],
+    "answerIndex": 0,
+    "explanation": "B(配線用遮断器)とE(漏電遮断器)を合わせたBEは、過負荷保護付きの漏電遮断器。住宅の主幹によく使われる。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-meter"
+    ]
+  },
+  {
+    "id": "q-wd-057",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「計器」の行",
+    "stem": "配線図で「A」と書かれた計器の記号が表すものはどれか。",
+    "choices": [
+      "電流計",
+      "電圧計",
+      "電力計",
+      "電力量計"
+    ],
+    "answerIndex": 0,
+    "explanation": "A=電流計、V=電圧計、W=電力計、Wh=電力量計。単位の頭文字がそのまま記号になる。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-meter"
+    ]
+  },
+  {
+    "id": "q-wd-058",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「小勢力回路・警報」の行",
+    "stem": "玄関の押しボタンを押すと室内で音が鳴る回路で、押しボタンとセットで図記号が置かれるのはどれか。",
+    "choices": [
+      "チャイム",
+      "分電盤",
+      "電力量計",
+      "進相コンデンサ"
+    ],
+    "answerIndex": 0,
+    "explanation": "押しボタン＋チャイム(またはベル・ブザー)が小勢力回路の定番の組み合わせ。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-other"
+    ]
+  },
+  {
+    "id": "q-wd-059",
+    "lessonId": "p1-w1-l1",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-symbols",
+    "sourceWatch": "記号一覧表の「小勢力回路・警報」の行",
+    "stem": "小勢力回路の電源として使われるものはどれか。",
+    "choices": [
+      "小型変圧器",
+      "漏電遮断器",
+      "進相コンデンサ",
+      "電力量計"
+    ],
+    "answerIndex": 0,
+    "explanation": "小型変圧器で電圧を下げた回路が小勢力回路。変圧器の記号が回路の入口に置かれる。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-symbol-other"
+    ]
+  },
+  {
+    "id": "q-wd-060",
+    "lessonId": "p2-w6-l2",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "hozan-figure-basic",
+    "sourceWatch": "「コンセントがある回路」の作図例。接続箇所の数え方",
+    "stem": "差込形コネクタとリングスリーブの使い分けとして正しいのはどれか。",
+    "choices": [
+      "どちらも接続器として認められ、施工条件で指定されたほうを使う",
+      "差込形コネクタは仮設専用である",
+      "リングスリーブは屋外専用である",
+      "どちらを使ってもよいが必ず絶縁テープを巻く"
+    ],
+    "answerIndex": 0,
+    "explanation": "どちらも正式な接続器。技能試験では施工条件でどちらを使うかが指定される。所定の接続器を使えばテープ巻きは不要。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-connector"
+    ]
+  },
+  {
+    "id": "q-wd-061",
+    "lessonId": "p2-w6-l2",
+    "topicId": "wiring-diagram",
+    "sourceResourceId": "gami-diagram",
+    "sourceWatch": "コンセントを足す例。材料を数える場面",
+    "stem": "複線図から支給材料の数を拾うとき、数える対象として正しいのはどれか。",
+    "choices": [
+      "ボックス内で電線が合流している「か所」の数",
+      "図に描かれた線の総数",
+      "器具の総数",
+      "電線の全長"
+    ],
+    "answerIndex": 0,
+    "explanation": "スリーブやコネクタは接続か所ごとに1個。通過するだけの線は接続ではないので数えない。",
+    "origin": "original",
+    "syllabusIds": [
+      "wd-material-count"
+    ]
   }
 ]

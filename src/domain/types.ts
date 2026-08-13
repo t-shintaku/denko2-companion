@@ -434,9 +434,12 @@ export type LessonProgress = {
   /**
    * 模範解答と見比べた自己採点。recallPrompts と同じ並び。
    * **合格準備度には入れない**(自己申告の自由記述なので、科目別正答率を汚す)。
-   * 使い道は「明日もう一度言う」リストの生成だけ。
+   * 使い道は「言い直しリスト」の生成だけ。
+   *
+   * 未採点は `undefined` のまま残す。押していない項目を「ちょっと惜しい」へ
+   * 化けさせると、本人が付けていない評価が記録に残ってしまう。
    */
-  recallSelfMarks?: RecallMark[];
+  recallSelfMarks?: (RecallMark | undefined)[];
   practiceSubmittedAt?: IsoDateTime;
   practiceNote?: string;
   practiceCorrect?: number;

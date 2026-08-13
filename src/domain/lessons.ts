@@ -11,6 +11,7 @@ import { DEFAULT_COMPLETION_RULE } from './types';
 import type {
   CompletionRule,
   CurriculumLesson,
+  IsoDateTime,
   LessonMode,
   LessonProgress,
   RecallMark,
@@ -121,8 +122,9 @@ export function applyStep(
     case 'recall':
       base.recallSubmittedAt = stamp;
       base.recallAnswers = payload.recallAnswers ?? [];
-      // 未採点(undefined)は 'partial' として残す。「思い出せたことにする」より安全側
-      base.recallSelfMarks = (payload.recallSelfMarks ?? []).map((m) => m ?? 'partial');
+      // 押していない項目は記録しない。'partial' に化けさせると、
+      // 本人が付けていない評価が「ちょっと惜しい」として残る
+      base.recallSelfMarks = payload.recallSelfMarks ?? [];
       break;
     case 'practice':
       base.practiceSubmittedAt = stamp;
@@ -264,4 +266,57 @@ export function modeForBudget(minutes: number): LessonMode {
   if (minutes <= 15) return 'minimum';
   if (minutes <= 45) return 'standard';
   return 'deep';
+}
+
+/**
+ * 「見ないで思い出す」で言えなかった項目(FR-007の受け側)。
+ *
+ * レビュー指摘: ○△×を保存していたのに、読み出して使う場所がどこにも無かった。
+ * 画面が「次の自分へのひとことに残しておこう」と手作業を案内しているだけで、
+ * 仕組みではなく努力目標になっていた。**効いているように見えて効いていない**のが
+ * いちばん悪い状態なので、ここで拾って画面へ出す。
+ *
+ * 合格準備度(科目別正答率)には入れない。自己申告の自由記述だから。
+ */
+export type RecallGap = {
+  lessonId: string;
+  lessonTitle: string;
+  promptId: string;
+  prompt: string;
+  modelAnswer: string;
+  mark: Exclude<RecallMark, 'ok'>;
+  /** 最後に答えた日時 */
+  at: IsoDateTime;
+};
+
+export function recallGaps(
+  lessons: CurriculumLesson[],
+  progress: Record<string, LessonProgress>,
+  limit = 12,
+): RecallGap[] {
+  const gaps: RecallGap[] = [];
+  for (const lesson of lessons) {
+    const p = progress[lesson.id];
+    if (!p?.recallSelfMarks || !p.recallSubmittedAt) continue;
+    lesson.recallPrompts.forEach((prompt, i) => {
+      const mark = p.recallSelfMarks?.[i];
+      if (mark !== 'partial' && mark !== 'miss') return;
+      gaps.push({
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        promptId: prompt.id,
+        prompt: prompt.prompt,
+        modelAnswer: prompt.modelAnswer,
+        mark,
+        at: p.recallSubmittedAt!,
+      });
+    });
+  }
+  // 出てこなかったものを先に、そのあと新しい順
+  return gaps
+    .sort((a, b) => {
+      const rank = (g: RecallGap) => (g.mark === 'miss' ? 0 : 1);
+      return rank(a) - rank(b) || (a.at < b.at ? 1 : -1);
+    })
+    .slice(0, limit);
 }

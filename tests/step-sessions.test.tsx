@@ -15,6 +15,7 @@ import { VaultProvider } from '../src/state/VaultContext';
 import { curriculum } from '../src/data';
 import { defaultSettings, repo } from '../src/db/repo';
 import { basicsMinutes } from '../src/domain/onboarding';
+import { fillRecall } from './helpers/recall';
 
 beforeEach(async () => {
   await repo.wipe();
@@ -84,8 +85,10 @@ describe('段階ごとに学習時間が残る', () => {
     await user.click(screen.getByRole('button', { name: '見終わった！ 次へ' }));
 
     await enterMinutes('5');
-    const recallBoxes = screen.getAllByRole('textbox');
-    await user.type(recallBoxes[0]!, '思い出した');
+    const recallSection = screen
+      .getByRole('heading', { name: '2. 見ないで思い出す' })
+      .closest('section')!;
+    await fillRecall(user, recallSection);
     await user.click(await screen.findByRole('button', { name: 'ここまでを保存' }));
 
     await enterMinutes('8');

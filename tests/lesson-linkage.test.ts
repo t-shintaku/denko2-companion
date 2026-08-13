@@ -71,6 +71,16 @@ describe('手を動かす ↔ まず見る', () => {
     }
   });
 
+  /**
+   * 作ったのにどのレッスンからも出ない問題があると、
+   * 出題範囲マップの「教えるレッスン」が空になり、その項目は永久に埋まらない。
+   */
+  it('バンクの問題は、すべてどこかのレッスンから出題される', () => {
+    const served = new Set(lessons.flatMap((l) => l.practice.questionIds ?? []));
+    const orphans = questions.filter((q) => !served.has(q.id)).map((q) => q.id);
+    expect(orphans).toEqual([]);
+  });
+
   it('同じレッスンで同じ問題を二度出していない', () => {
     for (const l of lessons) {
       const ids = l.practice.questionIds ?? [];

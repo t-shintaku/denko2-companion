@@ -13,7 +13,18 @@ import type { LessonMode } from '../../domain/types';
 export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: LessonMode) => void }) {
   const vault = useVault();
   const [budget, setBudget] = useState<10 | 30 | 60>(30);
-  const { onboarding, settings, schedule, adminTasks, snapshot, today } = vault;
+  const {
+    onboarding,
+    settings,
+    schedule,
+    adminTasks,
+    snapshot,
+    today,
+    academicGate,
+    skillGate,
+    overallCoverage,
+    coverageGaps,
+  } = vault;
 
   const quests = buildTodayQuests({
     today,
@@ -142,8 +153,34 @@ export function HomePage({ onOpenLesson }: { onOpenLesson: (id: string, mode: Le
         </div>
       ))}
 
+      {/*
+        合格に直結する数字を、いちばん見る場所へ出す。
+        以前はXPと今週の分数だけがトップにあり、範囲カバーも学科ゲートも
+        学科タブまで潜らないと見えなかった。努力の数字だけが目立つ状態になっていた。
+      */}
       <h2>合格までの現在地</h2>
       <div className="card">
+        <div className="row" style={{ flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+          <span className={overallCoverage >= 0.9 ? 'badge badge--ok' : 'badge'}>
+            範囲カバー {Math.round(overallCoverage * 100)}%
+          </span>
+          <span className={academicGate.passed ? 'badge badge--ok' : 'badge'}>
+            学科ミッション {academicGate.passedCount}/{academicGate.total}
+          </span>
+          <span className={skillGate.passed ? 'badge badge--ok' : 'badge'}>
+            技能ミッション {skillGate.passedCount}/{skillGate.total}
+          </span>
+        </div>
+        {coverageGaps.length > 0 && (
+          <p className="muted">
+            次に埋める穴: <strong>{coverageGaps[0]!.item.name}</strong>
+            {coverageGaps[0]!.taught && !coverageGaps[0]!.confirmed
+              ? `（レッスンは終わってる。あと${
+                  coverageGaps[0]!.requiredCorrect - coverageGaps[0]!.correct
+                }問正解でOK）`
+              : '（まだレッスンが残ってる）'}
+          </p>
+        )}
         <p>{STAGE_HINT[onboarding.stage]}</p>
         <ul className="plain muted">
           <li>

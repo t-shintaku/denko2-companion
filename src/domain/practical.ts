@@ -261,6 +261,35 @@ export function skillGate(
   return { criteria, passedCount, total: criteria.length, passed: passedCount === criteria.length };
 }
 
+/**
+ * 「13問すべてで欠陥なし1回」に、あと何回作れば届くか。**枠が足りるかを先に言う**。
+ *
+ * レビューで指摘された穴: カリキュラムが用意する練習枠が有限なのに、
+ * 何回失敗したら間に合わなくなるのかを誰も計算していなかった。
+ * 1周目で欠陥を出した数が残り枠を超えた瞬間、ゲートは数学的に閉じたまま動かない。
+ * それを試験の3日前に気づくのが最悪なので、常に差分を出す。
+ */
+export type SkillCapacity = {
+  /** まだ「欠陥なし1回」を取れていない問題の数 */
+  remaining: number;
+  /** カリキュラムに残っている、まるごと1作品を作る枠 */
+  slotsLeft: number;
+  /** 枠が足りているか */
+  enough: boolean;
+  /** 足りないときに増やすべき回数 */
+  shortBy: number;
+};
+
+export function skillCapacity(
+  attempts: SkillAttempt[],
+  slotsLeft: number,
+): SkillCapacity {
+  const states = candidateStates(attempts);
+  const remaining = states.filter((s) => s.defectFreeCount === 0).length;
+  const shortBy = Math.max(0, remaining - slotsLeft);
+  return { remaining, slotsLeft, enough: shortBy === 0, shortBy };
+}
+
 // ---------------------------------------------------------------------------
 // 予算(FR-012)
 // ---------------------------------------------------------------------------
