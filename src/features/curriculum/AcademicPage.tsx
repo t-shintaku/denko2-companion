@@ -47,6 +47,10 @@ export function AcademicPage({
   const [showCurriculum, setShowCurriculum] = useState(false);
   /** リベンジ問題で選んだ選択肢。attempt.id → 選んだ番号 */
   const [retry, setRetry] = useState<Record<string, number>>({});
+  const [retryFeedback, setRetryFeedback] = useState<{
+    correct: boolean;
+    message: string;
+  }>();
   /**
    * リベンジ問題も選択肢を並べ替える。並べ替えないと、
    * 「前に選んだのはこの位置だったから違うほう」で正解できてしまう。
@@ -273,6 +277,14 @@ export function AcademicPage({
 
       <h2>リベンジ問題</h2>
       <div className="card">
+        {retryFeedback && (
+          <p
+            className={retryFeedback.correct ? 'quiz-feedback quiz-feedback--ok' : 'quiz-feedback'}
+            role="status"
+          >
+            <strong>{retryFeedback.message}</strong>
+          </p>
+        )}
         {reviewQueue.length === 0 ? (
           <p className="muted">
             いまはリベンジ問題なし！ 間違えた問題や、あやふやな正解がここに入るよ。
@@ -332,11 +344,15 @@ export function AcademicPage({
                                 .join(' ')}
                               disabled={picked !== undefined}
                               onClick={async () => {
+                                const isCorrect = ci === shown.answerIndex;
                                 setRetry((prev) => ({ ...prev, [item.attempt.id]: ci }));
-                                await repo.markReviewed(
-                                  [item.attempt.id],
-                                  ci === shown.answerIndex,
-                                );
+                                setRetryFeedback({
+                                  correct: isCorrect,
+                                  message: isCorrect
+                                    ? 'リベンジ成功！ 次は間隔をあけて戻ってくるよ'
+                                    : 'おしい！ ✓が正解。明日もう一回',
+                                });
+                                await repo.markReviewed([item.attempt.id], isCorrect);
                                 await reload();
                               }}
                             >

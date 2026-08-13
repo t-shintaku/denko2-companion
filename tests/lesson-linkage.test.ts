@@ -56,6 +56,21 @@ describe('見ないで思い出す ↔ まず見る', () => {
     }
   });
 
+  it('導入のオームの法則は、見る教材・思い出す問い・5問が同じ教材', () => {
+    const intro = lessonById.get('p0-l2')!;
+    const first = intro.resources.find((r) => r.use === 'first')?.resourceId;
+
+    expect(first).toBe('gami-ohm');
+    expect(new Set(intro.recallPrompts.map((p) => p.sourceResourceId))).toEqual(
+      new Set([first]),
+    );
+    for (const id of intro.practice.questionIds ?? []) {
+      expect(questionById.get(id)?.sourceResourceId, id).toBe(first);
+    }
+    expect(intro.practice.questionIds).toHaveLength(5);
+    expect(intro.recallPrompts.map((p) => p.prompt).join('\n')).not.toMatch(/水|電力/);
+  });
+
   it('模範解答に絶対日付を焼き込んでいない(受験日から再計算できる)', () => {
     const text = lessons.flatMap((l) => l.recallPrompts.map((p) => p.modelAnswer)).join('\n');
     expect(/\d{4}-\d{2}-\d{2}/.test(text)).toBe(false);

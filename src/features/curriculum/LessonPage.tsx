@@ -286,6 +286,22 @@ export function LessonPage({
     [lesson.resources],
   );
   const firstGuide = guides.find((x) => x.ref.use === 'first') ?? guides[0];
+  const testedSourceIds = useMemo(
+    () =>
+      new Set([
+        ...lesson.recallPrompts.map((prompt) => prompt.sourceResourceId),
+        ...quizQuestions
+          .filter(({ question }) => question.lessonId === lesson.id)
+          .map(({ question }) => question.sourceResourceId),
+      ]),
+    [lesson.recallPrompts, quizQuestions],
+  );
+  const requiredGuides = guides.filter(
+    ({ ref }) => ref.use === 'first' || testedSourceIds.has(ref.resourceId),
+  );
+  const optionalGuides = guides.filter(
+    ({ ref }) => !requiredGuides.some(({ ref: required }) => required.resourceId === ref.resourceId),
+  );
 
   const commit = async (step: LessonStep) => {
     setBusy(true);
@@ -473,20 +489,32 @@ export function LessonPage({
             直前期は新しい教材を増やさない。手元の材料と自分の記録だけで仕上げよう。
           </p>
         )}
-        {firstGuide && guides.length > 1 && (
+        {firstGuide && requiredGuides.length > 0 && (
           <p className="notice">
-            まず開くのは<strong>「{firstGuide.resource!.title}」の1本。</strong>
-            問いの出どころが別なら、その問題の下にリンクを出すよ。
+            {requiredGuides.length === 1 ? (
+              <>
+                今日見るのは<strong>「{firstGuide.resource!.title}」の1本。</strong>
+                見ないで思い出す問いと今日の新しい問題は、全部この教材から。
+              </>
+            ) : (
+              <>
+                思い出す問いと今日の新しい問題に使う教材は<strong>{requiredGuides.length}本。</strong>
+                上から順に見て、全部閉じてから思い出そう。
+              </>
+            )}
           </p>
         )}
         <ul className="plain stack">
-          {guides.filter(({ ref }) => ref.use === 'first').map(({ ref, resource: r }) => (
+          {requiredGuides.map(({ ref, resource: r }) => (
             <li key={`${ref.resourceId}-${ref.use}`} className="resource-card resource-card--primary">
               <div className="resource-card__body">
               <div className="row" style={{ alignItems: 'baseline', gap: 8 }}>
                 <span className={ref.use === 'first' ? 'badge badge--ok' : 'badge'}>
                   {USE_LABEL[ref.use]}
                 </span>
+                {ref.use !== 'first' && (
+                  <span className="badge badge--ok">このあと出る</span>
+                )}
               </div>
               <a className="resource-link" href={ref.openUrl ?? r!.url} target="_blank" rel="noreferrer">
                 {r!.provider}｜{r!.title}
@@ -513,12 +541,12 @@ export function LessonPage({
               </div>
             </li>
           ))}
-          {guides.some(({ ref }) => ref.use !== 'first') && (
+          {optionalGuides.length > 0 && (
             <li>
               <details className="supplemental-resources">
-                <summary>ヘルプ教材を見る（{guides.filter(({ ref }) => ref.use !== 'first').length}件）</summary>
+                <summary>ヘルプ教材を見る（{optionalGuides.length}件）</summary>
                 <div className="supplemental-resources__body stack">
-                  {guides.filter(({ ref }) => ref.use !== 'first').map(({ ref, resource: r }) => (
+                  {optionalGuides.map(({ ref, resource: r }) => (
                     <div key={`${ref.resourceId}-${ref.use}`} className="resource-card">
                       <div className="resource-card__body">
                         <span className="badge">{USE_LABEL[ref.use]}</span>

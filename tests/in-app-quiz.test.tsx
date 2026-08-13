@@ -24,7 +24,7 @@ beforeEach(async () => {
   });
 });
 
-/** 「電圧・電流・抵抗・電力ということば」。まず見る=ガミデンキ #1 */
+/** 「オームの法則 — V・I・Rの3つの式」。まず見る=ガミデンキ #5 */
 const lesson = curriculum.lessons.find((l) => l.id === 'p0-l2')!;
 const bank = questionsFor(lesson.practice.questionIds);
 
@@ -84,6 +84,18 @@ async function settle(user: ReturnType<typeof userEvent.setup>, index: number) {
   else await user.click(item.getByRole('button', { name: 'リベンジ登録して次へ' }));
 }
 
+describe('まず見る教材の表示', () => {
+  it('思い出す問いと確認問題の教材を、ヘルプに隠さず先に見せる', () => {
+    renderLesson();
+
+    expect(screen.getByText(/思い出す問いと今日の新しい問題は、全部この教材から/)).toBeInTheDocument();
+    const primaryCards = document.querySelectorAll('.resource-card--primary');
+    expect(primaryCards).toHaveLength(1);
+    expect(within(primaryCards[0] as HTMLElement).getByText(/#5 オームの法則/)).toBeInTheDocument();
+    expect(screen.getByText(/ヘルプ教材を見る/)).toBeInTheDocument();
+  });
+});
+
 describe('見ないで思い出す(答え合わせ)', () => {
   it('書くまで模範解答は出ない。書いたら出る', async () => {
     const user = userEvent.setup();
@@ -95,7 +107,7 @@ describe('見ないで思い出す(答え合わせ)', () => {
     const check = screen.getAllByRole('button', { name: '答え合わせ' })[0]!;
     expect(check).toBeDisabled();
 
-    await user.type(screen.getByLabelText(prompt.prompt), '圧力と量と流れにくさ');
+    await user.type(screen.getByLabelText(prompt.prompt), 'V=I×R');
     await user.click(screen.getAllByRole('button', { name: '答え合わせ' })[0]!);
 
     expect(screen.getByText(prompt.modelAnswer)).toBeInTheDocument();

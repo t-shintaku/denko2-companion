@@ -165,8 +165,8 @@
       "phaseId": "phase-0",
       "order": 2,
       "stage": "orientation",
-      "title": "電圧・電流・抵抗・電力ということば",
-      "objective": "4つの言葉を、計算ではなく水の流れの比喩で説明できるようにする。",
+      "title": "オームの法則 — V・I・Rの3つの式",
+      "objective": "動画で習うオームの法則から、電圧・電流・抵抗を求める3つの式を使えるようにする。",
       "prerequisites": [
         "p0-l1"
       ],
@@ -178,18 +178,18 @@
       "resources": [
         {
           "resourceId": "gami-start",
-          "use": "first",
-          "where": "動画をそのまま再生する",
-          "watch": "難しい公式を使わずに電圧・電流・抵抗をつかむ回。知識ゼロの1本目に作られている",
-          "stop": "10分46秒。最後まで見たら閉じる。#2以降は今日は見ない",
+          "use": "more",
+          "where": "余力があるときだけ動画を開く",
+          "watch": "シリーズ全体の入口。このレッスンの想起問題はここから出さない",
+          "stop": "10分46秒。最後まで見たら閉じる",
           "minutes": 11
         },
         {
           "resourceId": "gami-ohm",
-          "use": "more",
+          "use": "first",
           "where": "動画をそのまま再生する",
-          "watch": "オームの法則の覚え方だけ",
-          "stop": "覚え方が出たら今日はクリア。応用問題はまた今度",
+          "watch": "電圧V・電流I・抵抗Rの関係と、求めたい文字に合わせた3つの式",
+          "stop": "10分。最後まで見たら閉じる。応用問題はまた今度",
           "minutes": 10
         },
         {
@@ -212,42 +212,41 @@
         {
           "id": "p0-l2-r1",
           "kind": "free-line",
-          "prompt": "電圧・電流・抵抗を、水のたとえで1行ずつ。",
-          "sourceResourceId": "gami-start",
-          "sourceWatch": "電圧・電流・抵抗を水の流れでたとえる場面",
-          "modelAnswer": "電圧=水を押し出す圧力。電流=1秒間に流れる水の量。抵抗=管の細さによる流れにくさ。圧力が高いほど、また流れにくさが小さいほど、多く流れる。",
+          "prompt": "オームの法則の3つの式を、V・I・Rで書くと?",
+          "sourceResourceId": "gami-ohm",
+          "sourceWatch": "オームの法則を3つの式にして覚える場面",
+          "modelAnswer": "電圧V=電流I×抵抗R、電流I=電圧V÷抵抗R、抵抗R=電圧V÷電流I。",
           "acceptKeywords": [
-            "圧力",
-            "量",
-            "流れにく"
+            "V=I",
+            "I=V",
+            "R=V"
           ]
         },
         {
           "id": "p0-l2-r2",
           "kind": "free-line",
-          "prompt": "電力(W)は何と何を掛けたもの?",
-          "sourceResourceId": "gami-start",
-          "sourceWatch": "電力(W)が出てくる場面",
-          "modelAnswer": "電圧(V)×電流(A)。100Vで5A流れれば500W。",
+          "prompt": "電流Iを求めるとき、電圧Vと抵抗Rをどう計算する?",
+          "sourceResourceId": "gami-ohm",
+          "sourceWatch": "電流を求める式 I=V÷R の場面",
+          "modelAnswer": "電流I=電圧V÷抵抗R。たとえば100V÷20Ω=5A。",
           "acceptKeywords": [
-            "電圧",
-            "電流"
+            "V",
+            "R"
           ]
         }
       ],
       "practice": {
         "kind": "in-app-questions",
-        "instruction": "この画面で6問。今日見た内容だけから出るよ",
+        "instruction": "この画面で5問。すべて今見たオームの法則から出るよ",
         "scored": true,
         "questionIds": [
           "q-bt-001",
           "q-bt-002",
           "q-bt-003",
           "q-bt-004",
-          "q-bt-005",
-          "q-bt-006"
+          "q-bt-005"
         ],
-        "targetCount": 6
+        "targetCount": 5
       },
       "officialTopicIds": [
         "basic-theory"
@@ -2623,10 +2622,11 @@
       ],
       "practice": {
         "kind": "in-app-questions",
-        "targetCount": 22,
-        "instruction": "この画面で22問。今日見た内容だけから出るよ",
+        "targetCount": 23,
+        "instruction": "この画面で23問。出どころは各問題の下に表示するよ",
         "scored": true,
         "questionIds": [
+          "q-bt-006",
           "q-bt-007",
           "q-bt-008",
           "q-bt-009",

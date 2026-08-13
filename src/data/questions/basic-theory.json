@@ -3,17 +3,17 @@
     "id": "q-bt-001",
     "lessonId": "p0-l2",
     "topicId": "basic-theory",
-    "sourceResourceId": "gami-start",
-    "sourceWatch": "電圧・電流・抵抗を水の流れでたとえる場面",
-    "stem": "水の流れにたとえたとき、「電圧(V)」にあたるのはどれか。",
+    "sourceResourceId": "gami-ohm",
+    "sourceWatch": "オームの法則の3つの式を説明する場面",
+    "stem": "オームの法則で、電圧Vを求める式はどれか。",
     "choices": [
-      "水を押し出す圧力",
-      "流れている水の量",
-      "管の細さによる流れにくさ",
-      "たまっている水の総量"
+      "V=I×R",
+      "V=I÷R",
+      "V=R÷I",
+      "V=I+R"
     ],
     "answerIndex": 0,
-    "explanation": "電圧は電気を押し出す力。水でいえば水圧。押す力が大きいほど、同じ管でも多く流れる。",
+    "explanation": "電圧は電流と抵抗の積。V=I×R。動画で覚えた3つの式のうち、Vを求める形。",
     "origin": "original",
     "syllabusIds": [
       "bt-ohm"
@@ -23,17 +23,17 @@
     "id": "q-bt-002",
     "lessonId": "p0-l2",
     "topicId": "basic-theory",
-    "sourceResourceId": "gami-start",
-    "sourceWatch": "電圧・電流・抵抗を水の流れでたとえる場面",
-    "stem": "水の流れにたとえたとき、「電流(A)」にあたるのはどれか。",
+    "sourceResourceId": "gami-ohm",
+    "sourceWatch": "オームの法則の3つの式を説明する場面",
+    "stem": "オームの法則で、電流Iを求める式はどれか。",
     "choices": [
-      "1秒間に流れる水の量",
-      "水を押し出す圧力",
-      "管の細さによる流れにくさ",
-      "管の長さ"
+      "I=V÷R",
+      "I=V×R",
+      "I=R÷V",
+      "I=V+R"
     ],
     "answerIndex": 0,
-    "explanation": "電流は流れている電気の量。水でいえば1秒間に流れる水の量にあたる。単位はA(アンペア)。",
+    "explanation": "電流は電圧を抵抗で割る。I=V÷R。動画で覚えた3つの式のうち、Iを求める形。",
     "origin": "original",
     "syllabusIds": [
       "bt-ohm"
@@ -43,8 +43,8 @@
     "id": "q-bt-003",
     "lessonId": "p0-l2",
     "topicId": "basic-theory",
-    "sourceResourceId": "gami-start",
-    "sourceWatch": "電圧・電流・抵抗を水の流れでたとえる場面",
+    "sourceResourceId": "gami-ohm",
+    "sourceWatch": "I=V÷Rの式と、抵抗が大きいほど電流が小さくなる説明",
     "stem": "同じ電圧をかけたまま抵抗だけを大きくすると、電流はどうなるか。",
     "choices": [
       "小さくなる",
@@ -101,10 +101,10 @@
   },
   {
     "id": "q-bt-006",
-    "lessonId": "p0-l2",
+    "lessonId": "p2-w6-l4",
     "topicId": "basic-theory",
-    "sourceResourceId": "gami-start",
-    "sourceWatch": "電力(W)が出てくる場面。何と何を掛けた値か",
+    "sourceResourceId": "hozan-theory",
+    "sourceWatch": "電気理論の一問一答で、電力P=V×Iを扱う問題",
     "stem": "100Vのコンセントに、5Aの電流が流れる電熱器をつないだ。消費電力は何Wか。",
     "choices": [
       "500W",
