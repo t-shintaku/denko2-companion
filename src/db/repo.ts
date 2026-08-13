@@ -281,9 +281,32 @@ export class Repo {
       scored: true,
       updatedAt: at,
     }));
-    await this.db.questionAttempts.bulkPut(attempts);
+    /**
+     * **同じ問題を解き直したら、前の記録を解き直し済みにする。**
+     *
+     * 週末チェックと直前期の誤答潰しは、前に出した問題をもう一度出す。
+     * ここを繋がないと、9月に落とした1問が12月まで「誤答」のまま復習キューに残り、
+     * 何度正解しても消えない。逆に、解き直して落としたら間隔は翌日へ戻る。
+     * この処理が、アプリ内出題における間隔反復(FR-009)の実体。
+     */
+    const refs = new Map(items.map((item) => [item.questionRef, item.correct]));
+    const newIds = new Set(attempts.map((a) => a.id));
+    await this.db.transaction('rw', this.db.questionAttempts, async () => {
+      await this.db.questionAttempts.bulkPut(attempts);
+      const previous = await this.db.questionAttempts
+        .filter(
+          (a) => a.source === IN_APP_SOURCE && !newIds.has(a.id) && refs.has(a.questionRef),
+        )
+        .toArray();
+      for (const before of previous) {
+        // 4回続けて解けて卒業した記録は、もう戻さない
+        if (before.reviewedAt && !before.nextReviewOn) continue;
+        await this.db.questionAttempts.put(
+          applyReview(before, refs.get(before.questionRef)!, at, jstDate),
+        );
+      }
+    });
     emitChange();
-    void lessonId;
     return attempts;
   }
 

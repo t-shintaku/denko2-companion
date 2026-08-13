@@ -169,3 +169,68 @@ describe('弱点から出し直す', () => {
     expect(picked.every((x) => x.topicId === 'law')).toBe(true);
   });
 });
+
+describe('解き直しが間隔反復につながる(週末チェック・誤答潰し)', () => {
+  it('同じ問題を解き直すと、前の誤答が復習キューから降り、間隔が付く', async () => {
+    const { repo } = await import('../src/db/repo');
+    await repo.wipe();
+
+    const target = questions[0]!;
+    // 1回目: 落とす
+    await repo.recordQuiz('p0-l2', [
+      { topicId: target.topicId, correct: false, confidence: 1, questionRef: target.id },
+    ]);
+    let rows = (await repo.load()).questionAttempts;
+    expect(reviewQueue(rows, topicStats(rows, topicIds), 30)).toHaveLength(1);
+
+    // 2回目(週末チェック): 解ける
+    await repo.recordQuiz('p1-w1-l3', [
+      { topicId: target.topicId, correct: true, confidence: 3, questionRef: target.id },
+    ]);
+    rows = (await repo.load()).questionAttempts;
+    expect(rows).toHaveLength(2);
+
+    const first = rows.find((a) => !a.correct)!;
+    expect(first.reviewedAt).toBeTruthy();
+    expect(first.reviewCount).toBe(1);
+    // 翌日ではなく、1回クリアぶんの間隔が付く
+    expect(first.nextReviewOn).toBeTruthy();
+    // 今日のキューには出ない(予定日が先)
+    expect(reviewQueue(rows, topicStats(rows, topicIds), 30)).toHaveLength(0);
+  });
+
+  it('解き直して落としたら、間隔は翌日へ戻る', async () => {
+    const { repo } = await import('../src/db/repo');
+    await repo.wipe();
+
+    const target = questions[1]!;
+    await repo.recordQuiz('p0-l2', [
+      { topicId: target.topicId, correct: false, confidence: 1, questionRef: target.id },
+    ]);
+    await repo.recordQuiz('p1-w1-l3', [
+      { topicId: target.topicId, correct: false, confidence: 1, questionRef: target.id },
+    ]);
+    const rows = (await repo.load()).questionAttempts;
+    const first = rows.sort((a, b) => (a.id < b.id ? -1 : 1))[0]!;
+    expect(first.reviewCount).toBe(0);
+    expect(first.lastReviewCorrect).toBe(false);
+  });
+
+  it('別の問題の記録は巻き添えにしない', async () => {
+    const { repo } = await import('../src/db/repo');
+    await repo.wipe();
+
+    const a = questions[0]!;
+    const b = questions[1]!;
+    await repo.recordQuiz('p0-l2', [
+      { topicId: a.topicId, correct: false, confidence: 1, questionRef: a.id },
+      { topicId: b.topicId, correct: false, confidence: 1, questionRef: b.id },
+    ]);
+    await repo.recordQuiz('p1-w1-l3', [
+      { topicId: a.topicId, correct: true, confidence: 3, questionRef: a.id },
+    ]);
+    const rows = (await repo.load()).questionAttempts;
+    const untouched = rows.find((r) => r.questionRef === b.id)!;
+    expect(untouched.reviewedAt).toBeUndefined();
+  });
+});
