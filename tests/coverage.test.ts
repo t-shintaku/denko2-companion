@@ -60,6 +60,15 @@ describe('出題項目の状態', () => {
     expect(branch.confirmed).toBe(false);
   });
 
+  it('レッスン完了だけ、または正解だけでは範囲カバーに加点しない', () => {
+    const lesson = curriculum.lessons.find((l) => l.id === 'p2-w5-l3')!;
+    const taughtOnly = statusOf({ [lesson.id]: completed(lesson.id) });
+    expect(overallCoverage(topicCoverage(taughtOnly, topicIds))).toBe(0);
+
+    const correctOnly = statusOf({}, [solved('q-dd-001', true), solved('q-dd-002', true)]);
+    expect(overallCoverage(topicCoverage(correctOnly, topicIds))).toBe(0);
+  });
+
   /**
    * 本番で1問以上出る重さの項目を、1問当てただけで「押さえた」と呼ばない。
    * 1問で埋めていた頃は、配線図の重み1.5の項目が1問正解で満点扱いになっていた。

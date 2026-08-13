@@ -127,6 +127,8 @@ export function LessonPage({
   }, [lesson.id]);
 
   const hasQuiz = quizQuestions.length > 0;
+  // 誤答が0件なら、そのこと自体がこの復習レッスンの達成。必須レッスンを進行不能にしない。
+  const emptyQuestionPool = Boolean(lesson.practice.questionPool && !hasQuiz);
   /** 2段階。選択肢を選ぶ → 解説を読む → 「バッチリ / あやふや」で確定 */
   const [picks, setPicks] = useState<Record<string, { choiceIndex: number; sure?: boolean }>>({});
   const settled: QuizAnswer[] = quizQuestions.flatMap(({ question }) => {
@@ -204,11 +206,20 @@ export function LessonPage({
         mode,
         recallAnswers: recall,
         recallSelfMarks: marks,
-        practiceNote,
+        practiceNote:
+          emptyQuestionPool && practiceNote.trim() === ''
+            ? 'リベンジ対象なし'
+            : practiceNote,
         // アプリ内出題は自己申告ではなく採点結果をそのまま入れる
-        practiceCorrect: hasQuiz ? quizCorrect : correct === '' ? undefined : Number(correct),
+        practiceCorrect: hasQuiz
+          ? quizCorrect
+          : emptyQuestionPool
+            ? 0
+            : correct === '' ? undefined : Number(correct),
         practiceTotal: hasQuiz
           ? quizQuestions.length
+          : emptyQuestionPool
+            ? 0
           : total === ''
             ? undefined
             : Number(total),
@@ -691,10 +702,10 @@ export function LessonPage({
         */}
         {lesson.practice.questionPool && !hasQuiz && (
           <p className="notice notice--safety">
-            出す問題がまだ無いよ。
+            リベンジ問題は0件！ このステップはそのままクリアできるよ。
             {lesson.practice.questionPool === 'mistakes'
-              ? 'アプリ内の問題を落とした記録がまだ無いか、全部リベンジ済み。学科タブの「腕だめし」か公式過去問へ進もう。'
-              : '科目別の記録がまだ足りない。学科タブの「腕だめし」で先に各科目へ着手しよう。'}
+              ? ' 間違いがまだ無いか、全部リベンジ済み。次のクエストへ進もう。'
+              : ' 科目別の記録がまだ足りないときは、学科タブの「腕だめし」で各科目へ着手しよう。'}
           </p>
         )}
         {lesson.practice.scored && !hasQuiz && !lesson.practice.questionPool && (
@@ -845,6 +856,8 @@ export function LessonPage({
             (hasQuiz && !quizDone) ||
             (hasQuiz
               ? false
+              : emptyQuestionPool
+                ? false
               : lesson.practice.scored
                 ? total.trim() === ''
                 : practiceNote.trim() === '')
@@ -855,6 +868,8 @@ export function LessonPage({
             ? '✓ 結果は保存済み'
             : hasQuiz
               ? `結果を残す（${quizCorrect}/${quizQuestions.length}）`
+              : emptyQuestionPool
+                ? 'リベンジなしでクリア！'
               : '結果を残す'}
         </button>
         {isCandidate && !alreadyRecorded && !(Number(workMinutes) > 0) && (

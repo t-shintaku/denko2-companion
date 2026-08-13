@@ -132,9 +132,10 @@ export function topicCoverage(statuses: SyllabusStatus[], topicIds: TopicId[]): 
   return topicIds.map((topicId) => {
     const items = statuses.filter((s) => s.item.topicId === topicId);
     const weight = items.reduce((n, s) => n + s.item.weight, 0);
-    // 「教わった」だけでも「正解した」だけでも半分。両方そろって1つぶん
+    // 画面の説明どおり「教わった」と「必要数を正解した」が両方そろった項目だけ数える。
+    // 片方だけで半分を与えると、確認済み0項目でも「範囲カバー50%」と表示される。
     const earned = items.reduce(
-      (n, s) => n + s.item.weight * ((s.taught ? 0.5 : 0) + (s.confirmed ? 0.5 : 0)),
+      (n, s) => n + (s.taught && s.confirmed ? s.item.weight : 0),
       0,
     );
     return {

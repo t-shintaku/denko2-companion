@@ -143,6 +143,22 @@ describe('誤答から出し直す', () => {
     expect(picked).toHaveLength(2);
   });
 
+  it('学科タブでリベンジ成功した問題は、元の誤答として即座に出し直さない', () => {
+    const reviewed = attempt({
+      id: 'a-reviewed',
+      questionRef: 'q-3',
+      topicId: 'law',
+      correct: false,
+      confidence: 1,
+      reviewedAt: '2026-09-02T10:00:00+09:00',
+      reviewCount: 1,
+      lastReviewCorrect: true,
+      nextReviewOn: '2026-09-03',
+      updatedAt: '2026-09-02T10:00:00+09:00',
+    });
+    expect(pickMistakes(bank, [reviewed], 4).map((x) => x.id)).not.toContain('q-3');
+  });
+
   it('同じ問題を二重に出さない', () => {
     const rows = [
       attempt({ id: 'a1', questionRef: 'q-3', topicId: 'law', correct: false }),

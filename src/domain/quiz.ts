@@ -136,18 +136,35 @@ export function pickMistakes(
   attempts: QuestionAttempt[],
   limit: number,
 ): QuizQuestion[] {
+  // 学科タブで解き直した記録は、元の正誤を上書きせず review 情報として残る。
+  // attemptedAt だけを見ると、リベンジ成功後も元の誤答を即座に出し直してしまうため、
+  // 各記録の最新イベント（初回回答または解き直し）を現在の結果として扱う。
   const inApp = attempts
     .filter((a) => a.source === IN_APP_SOURCE && a.scored)
-    .sort((a, b) => (a.attemptedAt < b.attemptedAt ? 1 : -1));
+    .map((attempt) => ({
+      attempt,
+      at: attempt.reviewedAt ?? attempt.attemptedAt,
+      correct: attempt.reviewedAt
+        ? (attempt.lastReviewCorrect ?? attempt.correct)
+        : attempt.correct,
+      confidence: attempt.reviewedAt && attempt.lastReviewCorrect ? 3 : attempt.confidence,
+    }))
+    .sort(
+      (a, b) =>
+        b.at.localeCompare(a.at) ||
+        Number(Boolean(a.attempt.reviewedAt)) - Number(Boolean(b.attempt.reviewedAt)) ||
+        b.attempt.id.localeCompare(a.attempt.id),
+    );
 
   const wrongIds: string[] = [];
   const unsureIds: string[] = [];
   const seen = new Set<string>();
-  for (const a of inApp) {
-    if (seen.has(a.questionRef)) continue;
-    seen.add(a.questionRef);
-    if (!a.correct) wrongIds.push(a.questionRef);
-    else if (a.confidence <= 2) unsureIds.push(a.questionRef);
+  for (const state of inApp) {
+    const ref = state.attempt.questionRef;
+    if (seen.has(ref)) continue;
+    seen.add(ref);
+    if (!state.correct) wrongIds.push(ref);
+    else if (state.confidence <= 2) unsureIds.push(ref);
   }
 
   const byId = new Map(bank.map((qq) => [qq.id, qq]));

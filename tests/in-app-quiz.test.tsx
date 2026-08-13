@@ -253,6 +253,30 @@ describe('選択肢の出し方', () => {
   });
 });
 
+describe('誤答が0件の必須レッスン', () => {
+  it('成績が良い人を進行不能にせず、リベンジなしでクリアできる', async () => {
+    const reviewLesson = curriculum.lessons.find((l) => l.id === 'p3-w7-l2')!;
+    const user = userEvent.setup();
+    render(
+      <VaultProvider>
+        <LessonPage lesson={reviewLesson} initialMode="standard" onClose={() => {}} />
+      </VaultProvider>,
+    );
+
+    const clear = await screen.findByRole('button', { name: 'リベンジなしでクリア！' });
+    expect(clear).toBeEnabled();
+    await user.click(clear);
+
+    await waitFor(async () => {
+      const saved = (await repo.load()).lessonProgress[reviewLesson.id];
+      expect(saved?.practiceSubmittedAt).toBeTruthy();
+      expect(saved?.practiceCorrect).toBe(0);
+      expect(saved?.practiceTotal).toBe(0);
+      expect(saved?.practiceNote).toBe('リベンジ対象なし');
+    });
+  });
+});
+
 describe('リベンジ問題(学科タブ)', () => {
   it('アプリ内で落とした問題は、その場で解き直せる。自己申告ボタンは出さない', async () => {
     const { AcademicPage } = await import('../src/features/curriculum/AcademicPage');
