@@ -1199,9 +1199,9 @@
         "p1-w2-l3"
       ],
       "estimatedMinutes": {
-        "minimum": 45,
-        "standard": 55,
-        "deep": 65
+        "minimum": 20,
+        "standard": 35,
+        "deep": 50
       },
       "resources": [
         {
@@ -1267,7 +1267,7 @@
       ],
       "required": true,
       "stepMinutes": {
-        "practice": 40
+        "practice": 15
       }
     },
     {
