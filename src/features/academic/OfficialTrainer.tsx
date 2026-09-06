@@ -4,6 +4,7 @@ import { newId, repo } from '../../db/repo';
 import { EXAM_CHOICES, examReadiness, gradeOfficial, officialPapers, officialPractice, validDraft, type ExamDraft } from '../../domain/officialExam';
 import { useVault } from '../../state/VaultContext';
 import type { LessonMode } from '../../domain/types';
+import { isPaperSaved, savePaper } from './offlinePaper';
 
 const DRAFT_KEY = 'denko2-official-draft-v1';
 const asset = (paperId: string, file: string) => `${import.meta.env.BASE_URL}exams/${paperId}/${file}.webp`;
@@ -25,6 +26,8 @@ export function OfficialTrainer({ onClose, onOpenLesson, initialPaperId, initial
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [offlineReady, setOfflineReady] = useState(false);
+  const [download, setDownload] = useState<{done:number;total:number}>();
   const lock = useRef(false);
   const paper = officialPapers.find(p => p.id === (draft?.paperId ?? result?.paperId ?? selected))!;
   const number = draft?.numbers[draft.index] ?? 1;
@@ -33,6 +36,21 @@ export function OfficialTrainer({ onClose, onOpenLesson, initialPaperId, initial
   const expired = draft?.mode === 'mock' && elapsed >= 7200;
   const seen = snapshot.mockExams.some(e => e.officialPaperId === selected);
   const reflow = 'reflow' in paper && Array.isArray(paper.reflow) && paper.reflow.includes(number);
+
+  useEffect(() => {
+    let alive=true; setOfflineReady(false);
+    void isPaperSaved(paper).then(saved=>{if(alive)setOfflineReady(saved);}).catch(()=>{});
+    return ()=>{alive=false;};
+  },[paper.id]);
+  const downloadPaper = async () => {
+    if(download) return;
+    setError('');
+    try {
+      await savePaper(paper,(done,total)=>setDownload({done,total}));
+      setOfflineReady(true);
+    } catch { setError('オフライン保存が途中で止まりました。通信と空き容量を確認して、もう一度押すと続きから保存します。'); }
+    finally { setDownload(undefined); }
+  };
 
   const persist = (next: ExamDraft) => {
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify(next)); setDraft(next); return true; }
@@ -92,12 +110,18 @@ export function OfficialTrainer({ onClose, onOpenLesson, initialPaperId, initial
         const runs = snapshot.mockExams.filter(e => e.officialPaperId === p.id && e.status === 'completed');
         const last = runs.at(-1);
         return <button className={`paper-card ${selected === p.id ? 'paper-card--selected' : ''}`} key={p.id} aria-pressed={selected === p.id}
-          onClick={() => { setSelected(p.id); setFirst(false); setUnaided(false); }}>
+          disabled={!!download} onClick={() => { setSelected(p.id); setFirst(false); setUnaided(false); }}>
           <span className="coach-kicker">{i < 2 ? '練習におすすめ' : '初見の仕上げに残す'}</span>
           <strong>{p.title.replace(' 第二種電気工事士 学科試験', '')}</strong>
           <span>{last ? `${last.correctCount}/${last.totalQuestions}問正解` : 'まだ採点していません'}</span>
         </button>;
       })}</div>
+      <section className="card" aria-label="公式問題のオフライン保存"><strong>電波のない場所でも、この回を。</strong>
+        <p className="muted">選んだ回の問題・選択肢・配線図を端末へ保存します。初めて解く回も、保存するだけなら初見のままです。</p>
+        <button className="btn-block" disabled={!!download || offlineReady} onClick={()=>void downloadPaper()}>{offlineReady ? 'この回はオフライン保存済み' : download ? '問題を保存しています…' : 'この回をオフライン保存'}</button>
+        {download && <><progress className="coach-progress" max={download.total} value={download.done} aria-label="問題画像の保存進捗"/><p role="status">{download.done}/{download.total}枚 保存</p></>}
+        {offlineReady && <p role="status">保存完了。この回はオフラインで解けます。</p>}
+      </section>
       <section className="card"><h2>今日はどちらで進む？</h2>
         <button className="btn-block" disabled={busy} onClick={() => void start('practice')}>5問ずつ練習する · 約10分</button>
         <p className="muted">練習した回は初見判定に使えません。はじめは令和6年度の2回を使い、残り3回を仕上げ用に残しましょう。</p>

@@ -92,7 +92,18 @@ try {
   check('timeout records 0/50 at 120 minutes',exams.some(e=>e.officialPaperId===papers[3].id&&e.correctCount===0&&e.minutes===120));
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;});
   await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);
+  await page.getByRole('button',{name:'次の練習を選ぶ',exact:true}).click();
+  await page.getByRole('button',{name:/令和8年度上期/}).click();
+  await context.setOffline(true);
+  await page.getByRole('button',{name:'この回をオフライン保存',exact:true}).click();
+  await page.getByRole('alert').filter({hasText:'オフライン保存が途中で止まりました'}).waitFor();
+  check('failed download remains retryable', await page.getByRole('button',{name:'この回をオフライン保存',exact:true}).isEnabled());
+  await context.setOffline(false);
+  await page.getByRole('button',{name:'この回をオフライン保存',exact:true}).click();
+  await page.getByText('保存完了。この回はオフラインで解けます。',{exact:true}).waitFor({timeout:120000});
+  check('selected paper saved without consuming first exposure', (await readTable('mockExams')).length===3);
   await context.setOffline(true); await page.reload(); await openOfficial();
+  await page.getByRole('button',{name:/令和8年度上期/}).click();
   await page.getByRole('button',{name:/5問ずつ練習/}).click();
   await page.locator('.exam-image-button img').waitFor();
   check('offline official image loaded from PWA', await page.locator('.exam-image-button img').first().evaluate(img=>img.complete&&img.naturalWidth>0));

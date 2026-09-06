@@ -33,10 +33,14 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Official question images are small WebP files, available offline after installation.
-        globPatterns: ['**/*.{js,css,html,svg,json,webp}'],
+        // Keep shell installation quick; papers are saved explicitly with visible progress.
+        globPatterns: ['**/*.{js,css,html,svg,json}'],
         navigateFallback: `${base}index.html`,
-        runtimeCaching: [],
+        runtimeCaching: [{
+          urlPattern: /\/exams\/\d{8}\/[^/]+\.webp$/,
+          handler: 'CacheFirst',
+          options: { cacheName: 'denko2-official-20260906-v1', cacheableResponse: { statuses: [200] } },
+        }],
       },
     }),
   ],
