@@ -14,7 +14,7 @@
   --accent-text: #ffffff;
   --danger: #b42318;
   --warn: #92400e;
-  --ok: #15803d;
+  --ok: #146c34;
   --radius: 12px;
   --tab-h: 60px;
   color-scheme: light dark;
@@ -368,25 +368,44 @@ td {
   --text: #12232b;
   --text-dim: #5d6d74;
   --border: #d5dfe2;
-  --accent: #087f8c;
+  --accent: #06707c;
   --accent-strong: #075d68;
   --accent-soft: #dff4f3;
   --navy: #102f3a;
   --spark: #f2b705;
   --spark-soft: #fff4c2;
+  /* 黄色と濃ティールは明暗どちらでも同じ明るさで出る。その上に乗る文字は
+     --navy / #fff ではなく、この2つを使う(暗色時に前景まで明るくして消えるため) */
+  --on-spark: #102f3a;
+  --on-accent-strong: #ffffff;
   --radius: 18px;
   --shadow: 0 10px 30px rgba(23, 55, 65, 0.08);
   --tab-h: 72px;
 }
 
+/*
+ * この :root は上の暗色ブロック(--bg/--surface/--text …)より後ろにあるので、
+ * ここで定義したトークンは暗色時にも勝つ。**明色の値をここへ置いたまま
+ * 下の暗色ブロックで上書きし忘れると、暗い盤面に暗い文字が出る。**
+ * 2026-09-06 に実際そうなっていた(--surface だけ暗色ブロックの #171a21 が残り、
+ * --text は明色の #12232b が勝って、コントラスト 1.08:1 で本文が読めなかった)。
+ * → 面と文字のトークンを足すときは、必ず下の暗色ブロックにも対を書くこと。
+ */
 @media (prefers-color-scheme: dark) {
   :root {
+    --bg: #0d161a;
+    --surface: #14232a;
+    --surface-2: #1b2f37;
+    --text: #e9f3f5;
+    --text-dim: #a7bcc2;
+    --border: #2a3f47;
     --accent: #64d8d1;
     --accent-strong: #9aebe5;
     --accent-soft: #173b40;
     --navy: #dff8f5;
     --spark: #ffd24a;
     --spark-soft: #3d3516;
+    --on-accent-strong: #04252b;
     --shadow: 0 12px 34px rgba(0, 0, 0, 0.25);
   }
 }
@@ -396,10 +415,12 @@ h1 { font-size: 1.35rem; letter-spacing: -0.025em; }
 h2 { font-size: 1.05rem; letter-spacing: -0.015em; margin: 24px 0 10px; }
 .card { padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
 .card--accent { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); border-width: 1px; box-shadow: 0 12px 32px color-mix(in srgb, var(--accent) 16%, transparent); }
+/* このカードの先頭 strong は必ず見出し。本文と同じ大きさ・同じ色で並べない */
+.card--accent > strong { display: block; margin-bottom: 5px; color: var(--accent-strong); font-size: 1.04rem; line-height: 1.45; }
 .card--flat { box-shadow: none; }
 .brandbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 2px 0 18px; }
 .brandmark { display: flex; align-items: center; gap: 10px; }
-.brandmark__icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: var(--navy); background: var(--spark); box-shadow: 0 8px 20px color-mix(in srgb, var(--spark) 28%, transparent); }
+.brandmark__icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: var(--on-spark); background: var(--spark); box-shadow: 0 8px 20px color-mix(in srgb, var(--spark) 28%, transparent); }
 .brandmark__eyebrow { display: block; color: var(--accent); font-size: .67rem; font-weight: 800; letter-spacing: .16em; }
 .brandmark h1 { margin: 0; font-size: 1.16rem; }
 .stage-chip { max-width: 48%; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: 999px; padding: 6px 10px; color: var(--accent-strong); background: var(--accent-soft); font-size: .7rem; font-weight: 750; line-height: 1.25; text-align: center; }
@@ -429,7 +450,7 @@ h2 { font-size: 1.05rem; letter-spacing: -0.015em; margin: 24px 0 10px; }
 .resource-card { border: 1px solid var(--border); border-radius: 16px; background: var(--surface-2); overflow: hidden; }
 .resource-card--primary { border-color: color-mix(in srgb, var(--accent) 44%, var(--border)); background: var(--accent-soft); }
 .resource-card__body { padding: 14px; }
-.resource-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0 4px; padding: 11px 12px; border-radius: 12px; color: #fff; background: var(--accent-strong); font-weight: 700; text-decoration: none; }
+.resource-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0 4px; padding: 11px 12px; border-radius: 12px; color: var(--on-accent-strong); background: var(--accent-strong); font-weight: 700; text-decoration: none; }
 .resource-link::after { content: '↗'; font-size: 1.1rem; }
 .resource-meta { padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
 .supplemental-resources { margin-top: 10px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
