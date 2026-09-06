@@ -33,8 +33,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // 学習データは IndexedDB。ここでキャッシュするのはアプリシェルだけ。
-        globPatterns: ['**/*.{js,css,html,svg,json}'],
+        // Official question images are small WebP files, available offline after installation.
+        globPatterns: ['**/*.{js,css,html,svg,json,webp}'],
         navigateFallback: `${base}index.html`,
         runtimeCaching: [],
       },

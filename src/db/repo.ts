@@ -4,10 +4,11 @@
 
 import type { Denko2Db } from './db';
 import { db as defaultDb } from './db';
-import { nowJstIso, todayJst } from '../domain/jst';
+import { addDays, nowJstIso, todayJst } from '../domain/jst';
 import { buildBackup } from '../domain/backup';
 import { applyReview, buildExamRecords, type ExamInput } from '../domain/academic';
 import { IN_APP_SOURCE } from '../domain/quiz';
+import { gradeOfficial, officialPapers, validDraft, type ExamDraft } from '../domain/officialExam';
 import { SCHEMA_VERSION, SEED_UPDATED_AT } from '../domain/types';
 import type {
   AdminTaskState,
@@ -94,6 +95,56 @@ export function defaultSettings(
 
 export class Repo {
   constructor(private readonly db: Denko2Db = defaultDb) {}
+
+  async beginOfficial(draft: ExamDraft): Promise<boolean> {
+    if (!validDraft(draft)) throw new Error('開始データを読み取れません。');
+    const paper = officialPapers.find(p => p.id === draft.paperId)!;
+    const at = nowJstIso(new Date(draft.startedAt));
+    const first = await this.db.transaction('rw', [this.db.mockExams, this.db.questionAttempts], async () => {
+      const seen = await this.db.mockExams.filter(e => e.officialPaperId === paper.id).count();
+      const answers = await this.db.questionAttempts.filter(a => a.questionRef.startsWith(`official:${paper.id}:`)).count();
+      const isFirst = draft.firstAttempt && seen === 0 && answers === 0;
+      await this.db.mockExams.put({ id: draft.id, takenAt: at, updatedAt: at, jstDate: todayJst(new Date(draft.startedAt)),
+        kind: draft.mode === 'mock' ? 'mock-50' : 'topic-quiz', label: paper.title, totalQuestions: draft.numbers.length,
+        correctCount: 0, timed: draft.mode === 'mock', officialPaperId: paper.id,
+        firstAttempt: isFirst, unaided: draft.unaided, status: 'in-progress' });
+      return isFirst;
+    });
+    emitChange();
+    return first;
+  }
+
+  /** Stable IDs + one transaction: refresh/double submit cannot inflate scores or time. */
+  async finishOfficial(draft: ExamDraft): Promise<void> {
+    const graded = gradeOfficial(draft);
+    if (!draft.finishedAt) throw new Error('終了時刻がありません。');
+    const at = nowJstIso(new Date(draft.finishedAt));
+    const date = todayJst(new Date(draft.finishedAt));
+    const minutes = Math.max(1 / 60, (draft.finishedAt - draft.startedAt) / 60_000);
+    await this.db.transaction('rw', [this.db.mockExams, this.db.questionAttempts, this.db.studySessions], async () => {
+      const existing = await this.db.mockExams.get(draft.id);
+      if (!existing) throw new Error('開始記録がありません。');
+      if (existing.officialPaperId !== draft.paperId || existing.totalQuestions !== draft.numbers.length ||
+          Math.abs(Date.parse(existing.takenAt) - draft.startedAt) >= 1000) throw new Error('開始記録と途中回答が一致しません。');
+      if (existing.status === 'completed') return;
+      const exam: MockExam = { ...existing, correctCount: graded.filter(q => q.correct).length,
+        minutes, grading: 'official-key', status: 'completed', updatedAt: at,
+        unaided: existing.unaided === true && draft.unaided };
+      await this.db.mockExams.put(exam);
+      await this.db.questionAttempts.bulkPut(graded.map(q => ({ id: `${draft.id}_q${q.number}`,
+        attemptedAt: at, updatedAt: at, jstDate: date, source: exam.label, questionRef: q.questionRef,
+        topicId: q.topicId, correct: q.correct, confidence: q.correct ? q.confidence : 1,
+        scored: true, examId: draft.id })));
+      // Repair older attempts with the same canonical question reference.
+      const refs = new Map(graded.map(q => [q.questionRef, q.correct && q.confidence === 3]));
+      const older = await this.db.questionAttempts.filter(a => a.examId !== draft.id && refs.has(a.questionRef)).toArray();
+      for (const a of older) await this.db.questionAttempts.put(applyReview(a, refs.get(a.questionRef)!, at, date));
+      await this.db.studySessions.put({ id: `session_${draft.id}`, startedAt: existing.takenAt,
+        updatedAt: at, jstDate: date, durationMinutes: Math.round(minutes * 10) / 10,
+        measuredMinutes: Math.round(minutes * 10) / 10, kind: draft.mode === 'mock' ? 'mock' : 'questions', countsAsBasics: false });
+    });
+    emitChange();
+  }
 
   async load(): Promise<VaultSnapshot> {
     const [
@@ -292,6 +343,15 @@ export class Repo {
     const refs = new Map(items.map((item) => [item.questionRef, item.correct]));
     const newIds = new Set(attempts.map((a) => a.id));
     await this.db.transaction('rw', this.db.questionAttempts, async () => {
+      const history = await this.db.questionAttempts.toArray();
+      for (const attempt of attempts) {
+        if (!attempt.correct || attempt.confidence < 3) continue;
+        const before = history.filter(a => a.source === IN_APP_SOURCE && a.questionRef === attempt.questionRef)
+          .sort((a, b) => b.attemptedAt.localeCompare(a.attemptedAt))[0];
+        const state = before ? applyReview(before, true, at, jstDate) : undefined;
+        Object.assign(attempt, { reviewedAt: at, reviewCount: state?.reviewCount ?? 0,
+          lastReviewCorrect: true, nextReviewOn: state ? state.nextReviewOn : addDays(jstDate, 1) });
+      }
       await this.db.questionAttempts.bulkPut(attempts);
       const previous = await this.db.questionAttempts
         .filter(

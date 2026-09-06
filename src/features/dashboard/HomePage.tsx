@@ -8,14 +8,19 @@ import { REASON_LABEL, buildTodayQuests, daysSinceLastActivity } from '../../dom
 import { comebackCount, reviewProgress, weekSummary } from '../../domain/growth';
 import { useVault } from '../../state/VaultContext';
 import { AdminTaskRow } from '../milestones/AdminTaskList';
-import type { LessonMode } from '../../domain/types';
+import type { LessonMode, QuizQuestion } from '../../domain/types';
+import { StudyCoach } from './StudyCoach';
 
 export function HomePage({
   onOpenLesson,
   onGoTo,
+  onPractice,
+  onOfficial,
 }: {
   onOpenLesson: (id: string, mode: LessonMode) => void;
   onGoTo?: (tab: 'academic' | 'settings') => void;
+  onPractice?: (questions: QuizQuestion[]) => void;
+  onOfficial?: () => void;
 }) {
   const vault = useVault();
   const [budget, setBudget] = useState<10 | 30 | 60>(30);
@@ -89,6 +94,9 @@ export function HomePage({
           </p>
         </div>
       )}
+
+      {onPractice && onOfficial && <StudyCoach onPractice={onPractice} onOfficial={onOfficial}
+        onNextLesson={quests.find(q => q.lessonId)?.lessonId ? () => onOpenLesson(quests.find(q => q.lessonId)!.lessonId!, modeForBudget(budget)) : undefined} />}
 
       <div className="stat-grid" aria-label="今週の成長">
         <div className="stat-tile"><strong>{week.days} / 7 日</strong><span>今週やった日</span></div>
@@ -171,7 +179,7 @@ export function HomePage({
 
       {showQuests && quests.length === 0 && onboarding.stage !== 'basics' && (
         <div className="card">
-          <p>今日の必須クエストはコンプリート！ あとは休むも、もう1問やるも自由。</p>
+          <p>{academicGate.passed ? '学科の準備目標に到達。受験まで、復習で力を保とう。' : 'レッスンの次は、得点を確かめる番。上の復習と公式トレーニングで、未達の項目を埋めよう。'}</p>
         </div>
       )}
 

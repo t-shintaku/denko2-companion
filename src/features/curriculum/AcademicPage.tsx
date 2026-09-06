@@ -23,11 +23,14 @@ import { useVault } from '../../state/VaultContext';
 import { ExamSheet } from '../academic/ExamSheet';
 import { presentQuestion, type PresentedQuestion } from '../../domain/quiz';
 import type { ExamKind, LessonMode, QuizQuestion } from '../../domain/types';
+import { parseOfficialRef } from '../../domain/officialExam';
 
 export function AcademicPage({
   onOpenLesson,
+  onOpenOfficial,
 }: {
   onOpenLesson: (id: string, mode: LessonMode) => void;
+  onOpenOfficial?: (paperId?: string, number?: number) => void;
 }) {
   const {
     snapshot,
@@ -88,6 +91,7 @@ export function AcademicPage({
   return (
     <main className="app">
       <h1>学科クエスト</h1>
+      {onOpenOfficial && <section className="coach-checkpoint"><div><strong>公式250問 · 図も写真も、この中に。</strong><p>5問練習から、初見50問の合格チェックへ。</p></div><button className="btn-primary" onClick={() => onOpenOfficial()}>公式トレーニング</button></section>}
 
       {/* 20問診断は、基礎180分に達するまで前面に出さない(FR-003) */}
       {onboarding.stage === 'diagnostic' && !onboarding.diagnosticDone && (
@@ -321,6 +325,7 @@ export function AcademicPage({
               {reviewQueue.slice(0, 10).map((item) => {
                 // アプリ内出題は questionRef が問題ID。問題そのものを出し直せる
                 const question = getQuestion(item.attempt.questionRef);
+                const officialQuestion = parseOfficialRef(item.attempt.questionRef);
                 const shown = question ? presentFor(item.attempt.id, question) : undefined;
                 const picked = retry[item.attempt.id];
                 return (
@@ -345,7 +350,7 @@ export function AcademicPage({
                     解けたかどうかを本人の気分が決めてしまい、間隔反復が意味を失う。
                     外部教材(過去問)の記録は問題文を持っていないので、従来どおり自己申告。
                   */}
-                  {question && shown ? (
+                  {officialQuestion && onOpenOfficial ? <button className="btn-primary" onClick={() => onOpenOfficial(officialQuestion.paper.id, officialQuestion.number)}>第{officialQuestion.number}問を図・写真付きで解き直す</button> : question && shown ? (
                     <div className="quiz-item">
                       <ul className="plain stack quiz-choices">
                         {shown.choices.map((choice, ci) => (

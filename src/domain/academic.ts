@@ -9,6 +9,7 @@
 
 import { addDays, diffDays, todayJst } from './jst';
 import { IN_APP_SOURCE } from './quiz';
+import { examReadiness, externalPaperId } from './officialExam';
 import type {
   ErrorReason,
   ExamKind,
@@ -68,7 +69,8 @@ export function validateExamInput(input: ExamInput): string[] {
     issues.push(`小テストは1〜${MAX_TOPIC_QUIZ_QUESTIONS}問で記録する(いまは${n}問)`);
   }
   if (input.label.trim() === '') issues.push('出典(年度・期)を書く。あとで推移を追えなくなる');
-  if (input.minutes !== undefined && (input.minutes < 1 || input.minutes > 600)) {
+  if (input.officialUrl && !externalPaperId(input.officialUrl)) issues.push('試験センターの公式問題PDFのURLを入れてください');
+  if (input.minutes !== undefined && (!Number.isFinite(input.minutes) || input.minutes < 1 || input.minutes > 600)) {
     issues.push('所要時間が現実的でない');
   }
   return issues;
@@ -254,7 +256,14 @@ export function reviewQueue(
 
   const items: ReviewItem[] = [];
   const staleByTopic = new Map<TopicId, number>();
+  const unique = new Map<string, QuestionAttempt>();
   for (const a of scored(attempts)) {
+    const key = a.source === IN_APP_SOURCE || a.questionRef.startsWith('official:') ? `${a.source}:${a.questionRef}` : a.id;
+    const old = unique.get(key);
+    if (!old || (a.reviewedAt ?? a.attemptedAt) > (old.reviewedAt ?? old.attemptedAt) ||
+        ((a.reviewedAt ?? a.attemptedAt) === (old.reviewedAt ?? old.attemptedAt) && a.attemptedAt >= old.attemptedAt)) unique.set(key, a);
+  }
+  for (const a of unique.values()) {
     if (a.reviewedAt) {
       // 予定日が来たものだけ戻す。予定日が無い(卒業した)ものは出さない
       if (a.nextReviewOn && a.nextReviewOn <= today) {
@@ -290,6 +299,10 @@ export function applyReview(
   at: IsoDateTime,
   today: IsoDate,
 ): QuestionAttempt {
+  // An immediate retry helps understanding, but is not another spaced success.
+  if (correct && attempt.reviewedAt && attempt.nextReviewOn && attempt.nextReviewOn > today) {
+    return { ...attempt, reviewedAt: at, lastReviewCorrect: true, updatedAt: at };
+  }
   const count = correct ? (attempt.reviewCount ?? 0) + 1 : 0;
   return {
     ...attempt,
@@ -331,7 +344,7 @@ export function mocks(exams: MockExam[]): MockExam[] {
   return exams
     .filter(
       (e) =>
-        e.kind === 'mock-50' &&
+        e.kind === 'mock-50' && e.status !== 'in-progress' &&
         e.totalQuestions === EXAM_QUESTION_COUNT['mock-50'] &&
         isSaneExam(e),
     )
@@ -445,7 +458,7 @@ export function academicGate(
   attempts: QuestionAttempt[],
   exams: MockExam[],
   stats: TopicStat[],
-  options: { requiredTotal?: number } = {},
+  options: { requiredTotal?: number; today?: IsoDate } = {},
 ): AcademicGate {
   const requiredTotal = options.requiredTotal ?? REQUIRED_TOTAL_QUESTIONS;
   const total = scored(attempts).length;
@@ -459,6 +472,13 @@ export function academicGate(
   const belowMinimum = stats.filter((s) => s.started && s.hasSample && !s.meetsMinimum);
 
   const criteria: GateCriterion[] = [
+    {
+      id: 'official-transfer',
+      label: '初見の公式3回で平均80点・最低70点（45日以内）',
+      passed: examReadiness(exams, options.today ?? todayJst()).passed,
+      evidence: examReadiness(exams, options.today ?? todayJst()).evidence,
+      official: false,
+    },
     {
       id: 'all-topics-started',
       label: '7科目すべてに着手',
@@ -519,6 +539,9 @@ export function meetsOfficialStandard(exams: MockExam[]): boolean {
 }
 
 export type ExamInput = {
+  officialUrl?: string;
+  firstAttempt?: boolean;
+  unaided?: boolean;
   kind: MockExam['kind'];
   label: string;
   timed: boolean;
@@ -548,6 +571,8 @@ export function buildExamRecords(
   }
   const correctCount = input.questions.filter((q) => q.correct).length;
   const exam: MockExam = {
+    ...(input.officialUrl ? { officialPaperId: externalPaperId(input.officialUrl), grading: 'self-reported' as const,
+      firstAttempt: input.firstAttempt === true, unaided: input.unaided === true, status: 'completed' as const } : {}),
     id: ids.examId,
     takenAt: at,
     jstDate,

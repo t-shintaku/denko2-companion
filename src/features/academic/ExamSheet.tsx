@@ -41,6 +41,9 @@ export function ExamSheet({
 }) {
   const { reload, settings } = useVault();
   const [label, setLabel] = useState('');
+  const [officialUrl, setOfficialUrl] = useState('');
+  const [firstAttempt, setFirstAttempt] = useState(false);
+  const [unaided, setUnaided] = useState(false);
   const [mode, setMode] = useState<'per-question' | 'bulk'>(
     kind === 'mock-50' ? 'bulk' : 'per-question',
   );
@@ -68,6 +71,7 @@ export function ExamSheet({
   const [minutes, setMinutes] = useState('');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   // 本番同様の計測。試験中は正誤を出さない(FR-010)
   const [running, setRunning] = useState(false);
@@ -136,9 +140,10 @@ export function ExamSheet({
             'チェックを外せばそのまま保存できる',
         );
       }
-    } else if (perQuestionAnswered !== rows.length) {
+    }
+    if (mode === 'per-question' && perQuestionAnswered !== rows.length) {
       list.push(`未回答が ${rows.length - perQuestionAnswered}問ある`);
-    } else if (rows.length >= 10 && new Set(rows.map((r) => r.topicId)).size === 1) {
+    } else if (mode === 'per-question' && rows.length >= 10 && new Set(rows.map((r) => r.topicId)).size === 1) {
       /*
         科目の既定値のまま保存すると、20問・50問がまるごと1科目として記録される。
         科目別の直近20問と出題範囲マップが同時に壊れ、しかも数字は「達成」に見える。
@@ -166,7 +171,9 @@ export function ExamSheet({
   const ready = blockers.length === 0;
 
   const submit = async () => {
+    if (busy || !ready) return;
     setBusy(true);
+    setSaveError('');
     try {
       // 誤答番号は入力された順に、誤答レコードへ割り当てる
       const wrongQueue = [...wrongNumbers];
@@ -211,6 +218,7 @@ export function ExamSheet({
         : undefined;
 
       await repo.recordExam({
+        officialUrl: officialUrl.trim() || undefined, firstAttempt, unaided,
         kind,
         label: label.trim(),
         timed,
@@ -229,6 +237,8 @@ export function ExamSheet({
       });
       await reload();
       onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : '保存できませんでした。入力を確認してください。');
     } finally {
       setBusy(false);
     }
@@ -240,6 +250,7 @@ export function ExamSheet({
         ← 戻る
       </button>
       <h1>{KIND_TITLE[kind]}の結果</h1>
+      {saveError && <p role="alert" className="notice">{saveError}</p>}
       <p className="muted">
         公式ページで問題を解いたら、結果だけサクッと記録しよう。
         {kind === 'mock-50' &&
@@ -247,6 +258,12 @@ export function ExamSheet({
       </p>
 
       <div className="card">
+        {kind === 'mock-50' && <details><summary>別年度の初見模試を、仕上げの判定に使う</summary>
+          <p className="muted">収録済みの回を使い切ったら、公式サイトの別年度へ。正誤・時間は自己採点の記録として、アプリ内の自動採点と区別して表示します。</p>
+          <label>公式問題PDFのURL<input type="url" value={officialUrl} onChange={e => setOfficialUrl(e.target.value)} placeholder="https://www.shiken.or.jp/construction/upload/…pdf" /></label>
+          <label className="check-row"><input type="checkbox" checked={firstAttempt} onChange={e => setFirstAttempt(e.target.checked)} />問題も解答も初めて見た回です</label>
+          <label className="check-row"><input type="checkbox" checked={unaided} onChange={e => setUnaided(e.target.checked)} />解説・教材・電卓を使わずに解きました</label>
+        </details>}
         <div className="field">
           <label htmlFor="exam-label">出典(年度・期がわかるように)</label>
           <input

@@ -557,6 +557,12 @@ export type ExamKind = 'diagnostic-20' | 'topic-quiz' | 'mock-50';
 
 /** 小テスト・模試の1セッション(FR-010)。1問ごとの記録は QuestionAttempt 側 */
 export type MockExam = {
+  /** Official runs retain their identity across refresh, sync and retry. */
+  officialPaperId?: string;
+  grading?: 'official-key' | 'self-reported';
+  firstAttempt?: boolean;
+  unaided?: boolean;
+  status?: 'in-progress' | 'completed';
   id: string;
   takenAt: IsoDateTime;
   jstDate: IsoDate;

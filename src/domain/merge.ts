@@ -311,7 +311,14 @@ export function mergeAll(
       PRIMARY_KEY[table],
       table === 'lessonProgress'
         ? (mergeLessonProgress as unknown as Combine<Row>)
-        : undefined,
+        : table === 'mockExams'
+          ? (a, b) => {
+            // A completed run must never revert to its start marker, even at the same second.
+            if (a.status === 'completed' && b.status === 'in-progress') return a;
+            if (b.status === 'completed' && a.status === 'in-progress') return b;
+            return pickWinner(a, b);
+          }
+          : undefined,
     );
     (data as Record<string, unknown>)[table] = merged.rows;
     counts[table] = merged.count;

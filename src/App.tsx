@@ -9,12 +9,16 @@ import { RecordsPage } from './features/review/RecordsPage';
 import { SettingsPage } from './features/settings/SettingsPage';
 import { SetupWizard } from './features/onboarding/SetupWizard';
 import { useVault } from './state/VaultContext';
-import type { LessonMode } from './domain/types';
+import type { LessonMode, QuizQuestion } from './domain/types';
+import { PracticeSprint } from './features/academic/PracticeSprint';
+import { OfficialTrainer } from './features/academic/OfficialTrainer';
 
 export default function App() {
   const { ready, settings, reload } = useVault();
   const [tab, setTab] = useState<TabId>('home');
   const [open, setOpen] = useState<{ lessonId: string; mode: LessonMode } | undefined>();
+  const [practice, setPractice] = useState<QuizQuestion[]>();
+  const [official, setOfficial] = useState<{ paperId?: string; number?: number }>();
 
   if (!ready) {
     return (
@@ -30,6 +34,9 @@ export default function App() {
 
   const openLesson = (lessonId: string, mode: LessonMode) => setOpen({ lessonId, mode });
   const lesson = open ? getLesson(open.lessonId) : undefined;
+  if (practice) return <PracticeSprint questions={practice} onClose={() => setPractice(undefined)} />;
+  if (official && !open) return <OfficialTrainer initialPaperId={official.paperId} initialNumber={official.number}
+    onClose={() => setOfficial(undefined)} onOpenLesson={openLesson} />;
 
   if (open && lesson) {
     return (
@@ -43,8 +50,8 @@ export default function App() {
 
   return (
     <>
-      {tab === 'home' && <HomePage onOpenLesson={openLesson} onGoTo={setTab} />}
-      {tab === 'academic' && <AcademicPage onOpenLesson={openLesson} />}
+      {tab === 'home' && <HomePage onOpenLesson={openLesson} onGoTo={setTab} onPractice={setPractice} onOfficial={() => setOfficial({})} />}
+      {tab === 'academic' && <AcademicPage onOpenLesson={openLesson} onOpenOfficial={(paperId, number) => setOfficial({ paperId, number })} />}
       {tab === 'practical' && <PracticalPage onOpenLesson={openLesson} />}
       {tab === 'records' && <RecordsPage />}
       {tab === 'settings' && <SettingsPage />}

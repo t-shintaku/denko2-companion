@@ -89,7 +89,7 @@ describe('AT-005 学科の集計', () => {
     expect(gate.passed).toBe(false);
   });
 
-  it('全科目60%以上・累計300問・120分模試2回で学科ゲートを通す', () => {
+  it('旧5条件がそろっても初見の公式問題の証拠なしには準備完了にしない', () => {
     const attempts: QuestionAttempt[] = [];
     let n = 0;
     for (const t of topicIds) {
@@ -99,7 +99,8 @@ describe('AT-005 学科の集計', () => {
     const stats = topicStats(attempts, topicIds);
     const gate = academicGate(attempts, exams, stats);
     expect(timedMockCount(exams)).toBe(2);
-    expect(gate.passed).toBe(true);
+    expect(gate.passed).toBe(false);
+    expect(gate.criteria.find(c => c.id === 'official-transfer')?.passed).toBe(false);
   });
 
   it('サンプルが少ない科目を「達成」と呼ばない', () => {
