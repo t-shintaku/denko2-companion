@@ -16,6 +16,7 @@ npm run dev:lan      # スマホから同一LANで見るとき
 npm test             # Vitest(128件)
 npm run verify:pwa   # 実Chromiumで25項目(360x800/PWA/オフライン)
 npm run verify:contrast  # 明色・暗色の両方で18画面の文字コントラストをWCAG AAで測る
+npm run verify:glyphs    # Ω などが別の字形で描かれていないかを実ブラウザで確かめる
 npm run build        # dist/ を生成(PWA の sw.js 込み)
 npm run preview
 ```
@@ -250,6 +251,7 @@ Codex が長期利用シナリオで再レビューし、重大4件と重要8件
 - `python scripts/import-official-exams.py`（PyMuPDF/Pillow）で公式PDFのSHA-256を記録し、行・選択肢画像を生成。全250解答を手転記の表とPDF抽出結果で照合します。
 - `npm test` / `npm run build` / `npm run verify:pwa`
 - `npm run verify:contrast [URL]`: 明色・暗色それぞれで18画面を開き、文字と背景のコントラストを測る。**トークンを足すとき、暗色ブロックに対を書き忘れると暗い面に暗い文字が出る**(2026-09-06 に発生)。グラデーション面だけは自動判定できないのでSKIPとして一覧に出る。
+- `npm run verify:glyphs [URL]`: 同じ書体・太さで「Ω」と「и」を描き、**ビットマップが一致したら不合格**にする。Windows の Yu Gothic UI は Semibold/Bold の Ω にキリル文字 и の字形が入っており、太字のときだけ「20Ω」が「20и」に見える(2026-09-06 発見)。文字コードは正しいので grep でも型検査でも出ない。
 - `node scripts/verify-study-loop.mjs [URL]`: 360px表示、実ブラウザで5問と50問を解答、再読込復帰、120分経過、オフライン画像、採点と保存を検証。
 - 本番公開はGitHub Pages。スマートフォン実機での長期学習や合格実績は未検証。
 

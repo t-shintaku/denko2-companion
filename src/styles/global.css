@@ -48,11 +48,41 @@ body,
   min-height: 100%;
 }
 
+/*
+ * Windows の Yu Gothic UI は、**Semibold と Bold の Ω(U+03A9)に別の字が入っている。**
+ * キリル文字の и(N の左右反転に見える)が出る。Regular では正しく Ω が出るので、
+ * 太字にした瞬間だけ「20Ω」が「20и」になる。2026-09-06 に本人が発見。
+ * ブラウザ側の不具合ではなく Windows のフォント側の問題で、Chrome でも Edge でも同じ。
+ * 抵抗値は電工二種の問題文の中心なので、ここは黙って見過ごせない。
+ *
+ * 対処: ギリシャ文字だけを Segoe UI(Ω が正しい)から取る。unicode-range を効かせるので
+ * 日本語・英数字は今までどおり system-ui(Windows なら Yu Gothic UI)のまま変わらない。
+ * Segoe UI が無い環境(Mac/Android/iOS)ではこの @font-face ごと無視され、素通りする。
+ */
+@font-face {
+  font-family: 'Greek Fallback';
+  src: local('Segoe UI'), local('Meiryo');
+  font-weight: 400;
+  unicode-range: U+0370-03FF, U+2126;
+}
+@font-face {
+  font-family: 'Greek Fallback';
+  src: local('Segoe UI Semibold'), local('Segoe UI'), local('Meiryo');
+  font-weight: 500 600;
+  unicode-range: U+0370-03FF, U+2126;
+}
+@font-face {
+  font-family: 'Greek Fallback';
+  src: local('Segoe UI Bold'), local('Segoe UI'), local('Meiryo Bold'), local('Meiryo');
+  font-weight: 700 900;
+  unicode-range: U+0370-03FF, U+2126;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP',
-    sans-serif;
+  font-family: 'Greek Fallback', system-ui, -apple-system, 'Segoe UI',
+    'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
   font-size: 15px;
   line-height: 1.65;
   overflow-x: hidden;
