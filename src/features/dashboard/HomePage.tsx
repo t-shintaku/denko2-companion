@@ -1,16 +1,28 @@
 import { useState } from 'react';
-import { curriculum, getLesson } from '../../data';
+import { curriculum, getLesson, questions } from '../../data';
 import { actionableAdminTasks } from '../../domain/adminTasks';
 import { formatJstShort } from '../../domain/jst';
-import { MODE_LABEL, modeForBudget } from '../../domain/lessons';
+import { modeForBudget } from '../../domain/lessons';
 import { STAGE_HINT, STAGE_LABEL } from '../../domain/onboarding';
-import { REASON_LABEL, buildTodayQuests, daysSinceLastActivity } from '../../domain/quests';
+import { buildTodayQuests, daysSinceLastActivity } from '../../domain/quests';
 import { comebackCount, reviewProgress, weekSummary } from '../../domain/growth';
+import { dailyPractice, questionMemory } from '../../domain/studyCoach';
+import { buildTodayPath, type TodayStep } from '../../domain/todayPath';
 import { useVault } from '../../state/VaultContext';
 import { AdminTaskRow } from '../milestones/AdminTaskList';
 import type { LessonMode, QuizQuestion } from '../../domain/types';
-import { StudyCoach } from './StudyCoach';
+import { ProgressPanel } from './ProgressPanel';
+import { TodayPathCard } from './TodayPathCard';
 
+/**
+ * ホーム。**この画面の役割は「今日の1歩目を、迷わせずに渡すこと」の1点。**
+ *
+ * 2026-09-06 の作り直し前は、入口が3つ(コーチのボタン・クエスト開始・公式トレーニング)並び、
+ * その周りに数字のカードが9枚あった。本人の言葉:
+ * 「いろいろメニューみたいなのがあるのはいいんだけど、どれから始めたらいいのかがよく分からない」。
+ * → 今日やることを順番付きの1枚(TodayPathCard)にまとめ、**残りは全部たたむ**。
+ *   数字を消したのではない。開けば同じものが全部ある。1歩目の隣に置かないだけ。
+ */
 export function HomePage({
   onOpenLesson,
   onGoTo,
@@ -24,7 +36,6 @@ export function HomePage({
 }) {
   const vault = useVault();
   const [budget, setBudget] = useState<10 | 30 | 60>(30);
-  const [keepGoing, setKeepGoing] = useState(false);
   const {
     onboarding,
     settings,
@@ -48,25 +59,42 @@ export function HomePage({
     onboarding,
     budgetMinutes: budget,
   });
+  const quest = quests.find((q) => q.slot === 'main' && q.lessonId);
+
+  const picks = dailyPractice(questions, snapshot.questionAttempts, snapshot.lessonProgress, today);
+  const dueCount = picks.filter(
+    (p) => questionMemory(p.question, snapshot.questionAttempts, today).due,
+  ).length;
+
+  const path = buildTodayPath({
+    today,
+    sessions: snapshot.studySessions,
+    practiceCount: picks.length,
+    dueCount,
+    quest,
+    officialReady: onboarding.stage === 'regular' || onboarding.stage === 'diagnostic',
+  });
 
   const urgent = actionableAdminTasks(adminTasks);
   const gap = daysSinceLastActivity(snapshot.studySessions, snapshot.lessonProgress, today, adminTasks);
   const week = weekSummary(snapshot.studySessions, today);
   const comebacks = comebackCount(snapshot.studySessions);
   const review = reviewProgress(snapshot.questionAttempts);
-  const learnedToday = snapshot.studySessions.some((session) => session.jstDate === today);
-  const showQuests = !learnedToday || keepGoing;
   const xp = Object.values(snapshot.lessonProgress).reduce((sum, p) => sum + p.xpAwarded, 0);
   const effortLevel = Math.floor(xp / 100) + 1;
   const xpToNextLevel = 100 - (xp % 100);
-  const basicsLeft = Math.max(
-    0,
-    onboarding.basicsRequiredMinutes - onboarding.basicsMinutes,
-  );
+  const basicsLeft = Math.max(0, onboarding.basicsRequiredMinutes - onboarding.basicsMinutes);
   const basicsPct = Math.min(
     100,
     Math.round((onboarding.basicsMinutes / onboarding.basicsRequiredMinutes) * 100),
   );
+
+  const start = (step: TodayStep) => {
+    if (step.kind === 'review') onPractice?.(picks.map((p) => p.question));
+    else if (step.kind === 'lesson' && quest?.lessonId) {
+      onOpenLesson(quest.lessonId, modeForBudget(budget));
+    } else onOfficial?.();
+  };
 
   return (
     <main className="app">
@@ -85,79 +113,22 @@ export function HomePage({
         <span className="stage-chip">{STAGE_LABEL[onboarding.stage]}</span>
       </div>
 
-      {gap !== undefined && gap >= 3 && (
-        <div className="card card--accent">
-          <strong>{gap}日ぶり。おかえり！</strong>
-          <p className="muted">
-            戻ってきた時点で、もう1歩前進。復帰はこれで{comebacks + 1}回目。
-            今日は下のクエストを1つクリアすればOK！
-          </p>
-        </div>
-      )}
-
-      {onPractice && onOfficial && <StudyCoach onPractice={onPractice} onOfficial={onOfficial}
-        onNextLesson={quests.find(q => q.lessonId)?.lessonId ? () => onOpenLesson(quests.find(q => q.lessonId)!.lessonId!, modeForBudget(budget)) : undefined} />}
-
-      <div className="stat-grid" aria-label="今週の成長">
-        <div className="stat-tile"><strong>{week.days} / 7 日</strong><span>今週やった日</span></div>
-        <div className="stat-tile"><strong>{week.minutes}<small>分</small></strong><span>今週の学習</span></div>
-        <div className="stat-tile"><strong>{review.solved}<small>問</small></strong><span>復習で克服</span></div>
-      </div>
-
-      <div className="xp-strip">
-        <svg className="xp-strip__bolt" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" /></svg>
-        <div className="xp-strip__label">
-          努力レベル Lv.{effortLevel}
-          <span className="xp-strip__sub">
-            {xpToNextLevel === 0 ? 'レベルアップ目前！' : `次のレベルまで ${xpToNextLevel} XP`}。
-            合格ラインは別でチェック。
-          </span>
-        </div>
-        <span className="xp-strip__value">{xp} XP</span>
-      </div>
-
-      {urgent[0] && (
-        <>
-          <h2>先にクリアする手続き</h2>
-          <AdminTaskRow task={urgent[0]} />
-        </>
-      )}
-
-      <div className="quest-section-title">
-        <h2>{learnedToday && !keepGoing ? '今日のクエスト、クリア！' : '今日のクエスト'}</h2>
-        <span>{learnedToday && !keepGoing ? 'よくやった！' : '1件でクリア'}</span>
-      </div>
-      <div className="budget-switch" role="group" aria-label="今日の持ち時間">
-        {([10, 30, 60] as const).map((m) => (
-          <button
-            key={m}
-            className={m === budget ? 'btn-primary btn-sm' : 'btn-sm'}
-            aria-pressed={m === budget}
-            onClick={() => setBudget(m)}
-          >
-            {m}分
-          </button>
-        ))}
-      </div>
-
-      {learnedToday && !keepGoing && (
-        <div className="card card--accent">
-          <strong>今日はここで終わってOK！</strong>
-          <p className="muted">1つ進めた時点で今日の勝ち。続きは明日の自分に任せよう。</p>
-          <button className="btn-sm" type="button" onClick={() => setKeepGoing(true)}>
-            まだいける。もう1つだけ！
-          </button>
-        </div>
+      {path.steps.length > 0 && (
+        <TodayPathCard
+          path={path}
+          budget={budget}
+          onBudget={setBudget}
+          onStart={start}
+          gap={gap}
+          comebacks={comebacks}
+        />
       )}
 
       {/*
         基礎トレのレッスンを全部終えても、10分モードの見積合計(142分)は
-        必要な180分に届かない。ここで「コンプリート！」とだけ出すと、
-        やることが無いのに20問診断も開かない行き止まりになる。
-        抜け道(腕だめし・手動アンロック)は設定と学科タブにあるが、
-        ホームから案内していなかったので、その場で出す。
+        必要な180分に届かない。やることが無いのに20問診断も開かない行き止まりを、その場で塞ぐ。
       */}
-      {showQuests && quests.length === 0 && onboarding.stage === 'basics' && (
+      {path.steps.length === 0 && onboarding.stage === 'basics' && (
         <div className="card card--accent">
           <strong>基礎トレのレッスンは全部クリア！ あと {basicsLeft} 分でアンロック。</strong>
           <p className="muted">
@@ -177,57 +148,54 @@ export function HomePage({
         </div>
       )}
 
-      {showQuests && quests.length === 0 && onboarding.stage !== 'basics' && (
-        <div className="card">
-          <p>{academicGate.passed ? '学科の準備目標に到達。受験まで、復習で力を保とう。' : 'レッスンの次は、得点を確かめる番。上の復習と公式トレーニングで、未達の項目を埋めよう。'}</p>
+      {path.steps.length === 0 && onboarding.stage !== 'basics' && (
+        <div className="card card--accent">
+          <strong>今日の学習は、ここまで。</strong>
+          <p className="muted">
+            {academicGate.passed
+              ? '学科の準備目標に到達。受験まで、復習で力を保とう。'
+              : '出せるレッスンが今日はもう無い。学科タブの公式トレーニングで、得点を確かめる番。'}
+          </p>
         </div>
       )}
 
-      {showQuests && quests.map((q) => (
-        <div className={q.slot === 'main' ? 'card quest-card' : 'card'} key={q.id}>
-          <div className="row row--between">
-            <strong className={q.slot === 'main' ? 'quest-card__title' : undefined}>{q.title}</strong>
-            <span className="badge">{REASON_LABEL[q.reason]}</span>
-          </div>
-          <p className="muted">{q.detail}</p>
-          <p className="muted">クリアすると: {q.clearCondition}</p>
-          {q.remainingMinutes !== undefined && q.remainingMinutes > q.minutes && (
-            <p className="muted">
-              レッスン全体は残り約{q.remainingMinutes}分。今日はキリのいいところでストップOK！
-            </p>
-          )}
-          {!q.fitsBudget && (
-            // 収まらないなら黙って出さない。「10分」と書いて60分渡すのが一番効く嘘
-            <p className="notice">
-              このクエストは約{q.minutes}分。今日は{budget}分だけ進めればOK。
-              終わったステップまで、ちゃんと記録に残る。
-            </p>
-          )}
-          <div className="row row--between">
-            <span className="badge">
-              {q.minutes}分 / {MODE_LABEL[modeForBudget(budget)]}版
-            </span>
-            {q.lessonId ? (
-              <button
-                className="btn-primary btn-sm"
-                onClick={() => onOpenLesson(q.lessonId!, modeForBudget(budget))}
-              >
-                クエスト開始
-              </button>
-            ) : (
-              <span className="muted">↑ 先に上の手続きをクリアしよう</span>
-            )}
-          </div>
-        </div>
-      ))}
+      {/* 学習ではないが期限がある。1歩目を隠さない位置に、1件だけ出す */}
+      {urgent[0] && (
+        <>
+          <h2>学習とは別に、期限がある手続き</h2>
+          <AdminTaskRow task={urgent[0]} />
+        </>
+      )}
 
       {/*
-        合格に直結する数字を、いちばん見る場所へ出す。
-        以前はXPと今週の分数だけがトップにあり、範囲カバーも学科ゲートも
-        学科タブまで潜らないと見えなかった。努力の数字だけが目立つ状態になっていた。
+        ここから下は「開けば見られる」場所。閉じているのが既定。
+        合格準備度(ゲート)と努力の数字(XP)を混ぜない方針はそのまま。
       */}
-      <h2>合格までの現在地</h2>
-      <div className="card">
+      <details className="home-fold">
+        <summary>進み具合を見る</summary>
+        <div className="stat-grid" aria-label="今週の成長">
+          <div className="stat-tile"><strong>{week.days} / 7 日</strong><span>今週やった日</span></div>
+          <div className="stat-tile"><strong>{week.minutes}<small>分</small></strong><span>今週の学習</span></div>
+          <div className="stat-tile"><strong>{review.solved}<small>問</small></strong><span>復習で克服</span></div>
+        </div>
+        <div className="xp-strip">
+          <svg className="xp-strip__bolt" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="m13 2-7 11h6l-1 9 7-12h-6l1-8Z" />
+          </svg>
+          <div className="xp-strip__label">
+            努力レベル Lv.{effortLevel}
+            <span className="xp-strip__sub">
+              {xpToNextLevel === 0 ? 'レベルアップ目前！' : `次のレベルまで ${xpToNextLevel} XP`}。
+              合格ラインは別でチェック。
+            </span>
+          </div>
+          <span className="xp-strip__value">{xp} XP</span>
+        </div>
+        <ProgressPanel />
+      </details>
+
+      <details className="home-fold">
+        <summary>合格までの現在地</summary>
         <div className="row" style={{ flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
           <span className={overallCoverage >= 0.9 ? 'badge badge--ok' : 'badge'}>
             範囲カバー {Math.round(overallCoverage * 100)}%
@@ -251,9 +219,7 @@ export function HomePage({
         )}
         <p>{STAGE_HINT[onboarding.stage]}</p>
         <ul className="plain muted">
-          <li>
-            オリエンテーション: {onboarding.orientationDone} / {onboarding.orientationTotal} 本
-          </li>
+          <li>オリエンテーション: {onboarding.orientationDone} / {onboarding.orientationTotal} 本</li>
           <li>お試し5問: {onboarding.ungradedFiveDone ? 'クリア' : 'これから'}</li>
           <li>
             基礎学習: {onboarding.basicsMinutes} / {onboarding.basicsRequiredMinutes} 分
@@ -270,10 +236,10 @@ export function HomePage({
                 : '基礎をためるとアンロック'}
           </li>
         </ul>
-      </div>
+      </details>
 
-      <h2>受験までの残り</h2>
-      <div className="card">
+      <details className="home-fold">
+        <summary>受験までの残り</summary>
         <ul className="plain">
           <li>
             学科: {settings?.academicDate ?? '未設定'}
@@ -297,16 +263,13 @@ export function HomePage({
             任意レッスン {schedule.droppedOptionalLessonIds.length} 本は、今回はお休み。必須レッスンは残してある。
           </p>
         )}
-      </div>
-
-      {settings?.motivation && (
-        <>
-          <h2>合格したら、やりたいこと</h2>
-          <div className="card">
+        {settings?.motivation && (
+          <>
+            <h3>合格したら、やりたいこと</h3>
             <p>{settings.motivation}</p>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </details>
     </main>
   );
 }

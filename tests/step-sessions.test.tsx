@@ -40,7 +40,7 @@ describe('段階ごとに学習時間が残る', () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
+    await user.click(await screen.findByRole('button', { name: '今日のぶんを始める' }));
     await screen.findByRole('heading', { name: firstLesson.title });
 
     await user.type(screen.getByLabelText(/このステップにかかった時間/), '12');
@@ -62,7 +62,7 @@ describe('段階ごとに学習時間が残る', () => {
   it('段階を4つ通すと、4件の時間が積み上がる(上書き保存では二重に増えない)', async () => {
     const user = userEvent.setup();
     renderApp();
-    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
+    await user.click(await screen.findByRole('button', { name: '今日のぶんを始める' }));
     await screen.findByRole('heading', { name: firstLesson.title });
 
     /**

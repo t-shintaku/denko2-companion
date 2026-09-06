@@ -27,9 +27,11 @@ const AUDIT = () => {
     let n = el, grad = false;
     while (n && n !== document.documentElement) {
       const cs = getComputedStyle(n);
-      if (cs.backgroundImage && cs.backgroundImage !== 'none') grad = true;
+      // グラデーション面でも、その要素が不透明な background-color を宣言していれば測れる。
+      // **その色に「いちばん明るくなる画素」を書いておく**規約なので、最悪値での判定になる。
       const p = parse(cs.backgroundColor);
       if (p && (p.length < 4 || p[3] > 0.95)) return { bg: p.slice(0, 3), grad };
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') grad = true;
       n = n.parentElement;
     }
     return { bg: (parse(getComputedStyle(document.body).backgroundColor) ?? [255, 255, 255]).slice(0, 3), grad };
@@ -79,7 +81,7 @@ for (const scheme of ['light', 'dark']) {
   await page.getByRole('button', { name: 'ホーム', exact: true }).waitFor();
   await check('01-home');
 
-  // 復帰バナー(card--accent)は数日空けないと出ない。24日前の学習を1件入れて出す
+  // 復帰の一文は数日空けないと出ない。24日前の学習を1件入れて出す
   await page.evaluate(async () => {
     const d = new Date(Date.now() - 24 * 864e5).toISOString();
     const db = await new Promise(r => { const q = indexedDB.open('denko2-companion'); q.onsuccess = () => r(q.result); });
@@ -88,10 +90,10 @@ for (const scheme of ['light', 'dark']) {
     await new Promise(r => tx.oncomplete = r); db.close();
   });
   await page.reload({ waitUntil: 'networkidle' });
-  await page.locator('.card--accent').first().waitFor();
+  await page.locator('.today__comeback').first().waitFor();
   await check('02-comeback');
 
-  await page.getByRole('button', { name: 'クエスト開始' }).first().click();
+  await page.getByRole('button', { name: '今日のぶんを始める' }).first().click();
   await page.waitForTimeout(700);
   await check('03-lesson');
 

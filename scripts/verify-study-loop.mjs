@@ -30,7 +30,7 @@ try {
     const tx=db.transaction('lessonProgress','readwrite'); tx.objectStore('lessonProgress').put({lessonId:'p0-l2',inputViewedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),xpAwarded:0});
     await new Promise(resolve=>tx.oncomplete=resolve);db.close();
   });
-  await page.reload(); await page.getByRole('button',{name:'今日の5問を始める',exact:true}).click();
+  await page.reload(); await page.getByRole('button',{name:/習ったところから/}).click();
   await noOverflow('360px daily recall'); await shot('recall');
   check('confidence required', await page.getByRole('button',{name:'理由も分かる',exact:true}).isDisabled());
   await page.locator('.sprint-question .quiz-choice').first().click();

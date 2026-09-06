@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 const uiFiles = [
   'src/features/dashboard/HomePage.tsx',
+  'src/features/dashboard/TodayPathCard.tsx',
+  'src/domain/todayPath.ts',
   'src/features/onboarding/SetupWizard.tsx',
   'src/features/curriculum/LessonPage.tsx',
   'src/features/curriculum/AcademicPage.tsx',

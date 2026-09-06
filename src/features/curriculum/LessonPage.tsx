@@ -202,6 +202,15 @@ export function LessonPage({
   const [actualMinutes, setActualMinutes] = useState<string>('');
 
   const steps = requiredSteps(lesson);
+  /**
+   * 4段階を全部同じ強さで並べると、初見の人には「何から手を付けるのか」が読めない
+   * (2026-09-06 本人の指摘)。**消さずに、いまやる段階だけを強く**する。
+   * 中身は常に描画したまま(記録・テスト・スクリーンリーダーの経路を変えない)。
+   */
+  const stepClass = (step: LessonStep) =>
+    ['card', 'lesson-step', stepDone(progress, step) ? 'is-done' : upcoming === step ? 'is-now' : 'is-later']
+      .join(' ');
+
   const upcoming = nextStep(lesson, progress);
   const complete = isLessonComplete(lesson, progress);
   // 努力レベルは XP 100 ごと(ホームと同じ式)。このレッスンぶんで境界をまたいだかを見る。
@@ -489,8 +498,11 @@ export function LessonPage({
       </div>
 
       {/* --- 1. 見る --------------------------------------------------- */}
-      <section className="card">
-        <h2>1. まず見る</h2>
+      <section className={stepClass('input')}>
+        <div className="lesson-step__head">
+          <h2>1. まず見る</h2>
+          {upcoming === 'input' && <span className="step-here">いまここ</span>}
+        </div>
         {guides.length === 0 && (
           <p className="muted">
             直前期は新しい教材を増やさない。手元の材料と自分の記録だけで仕上げよう。
@@ -582,8 +594,11 @@ export function LessonPage({
       </section>
 
       {/* --- 2. 閉じて答える -------------------------------------------- */}
-      <section className="card">
-        <h2>2. 見ないで思い出す</h2>
+      <section className={stepClass('recall')}>
+        <div className="lesson-step__head">
+          <h2>2. 見ないで思い出す</h2>
+          {upcoming === 'recall' && <span className="step-here">いまここ</span>}
+        </div>
         <p className="muted">
           問いの下に<strong>出どころ</strong>を出しているよ。必要なら先にそこだけ見て、
           教材を閉じてから思い出せたぶんを書こう。書いたら答え合わせ！
@@ -685,8 +700,11 @@ export function LessonPage({
       </section>
 
       {/* --- 3. 解く／作る ---------------------------------------------- */}
-      <section className="card">
-        <h2>3. 手を動かす</h2>
+      <section className={stepClass('practice')}>
+        <div className="lesson-step__head">
+          <h2>3. 手を動かす</h2>
+          {upcoming === 'practice' && <span className="step-here">いまここ</span>}
+        </div>
         <p>
           {lesson.practice.instruction.replace('今日見た内容だけから出るよ', '出どころは各問題の下に表示するよ')}
         </p>
@@ -1012,8 +1030,11 @@ export function LessonPage({
       </section>
 
       {/* --- 4. 1点残す ------------------------------------------------- */}
-      <section className="card">
-        <h2>4. 次の自分にひとこと</h2>
+      <section className={stepClass('takeaway')}>
+        <div className="lesson-step__head">
+          <h2>4. 次の自分にひとこと</h2>
+          {upcoming === 'takeaway' && <span className="step-here">いまここ</span>}
+        </div>
         <p className="muted">次に直したいことを1つだけ。短くてOK！</p>
         <textarea
           aria-label="次の自分へのひとこと"

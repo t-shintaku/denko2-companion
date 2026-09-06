@@ -55,7 +55,7 @@ describe('Sprint 1 の通し動作', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderApp();
     await user.click(await screen.findByRole('button', { name: '冒険をはじめる' }));
-    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
+    await user.click(await screen.findByRole('button', { name: '今日のぶんを始める' }));
 
     expect(await screen.findByRole('heading', { name: '資格と試験の地図' })).toBeInTheDocument();
 
@@ -117,7 +117,7 @@ describe('Sprint 1 の通し動作', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderApp();
     await user.click(await screen.findByRole('button', { name: '冒険をはじめる' }));
-    await user.click(await screen.findByRole('button', { name: 'クエスト開始' }));
+    await user.click(await screen.findByRole('button', { name: '今日のぶんを始める' }));
 
     await user.click(await screen.findByRole('button', { name: '見終わった！ 次へ' }));
     await waitFor(() => expect(screen.getByRole('button', { name: '✓ 見終わった' })).toBeDisabled());

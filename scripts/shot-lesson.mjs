@@ -29,7 +29,7 @@ if (await page.getByRole('button', { name: /冒険をはじめる|保存して�
 await page.screenshot({ path: `${OUT}/01-home.png`, fullPage: true });
 
 // 今日のクエストからレッスンを開く
-await page.getByRole('button', { name: 'クエスト開始' }).first().click();
+await page.getByRole('button', { name: '今日のぶんを始める' }).first().click();
 await page.waitForTimeout(800);
 await page.screenshot({ path: `${OUT}/02-lesson.png`, fullPage: true });
 

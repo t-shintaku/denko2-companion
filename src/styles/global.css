@@ -454,19 +454,6 @@ h2 { font-size: 1.05rem; letter-spacing: -0.015em; margin: 24px 0 10px; }
 .brandmark__eyebrow { display: block; color: var(--accent); font-size: .67rem; font-weight: 800; letter-spacing: .16em; }
 .brandmark h1 { margin: 0; font-size: 1.16rem; }
 .stage-chip { max-width: 48%; border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: 999px; padding: 6px 10px; color: var(--accent-strong); background: var(--accent-soft); font-size: .7rem; font-weight: 750; line-height: 1.25; text-align: center; }
-.quest-section-title { display: flex; align-items: end; justify-content: space-between; margin: 0 0 10px; }
-.quest-section-title h2 { margin: 0; font-size: 1.28rem; }
-.quest-section-title span { color: var(--text-dim); font-size: .75rem; }
-.budget-switch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 5px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-2); }
-.budget-switch button { min-height: 38px; padding: 6px 8px; border: 0; border-radius: 11px; background: transparent; }
-.budget-switch .btn-primary { background: var(--surface); color: var(--accent-strong); box-shadow: 0 3px 10px rgba(23, 55, 65, .1); }
-.quest-card { position: relative; overflow: hidden; padding: 20px; color: #fff; border: 0; background: radial-gradient(circle at 100% 0%, rgba(242,183,5,.34), transparent 34%), linear-gradient(145deg, #123b48 0%, #075d68 100%); box-shadow: 0 18px 38px rgba(11,69,77,.22); }
-.quest-card::after { content: ''; position: absolute; right: -28px; bottom: -42px; width: 140px; height: 140px; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; box-shadow: 0 0 0 22px rgba(255,255,255,.035), 0 0 0 48px rgba(255,255,255,.025); pointer-events: none; }
-.quest-card .muted { color: rgba(255,255,255,.76); }
-.quest-card .badge { border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.1); color: #fff; }
-.quest-card__title { display: block; max-width: 78%; font-size: 1.22rem; line-height: 1.42; }
-.quest-card__meta { display: flex; gap: 8px; align-items: center; margin: 14px 0 4px; }
-.quest-card .btn-primary { position: relative; z-index: 1; background: var(--spark); color: #132c34; border-color: var(--spark); font-weight: 800; }
 .xp-strip { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; margin: 16px 0 22px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
 .xp-strip__bolt { color: var(--spark); }
 .xp-strip__label { font-size: .78rem; font-weight: 750; }
@@ -487,13 +474,13 @@ h2 { font-size: 1.05rem; letter-spacing: -0.015em; margin: 24px 0 10px; }
 .supplemental-resources summary { cursor: pointer; padding: 12px 14px; color: var(--accent-strong); font-weight: 700; }
 .supplemental-resources[open] summary { border-bottom: 1px solid var(--border); }
 .supplemental-resources__body { padding: 10px; }
-.lesson-hero { margin: 10px 0 14px; padding: 16px; border-radius: 18px; color: #fff; background: linear-gradient(145deg,#123b48,#075d68); }
+.lesson-hero { margin: 10px 0 14px; padding: 16px; border-radius: 18px; color: #fff; background-color: #075d68; background-image: linear-gradient(145deg,#123b48,#075d68); }
 .lesson-hero h1 { margin: 4px 0 6px; }
 .lesson-hero .muted { color: rgba(255,255,255,.74); }
 .lesson-hero .steps { margin-top: 14px; }
 .lesson-hero .step { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.08); }
 .lesson-hero .step--done { color: #8be4bd; border-color: #8be4bd; }
-.lesson-hero .step--next { color: var(--spark); border-color: var(--spark); }
+.lesson-hero .step--next { color: #ffd24a; border-color: #ffd24a; }
 button, .btn { border-radius: 12px; }
 .btn-primary { font-weight: 750; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 18%, transparent); }
 .tabbar { height: calc(var(--tab-h) + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); }
@@ -628,3 +615,65 @@ progress::-webkit-progress-value { background: #659549; border-radius: 20px; }
 .exam-reflow-answer img { width: auto; max-width: 100%; max-height: 200px; }
 .exam-reflow-answer--selected { border-color: #0b7d88; background: #edf9f8; }
 .exam-reflow-choice > .btn-sm { margin: 6px 0 12px; font-size: 11px; }
+
+/*
+ * 「きょうの道のり」(2026-09-06)。
+ * ホームで一番強いのはこのカード1枚だけにする。押せるのは「いまここ」の1件。
+ * 先の段階は薄くするが、**opacity では薄くしない**。計算後の色が変わらないと
+ * verify:contrast が実際より明るい色を測ってしまい、読めない字を見逃す。色そのもので落とす。
+ */
+/* background-color には**この面がいちばん明るくなる画素の色**(金色を重ねた右上の角)を置く。
+   見た目はグラデーションが覆うので変わらないが、verify:contrast が最悪値で測れるようになる。 */
+.today { margin: 2px 0 18px; padding: 20px; border-radius: 24px; color: #f4ffed; background-color: #3a5438; background-image: radial-gradient(circle at 100% 0%, rgba(242,183,5,.18), transparent 38%), linear-gradient(150deg, #123e43 0%, #0c2f36 100%); box-shadow: 0 18px 38px rgba(11,69,77,.28); }
+.today__kicker { margin: 0 0 10px; font-size: 10px; letter-spacing: .18em; font-weight: 800; color: #b9dbc5; }
+.today__comeback { margin: 0 0 14px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.08); font-size: 12px; color: #c9e3d6; }
+.today__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.today__step { width: 100%; display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 0 0; border: 0; border-top: 1px solid rgba(255,255,255,.16); border-radius: 0; background: transparent; color: inherit; text-align: left; font: inherit; }
+.today__body { min-width: 0; }
+.today__detail { display: block; margin-top: 4px; font-size: 13px; line-height: 1.6; color: #c9e3d6; }
+.today__steps > li:first-child .today__step { border-top: 0; padding-top: 0; }
+.today__num { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); font-size: 13px; font-weight: 800; color: #c9e3d6; }
+.today__body strong { display: block; font-size: 17px; line-height: 1.45; }
+
+.today__meta { display: block; margin-top: 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: #b6cfc5; }
+.today__step.is-now .today__num { background: #d6f888; border-color: #d6f888; color: #163b34; }
+.today__step.is-now .today__meta { color: #d6f888; }
+.today__step.is-later strong { color: #b6cfc5; font-size: 15px; }
+.today__step.is-later .today__detail { color: #b6cfc5; }
+.today__step.is-done .today__num { background: rgba(214,248,136,.22); border-color: #9fc05a; color: #d6f888; }
+.today__step.is-done strong { color: #b6cfc5; font-size: 15px; }
+.today__step.is-done .today__detail { color: #b6cfc5; }
+.today__start { width: 100%; margin-top: 18px; min-height: 56px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border: 0; border-bottom: 4px solid #95b954; border-radius: 14px; background: #d6f888; color: #163b34; font-size: 16px; font-weight: 800; }
+.today__start:hover { background: #e6ffb0; }
+.today__start:active { transform: translateY(2px); }
+.today__note { margin: 10px 0 0; font-size: 11px; line-height: 1.7; text-align: center; color: #c9e3d6; }
+.today__note strong { color: #f4ffed; }
+.today__done strong { display: block; font-size: 19px; line-height: 1.45; }
+.today__done p { margin: 6px 0 12px; font-size: 13px; color: #c9e3d6; }
+.today__done .btn-sm { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); color: #f4ffed; }
+.today__budget { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.16); display: grid; gap: 8px; }
+.today__budget > span { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #b6cfc5; }
+.today__budget > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.today__budget button { min-height: 38px; border-radius: 10px; border: 1px solid rgba(255,255,255,.28); background: transparent; color: #c9e3d6; font-size: 13px; font-weight: 700; }
+.today__budget button.is-on { background: #d6f888; border-color: #d6f888; color: #163b34; }
+.today__budget small { font-size: 10px; color: #b6cfc5; }
+
+/* たたんである補助情報。開くまでは1行で、1歩目の邪魔をしない */
+.home-fold { margin: 10px 0; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+.home-fold > summary { cursor: pointer; padding: 14px 16px; min-height: 44px; font-size: 14px; font-weight: 750; color: var(--accent-strong); }
+.home-fold[open] > summary { border-bottom: 1px solid var(--border); }
+.home-fold > *:not(summary) { margin-left: 16px; margin-right: 16px; }
+.home-fold > *:last-child { margin-bottom: 16px; }
+.home-fold .stat-grid { margin-top: 14px; }
+.home-fold h3 { font-size: 14px; margin: 16px 0 6px; }
+.today__note-inline { display: block; margin-top: 6px; font-size: 12px; line-height: 1.6; color: #ffd24a; }
+
+/* レッスンの4段階。全部見えているが、いまやる1つだけが強い(2026-09-06) */
+.lesson-step { position: relative; }
+.lesson-step.is-now { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 16%, transparent); }
+.lesson-step.is-later { background: var(--surface-2); }
+.lesson-step.is-later .lesson-step__head h2 { color: var(--text-dim); }
+.lesson-step.is-done .lesson-step__head h2::after { content: ' ✓'; color: var(--ok); }
+.step-here { display: inline-block; margin-left: 8px; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong); font-size: .62rem; font-weight: 800; letter-spacing: .04em; vertical-align: middle; }
+.lesson-step__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 24px 0 10px; }
+.lesson-step__head h2 { margin: 0; }
